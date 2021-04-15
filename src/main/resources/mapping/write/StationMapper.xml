@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.write.StationDao" >
+	<select id="selectCount" resultType="java.lang.Integer">
+        select
+        	count(s.id)
+        from station s
+        left join sttype t on s.type = t.code
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd like '%' + #{stcd} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and s.stname like '%' + #{name} + '%'
+        </if>
+    </select>
+	<select id="selectList" resultType="java.util.Map">
+        select s1.id, s1.stcd, s1.stname, t.name as sttype
+        from station s1
+        left join sttype t on s1.type = t.code,
+        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from station) s2
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s1.stcd like '%' + #{stcd} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and s1.stname like '%' + #{name} + '%'
+        </if>
+        and s1.id = s2.id
+        and s2.n > ${(page-1)*limit}
+        order by s2.n asc
+    </select>
+	<select id="selectListByType" resultType="java.util.Map">
+        select
+        	stcd, stname, type
+        from station
+        where type = #{type}
+        order by stcd asc
+    </select>
+	<insert id="insertBatch" parameterType="java.util.List">
+		insert into station
+		(stcd,stname,type)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.stcd},#{item.stname},#{item.type})
+		</foreach>
+	</insert>
+	<delete id="clear">
+        delete from station
+    </delete>
+	<delete id="dbcc">
+		DBCC CHECKIDENT('station', RESEED, 0)
+	</delete>
+</mapper>

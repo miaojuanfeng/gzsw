@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.read.RiverDao" >
+	<resultMap id="BaseResultMap" type="gz.sw.entity.read.River" >
+		<id column="stcd" property="stcd" jdbcType="VARCHAR" />
+        <result column="tm" property="tm"/>
+        <result column="z" property="z"/>
+        <result column="q" property="q"/>
+	</resultMap>
+
+    <select id="selectRiverTime" resultMap="BaseResultMap">
+        select stcd, tm, z
+        from ST_RIVER_R
+        where stcd = #{stcd}
+        and tm >= #{startDay} and #{endDay} >= tm
+        order by tm asc
+    </select>
+
+    <select id="selectRiverQRange" resultMap="BaseResultMap">
+        select tm, q
+        from ST_RIVER_R
+        <!--where CONVERT(varchar(100), tm, 23) >= CONVERT(varchar(100), dateadd(day, -5, getdate()), 23)-->
+        where stcd = #{stcd}
+        and RIGHT(CONVERT(varchar(19),tm,120),5)='00:00'
+        and tm >= #{affectTime} and #{forecastTime} >= tm
+        order by tm asc
+    </select>
+
+    <select id="selectRiverZRange" resultMap="BaseResultMap">
+        select tm, z
+        from ST_RIVER_R
+        <!--where CONVERT(varchar(100), tm, 23) >= CONVERT(varchar(100), dateadd(day, -5, getdate()), 23)-->
+        where stcd = #{stcd}
+        and RIGHT(CONVERT(varchar(19),tm,120),5)='00:00'
+        and tm >= #{affectTime} and #{forecastTime} >= tm
+        order by tm asc
+    </select>
+
+    <select id="selectRiverLast" resultMap="BaseResultMap">
+        select top 1 *
+        from ST_RIVER_R
+        where stcd = #{stcd}
+        order by tm desc
+    </select>
+</mapper>

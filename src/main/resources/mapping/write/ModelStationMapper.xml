@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.write.ModelStationDao" >
+	<select id="selectByModel" resultType="java.util.Map">
+		select
+			ms.*,
+			ms.plan_cl as PLAN_CL_ID,
+			ms.plan_hl as PLAN_HL_ID,
+			(select s.stname from station s where ms.stcd = s.stcd) as STNAME,
+			(select s.type from station s where ms.stcd = s.stcd) as STTYPE,
+			(select p.name from [plan] p where ms.plan_cl = p.id) as PLAN_CL_NAME,
+			(select p.name from [plan] p where ms.plan_hl = p.id) as PLAN_HL_NAME
+		from model_station ms
+		where 1=1
+		and ms.model_id = #{modelId}
+		order by ms.id asc
+	</select>
+	<delete id="deleteByModel" parameterType="java.lang.Integer">
+        delete from model_station where model_id = #{modelId}
+    </delete>
+	<insert id="insertBatch" parameterType="java.util.List">
+		insert into model_station
+		(model_id, stcd, ke, xe, intv, model_cl, plan_cl, model_hl, plan_hl, fa_stcd)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.modelId},#{item.stcd},#{item.ke},#{item.xe},#{item.intv},#{item.modelCl},#{item.planCl},#{item.modelHl},#{item.planHl},#{item.faStcd})
+		</foreach>
+	</insert>
+</mapper>

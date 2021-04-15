@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.write.PlanDao" >
+    <select id="selectCount" resultType="java.lang.Integer">
+        select
+        	count(p.id)
+        from [plan] p
+        left join station s on p.stcd = s.stcd
+        left join sttype t on s.type = t.code
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd = #{stcd}
+        </if>
+        <if test="name != null and name != ''" >
+            and p.name like '%' + #{name} + '%'
+        </if>
+    </select>
+    <select id="selectList" resultType="java.util.Map">
+        select p1.id, p1.name, CONVERT(varchar(100), p1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from [plan] p1
+        left join station s on p1.stcd = s.stcd
+        left join sttype t on s.type = t.code,
+        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from [plan]) p2
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd = #{stcd}
+        </if>
+        <if test="name != null and name != ''" >
+            and p1.name like '%' + #{name} + '%'
+        </if>
+        and p1.id = p2.id
+        and p2.n > ${(page-1)*limit}
+        order by p2.n asc
+    </select>
+    <select id="selectListByStcd" resultType="java.util.Map">
+        select
+        	id, name
+        from [plan]
+        where 1=1
+        and stcd = #{stcd}
+        and model = #{model}
+        order by id desc
+    </select>
+    <select id="select" resultType="gz.sw.entity.write.Plan">
+        select p.* from [plan] p
+        where p.id = #{id}
+    </select>
+    <select id="selectMap" resultType="java.util.Map">
+        select p.*, rtrim(s.type) as sttype, rtrim(s.stcd) as stcd
+        from [plan] p
+        left join station s on p.stcd = s.stcd
+        where p.id = #{id}
+    </select>
+    <insert id="insert" parameterType="gz.sw.entity.write.Plan" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into [plan]
+        (stcd, name, model, WU0, WL0, WD0, WUM, WLM, WDM, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        values
+        (#{stcd},#{name},#{model},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{createUser},#{createTime})
+    </insert>
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into [plan]
+        (stcd, name, model, WU0, WL0, WD0, WUM, WLM, WDM, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.stcd},#{item.name},#{item.model},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.createUser},#{item.createTime})
+        </foreach>
+    </insert>
+    <update id="update" parameterType="gz.sw.entity.write.Plan">
+        update [plan]
+        <set>
+            <if test="stcd != null" >stcd = #{stcd},</if>
+            <if test="name != null" >name = #{name},</if>
+            <if test="model != null" >model = #{model},</if>
+            <if test="WU0 != null" >WU0 = #{WU0},</if>
+            <if test="WL0 != null" >WL0 = #{WL0},</if>
+            <if test="WD0 != null" >WD0 = #{WD0},</if>
+            <if test="WUM != null" >WUM = #{WUM},</if>
+            <if test="WLM != null" >WLM = #{WLM},</if>
+            <if test="WDM != null" >WDM = #{WDM},</if>
+            <if test="B != null" >B = #{b},</if>
+            <if test="K != null" >K = #{k},</if>
+            <if test="C != null" >C = #{c},</if>
+            <if test="SM != null" >SM = #{SM},</if>
+            <if test="EX != null" >EX = #{EX},</if>
+            <if test="KSS != null" >KSS = #{KSS},</if>
+            <if test="KG != null" >KG = #{KG},</if>
+            <if test="IM != null" >IM = #{IM},</if>
+            <if test="CI != null" >CI = #{CI},</if>
+            <if test="CG != null" >CG = #{CG},</if>
+            <if test="L != null" >L = #{l},</if>
+            <if test="T != null" >T = #{t},</if>
+            <if test="F != null" >F = #{f},</if>
+            <if test="s0 != null" >S0 = #{s0},</if>
+            <if test="FR0 != null" >FR0 = #{FR0},</if>
+            <if test="QRS0 != null" >QRS0 = #{QRS0},</if>
+            <if test="QRSS0 != null" >QRSS0 = #{QRSS0},</if>
+            <if test="QRG0 != null" >QRG0 = #{QRG0},</if>
+            <if test="CS != null" >CS = #{CS},</if>
+            <if test="PA != null" >PA = #{PA},</if>
+            <if test="KR != null" >KR = #{KR},</if>
+            <if test="IMM != null" >IMM = #{IMM},</if>
+            <if test="NA != null" >NA = #{NA},</if>
+            <if test="NU != null" >NU = #{NU},</if>
+            <if test="KU != null" >KU = #{KU},</if>
+            <if test="AREA != null" >AREA = #{AREA},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from [plan] where id = #{id}
+    </delete>
+</mapper>

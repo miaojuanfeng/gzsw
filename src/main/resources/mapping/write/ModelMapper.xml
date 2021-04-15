@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.write.ModelDao">
+    <select id="selectCount" resultType="java.lang.Integer">
+        select
+        	count(m.id)
+        from model m
+        left join station s on m.stcd = s.stcd
+        left join sttype t on s.type = t.code
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd = #{stcd}
+        </if>
+        <if test="name != null and name != ''" >
+            and m.name like '%' + #{name} + '%'
+        </if>
+    </select>
+    <select id="selectList" resultType="java.util.Map">
+        select m1.id, m1.name, CONVERT(varchar(100), m1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from model m1
+        left join station s on m1.stcd = s.stcd
+        left join sttype t on s.type = t.code,
+        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from model) m2
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd = #{stcd}
+        </if>
+        <if test="name != null and name != ''" >
+            and m1.name like '%' + #{name} + '%'
+        </if>
+        and m1.id = m2.id
+        and m2.n > ${(page-1)*limit}
+        order by m2.n asc
+    </select>
+    <select id="selectListByStcd" resultType="java.util.Map">
+        select
+        	id, name
+        from model
+        where stcd = #{stcd}
+        order by id desc
+    </select>
+    <select id="select" resultType="gz.sw.entity.write.Model">
+        select m.* from model m
+        where m.id = #{id}
+    </select>
+    <insert id="insert" parameterType="gz.sw.entity.write.Model" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
+    </insert>
+    <update id="update" parameterType="gz.sw.entity.write.Model">
+        update model
+        <set>
+            <if test="name != null" > name = #{name},</if>
+            <if test="stcd != null" > stcd = #{stcd},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from model where id = #{id}
+    </delete>
+</mapper>
