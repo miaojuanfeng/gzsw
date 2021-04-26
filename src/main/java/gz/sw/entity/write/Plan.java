@@ -10,6 +10,7 @@ public class Plan {
 	private Integer id;
 	private String stcd;
 	private String name;
+	private Integer mtype;
 	private Integer model;
 	private Long createUser;
 	private Date createTime;
@@ -28,6 +29,7 @@ public class Plan {
 	private BigDecimal WUM;
 	private BigDecimal WLM;
 	private BigDecimal WDM;
+	private BigDecimal E;
 	private BigDecimal B;
 	private BigDecimal K;
 	private BigDecimal C;
@@ -84,6 +86,14 @@ public class Plan {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getMtype() {
+		return mtype;
+	}
+
+	public void setMtype(Integer mtype) {
+		this.mtype = mtype;
 	}
 
 	public Integer getModel() {
@@ -196,6 +206,14 @@ public class Plan {
 
 	public void setWDM(BigDecimal WDM) {
 		this.WDM = WDM;
+	}
+
+	public BigDecimal getE() {
+		return E;
+	}
+
+	public void setE(BigDecimal e) {
+		E = e;
 	}
 
 	public BigDecimal getB() {

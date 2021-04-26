@@ -182,6 +182,12 @@ public class ModelController {
 		return retval;
 	}
 
+	@PostMapping("getType")
+	@ResponseBody
+	public List getType(Integer mtype) {
+		return ModelTypeEnum.getList(mtype);
+	}
+
 	@PostMapping("getModel")
 	@ResponseBody
 	public List getModel(String stcd) {
@@ -225,7 +231,7 @@ public class ModelController {
 
 	private Map setPlan(Plan plan) {
 		Map m = new HashMap();
- 		if( ModelTypeEnum.XAJ.getId().equals(plan.getModel()) ){
+ 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModel()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());
@@ -255,13 +261,13 @@ public class ModelController {
 			m.put("QRS0", plan.getQRS0());
 			m.put("QRSS0", plan.getQRSS0());
 			m.put("QRG0", plan.getQRG0());
-		}else if( ModelTypeEnum.EXP.getId().equals(plan.getModel()) ){
+		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModel()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());
 			m.put("MODEL", plan.getModel());
 			m.put("PA", plan.getPA());
-		}else if( ModelTypeEnum.API.getId().equals(plan.getModel()) ){
+		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModel()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());

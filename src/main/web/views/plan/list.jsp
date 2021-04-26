@@ -49,9 +49,9 @@
               </div>
             </div>
           </div>
-          <div class="layui-form-item">
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="insert">新增方案</button>
-          </div>
+          <%--<div class="layui-form-item">--%>
+            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="insert">新增方案</button>--%>
+          <%--</div>--%>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>

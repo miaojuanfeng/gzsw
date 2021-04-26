@@ -548,15 +548,15 @@ public class ForecastController {
 			 */
 			Integer modelClId = m.getInteger("modelClId");
 			Plan planCl = setPlan(modelClId, m.getJSONObject("planCl"), m.getBigDecimal("ke"), m.getBigDecimal("xe"));
-			if( ModelTypeEnum.XAJ.getId().equals(modelClId) ) {
-				if( ModelTypeEnum.XAJ.getId().equals(m.getInteger("modelHlId")) ){
+			if( ModelTypeEnum.XAJ_CL.getId().equals(modelClId) ) {
+				if( ModelTypeEnum.XAJ_CL.getId().equals(m.getInteger("modelHlId")) ){
 					listQTR = XajCalc.getR(planCl, listP, CommonConst.RETURN_TYPE_QTR);
 				}else{
 					listR = XajCalc.getR(planCl, listP, CommonConst.RETURN_TYPE_R);
 				}
-			}else if( ModelTypeEnum.EXP.getId().equals(modelClId) ){
+			}else if( ModelTypeEnum.EXP_CL.getId().equals(modelClId) ){
 				listR = ExpCalc.getR(planCl, listP);
-			}else if( ModelTypeEnum.API.getId().equals(modelClId) ) {
+			}else if( ModelTypeEnum.API_CL.getId().equals(modelClId) ) {
 				listR = ApiCalc.getR(planCl, listP);
 			}
 
@@ -568,11 +568,11 @@ public class ForecastController {
 			 */
 			Integer modelHlId = m.getInteger("modelHlId");
 			Plan planHl = setPlan(modelHlId, m.getJSONObject("planHl"), m.getBigDecimal("ke"), m.getBigDecimal("xe"));
-			if( ModelTypeEnum.XAJ.getId().equals(modelHlId) ) {
+			if( ModelTypeEnum.XAJ_CL.getId().equals(modelHlId) ) {
 				listQTRR = XajCalc.getQTRR(planHl, listQTR);
-			}else if( ModelTypeEnum.EXP.getId().equals(modelHlId) ){
+			}else if( ModelTypeEnum.EXP_CL.getId().equals(modelHlId) ){
 				listQTRR = ExpCalc.getQTRR(planHl, listR);
-			}else if( ModelTypeEnum.API.getId().equals(modelHlId) ) {
+			}else if( ModelTypeEnum.API_CL.getId().equals(modelHlId) ) {
 				listQTRR = ApiCalc.getQTRR(planHl, listR);
 			}
 
@@ -624,7 +624,7 @@ public class ForecastController {
 
 	private Plan setPlan(Integer model, JSONObject p, BigDecimal KE, BigDecimal XE){
 		Plan plan = new Plan();
-		if( ModelTypeEnum.XAJ.getId().equals(model) ) {
+		if( ModelTypeEnum.XAJ_CL.getId().equals(model) ) {
 			plan.setF(p.getBigDecimal("F"));
 			plan.setK(p.getBigDecimal("K"));
 			plan.setIM(p.getBigDecimal("IM"));
@@ -652,11 +652,11 @@ public class ForecastController {
 			plan.setQRS0(p.getBigDecimal("QRS0"));
 			plan.setQRSS0(p.getBigDecimal("QRSS0"));
 			plan.setQRG0(p.getBigDecimal("QRG0"));
-		}else if( ModelTypeEnum.EXP.getId().equals(model) ){
+		}else if( ModelTypeEnum.EXP_CL.getId().equals(model) ){
 			plan.setKE(KE);
 			plan.setXE(XE);
 			plan.setPA(p.getBigDecimal("PA"));
-		}else if( ModelTypeEnum.API.getId().equals(model) ) {
+		}else if( ModelTypeEnum.API_CL.getId().equals(model) ) {
 			plan.setKR(p.getBigDecimal("KR"));
 			plan.setIM(p.getBigDecimal("IM"));
 			plan.setIMM(p.getBigDecimal("IMM"));

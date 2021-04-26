@@ -106,10 +106,10 @@
               </a>
               <dl class="layui-nav-child">
                 <dd data-name="console">
-                  <a lay-href="<c:url value="plan/list"></c:url>">方案列表</a>
+                  <a lay-href="<c:url value="plan/list"></c:url>">单站方案列表</a>
                 </dd>
                 <dd data-name="console">
-                  <a lay-href="<c:url value="plan/insert"></c:url>">新建方案</a>
+                  <a lay-href="<c:url value="plan/insert"></c:url>">新建单站方案</a>
                 </dd>
               </dl>
             </li>

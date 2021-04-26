@@ -59,16 +59,16 @@
     </select>
     <insert id="insert" parameterType="gz.sw.entity.write.Plan" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into [plan]
-        (stcd, name, model, WU0, WL0, WD0, WUM, WLM, WDM, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        (stcd, name, mtype, model, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
         values
-        (#{stcd},#{name},#{model},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{createUser},#{createTime})
+        (#{stcd},#{name},#{mtype},#{model},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{E},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{createUser},#{createTime})
     </insert>
     <insert id="insertBatch" parameterType="java.util.List">
         insert into [plan]
-        (stcd, name, model, WU0, WL0, WD0, WUM, WLM, WDM, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        (stcd, name, mtype, model, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.stcd},#{item.name},#{item.model},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.createUser},#{item.createTime})
+            (#{item.stcd},#{item.name},#{item.mtype},#{item.model},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.E},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.createUser},#{item.createTime})
         </foreach>
     </insert>
     <update id="update" parameterType="gz.sw.entity.write.Plan">
@@ -76,6 +76,7 @@
         <set>
             <if test="stcd != null" >stcd = #{stcd},</if>
             <if test="name != null" >name = #{name},</if>
+            <if test="mtype != null" >mtype = #{mtype},</if>
             <if test="model != null" >model = #{model},</if>
             <if test="WU0 != null" >WU0 = #{WU0},</if>
             <if test="WL0 != null" >WL0 = #{WL0},</if>
@@ -83,9 +84,10 @@
             <if test="WUM != null" >WUM = #{WUM},</if>
             <if test="WLM != null" >WLM = #{WLM},</if>
             <if test="WDM != null" >WDM = #{WDM},</if>
-            <if test="B != null" >B = #{b},</if>
-            <if test="K != null" >K = #{k},</if>
-            <if test="C != null" >C = #{c},</if>
+            <if test="B != null" >E = #{E},</if>
+            <if test="B != null" >B = #{B},</if>
+            <if test="K != null" >K = #{K},</if>
+            <if test="C != null" >C = #{C},</if>
             <if test="SM != null" >SM = #{SM},</if>
             <if test="EX != null" >EX = #{EX},</if>
             <if test="KSS != null" >KSS = #{KSS},</if>
@@ -93,10 +95,10 @@
             <if test="IM != null" >IM = #{IM},</if>
             <if test="CI != null" >CI = #{CI},</if>
             <if test="CG != null" >CG = #{CG},</if>
-            <if test="L != null" >L = #{l},</if>
-            <if test="T != null" >T = #{t},</if>
-            <if test="F != null" >F = #{f},</if>
-            <if test="s0 != null" >S0 = #{s0},</if>
+            <if test="L != null" >L = #{L},</if>
+            <if test="T != null" >T = #{T},</if>
+            <if test="F != null" >F = #{F},</if>
+            <if test="s0 != null" >S0 = #{S0},</if>
             <if test="FR0 != null" >FR0 = #{FR0},</if>
             <if test="QRS0 != null" >QRS0 = #{QRS0},</if>
             <if test="QRSS0 != null" >QRSS0 = #{QRSS0},</if>

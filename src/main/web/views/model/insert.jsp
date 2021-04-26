@@ -70,20 +70,24 @@
                   <td>站点名称</td>
                   <td id="td-stname"></td>
                 </tr>
+                <%--<tr>--%>
+                  <%--<td>产流河系</td>--%>
+                  <%--<td id="td-model-cl"></td>--%>
+                <%--</tr>--%>
+                <%--<tr>--%>
+                  <%--<td>产流方案</td>--%>
+                  <%--<td id="td-plan-cl"></td>--%>
+                <%--</tr>--%>
+                <%--<tr>--%>
+                  <%--<td>汇流河系</td>--%>
+                  <%--<td id="td-model-hl"></td>--%>
+                <%--</tr>--%>
+                <%--<tr>--%>
+                  <%--<td>汇流方案</td>--%>
+                  <%--<td id="td-plan-hl"></td>--%>
+                <%--</tr>--%>
                 <tr>
-                  <td>产流河系</td>
-                  <td id="td-model-cl"></td>
-                </tr>
-                <tr>
-                  <td>产流方案</td>
-                  <td id="td-plan-cl"></td>
-                </tr>
-                <tr>
-                  <td>汇流河系</td>
-                  <td id="td-model-hl"></td>
-                </tr>
-                <tr>
-                  <td>汇流方案</td>
+                  <td>预报方案</td>
                   <td id="td-plan-hl"></td>
                 </tr>
                 <tr>
@@ -310,7 +314,7 @@
             ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
             ,id: 'layerDemo1' //防止重复弹出
             ,content: $('#addform')
-            ,area:["500px","400px"]
+            ,area:["500px","320px"]
             ,btn: ['确定', '取消']
             ,btnAlign: 'c' //按钮居中
             ,shade: 0 //不显示遮罩

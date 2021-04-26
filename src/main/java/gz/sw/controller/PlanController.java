@@ -3,6 +3,7 @@ package gz.sw.controller;
 import com.alibaba.fastjson.JSONObject;
 import gz.sw.entity.write.Model;
 import gz.sw.entity.write.Plan;
+import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.write.PlanService;
 import gz.sw.service.write.StationService;
@@ -66,6 +67,7 @@ public class PlanController {
 		Map plan = planService.selectMap(id);
 		List stations = stationService.selectListByType(String.valueOf(plan.get("sttype")));
         map.put("stations", stations);
+		map.put("models", ModelTypeEnum.getList(Integer.valueOf(String.valueOf(plan.get("MTYPE")))));
 		map.put("plan", plan);
 		return "plan/insert";
 	}
