@@ -57,7 +57,7 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public List selectListByStcd(String stcd, Integer model) {
-		return planDao.selectListByStcd(stcd, model);
+	public List selectListByStcd(String stcd) {
+		return planDao.selectListByStcd(stcd);
 	}
 }

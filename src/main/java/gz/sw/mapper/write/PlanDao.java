@@ -18,5 +18,5 @@ public interface PlanDao {
 
 	int selectCount(@Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
 	List selectList(@Param("page") Integer page, @Param("limit") Integer limit, @Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
-	List selectListByStcd(@Param("stcd") String stcd, @Param("model") Integer model);
+	List selectListByStcd(@Param("stcd") String stcd);
 }

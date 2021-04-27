@@ -10,13 +10,7 @@ public class ModelStation {
 
 	private String stcd;
 
-	private Integer planCl;
-
-	private Integer planHl;
-
-	private Integer modelCl;
-
-	private Integer modelHl;
+	private Integer planId;
 
 	private BigDecimal ke;
 
@@ -50,36 +44,12 @@ public class ModelStation {
 		this.stcd = stcd;
 	}
 
-	public Integer getPlanCl() {
-		return planCl;
+	public Integer getPlanId() {
+		return planId;
 	}
 
-	public void setPlanCl(Integer planCl) {
-		this.planCl = planCl;
-	}
-
-	public Integer getPlanHl() {
-		return planHl;
-	}
-
-	public void setPlanHl(Integer planHl) {
-		this.planHl = planHl;
-	}
-
-	public Integer getModelCl() {
-		return modelCl;
-	}
-
-	public void setModelCl(Integer modelCl) {
-		this.modelCl = modelCl;
-	}
-
-	public Integer getModelHl() {
-		return modelHl;
-	}
-
-	public void setModelHl(Integer modelHl) {
-		this.modelHl = modelHl;
+	public void setPlanId(Integer planId) {
+		this.planId = planId;
 	}
 
 	public BigDecimal getKe() {

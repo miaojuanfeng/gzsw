@@ -4,12 +4,10 @@
 	<select id="selectByModel" resultType="java.util.Map">
 		select
 			ms.*,
-			ms.plan_cl as PLAN_CL_ID,
-			ms.plan_hl as PLAN_HL_ID,
+			ms.plan_id as PLAN_ID,
 			(select s.stname from station s where ms.stcd = s.stcd) as STNAME,
 			(select s.type from station s where ms.stcd = s.stcd) as STTYPE,
-			(select p.name from [plan] p where ms.plan_cl = p.id) as PLAN_CL_NAME,
-			(select p.name from [plan] p where ms.plan_hl = p.id) as PLAN_HL_NAME
+			(select p.name from [plan] p where ms.plan_id = p.id) as PLAN_NAME
 		from model_station ms
 		where 1=1
 		and ms.model_id = #{modelId}
@@ -20,10 +18,10 @@
     </delete>
 	<insert id="insertBatch" parameterType="java.util.List">
 		insert into model_station
-		(model_id, stcd, ke, xe, intv, model_cl, plan_cl, model_hl, plan_hl, fa_stcd)
+		(model_id, stcd, plan_id, ke, xe, intv, fa_stcd)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.modelId},#{item.stcd},#{item.ke},#{item.xe},#{item.intv},#{item.modelCl},#{item.planCl},#{item.modelHl},#{item.planHl},#{item.faStcd})
+			(#{item.modelId},#{item.stcd},#{item.planId},#{item.ke},#{item.xe},#{item.intv},#{item.faStcd})
 		</foreach>
 	</insert>
 </mapper>

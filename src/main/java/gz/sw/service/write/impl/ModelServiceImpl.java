@@ -48,4 +48,9 @@ public class ModelServiceImpl implements ModelService {
 	public List selectListByStcd(String stcd) {
 		return modelDao.selectListByStcd(stcd);
 	}
+
+	@Override
+	public List selectAll() {
+		return modelDao.selectAll();
+	}
 }

@@ -13,6 +13,7 @@ import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.read.RainfallService;
+import gz.sw.service.write.ModelService;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class ForecastController {
 
 	@Autowired
 	private RainfallService rainfallService;
+
+	@Autowired
+	private ModelService modelService;
 //
 //	@Autowired
 //	private ForecastService forecastService;
@@ -49,7 +53,8 @@ public class ForecastController {
 	@GetMapping("home")
 	public String home(ModelMap map) {
 		map.put("date", DateUtil.getDate());
-		map.put("sttps", StationTypeEnum.getList());
+		map.put("models", modelService.selectAll());
+//		map.put("sttps", StationTypeEnum.getList());
 //		List<Plan> planList = planService.selectPlan(CommonConst.STCD_STATION[0]);
 //		map.put("planList", planList);
 //		if( planList.size() > 0 ){

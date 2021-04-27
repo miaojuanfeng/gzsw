@@ -16,25 +16,29 @@ public enum ModelTypeEnum {
 
     XAJ_CL(1, 1, "蓄满产流法"),
 
-    XAJ_HL(2, 1, "滞后演算法"),
+    XAJ_HL(2, 2, "滞后演算法"),
 
-    EXP_CL(3, 2, "经验降径关系线"),
+    EXP_CL(3, 1, "经验降径关系线"),
 
     EXP_HL(4, 2, "经验单位线"),
 
-    API_CL(5, 3, "公式降径关系线"),
+    API_CL(5, 1, "公式降径关系线"),
 
-    API_HL(6, 3, "瞬时单位线");
+    API_HL(6, 2, "瞬时单位线");
 
     private final Integer id;
 
-    private final Integer parent;
+    private final Integer type;
 
     private final String text;
 
-    private ModelTypeEnum(Integer id, Integer parent, String text){
+    public static final Integer MODEL_TYPE_CL = 1;
+
+    public static final Integer MODEL_TYPE_HL = 2;
+
+    private ModelTypeEnum(Integer id, Integer type, String text){
         this.id = id;
-        this.parent = parent;
+        this.type = type;
         this.text = text;
     }
 
@@ -52,11 +56,11 @@ public enum ModelTypeEnum {
         return null;
     }
 
-    public static List getList(Integer mtype){
+    public static List getList(Integer type){
         List retval = new ArrayList();
         ModelTypeEnum[] modelTypeEnums = values();
         for (ModelTypeEnum modelTypeEnum : modelTypeEnums) {
-            if (modelTypeEnum.parent.equals(mtype)) {
+            if (modelTypeEnum.type.equals(type)) {
                 Map m = new HashMap<>();
                 m.put("id", modelTypeEnum.id);
                 m.put("text", modelTypeEnum.text);

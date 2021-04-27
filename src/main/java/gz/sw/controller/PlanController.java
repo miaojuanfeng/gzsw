@@ -47,6 +47,8 @@ public class PlanController {
 	@GetMapping("insert")
 	public String insert(ModelMap map) {
 		map.put("sttps", StationTypeEnum.getList());
+		map.put("modelCls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_CL));
+		map.put("modelHls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_HL));
 		return "plan/insert";
 	}
 
@@ -64,10 +66,11 @@ public class PlanController {
 	@GetMapping("update/{id}")
 	public String update(ModelMap map, @PathVariable("id") Integer id) {
 		map.put("sttps", StationTypeEnum.getList());
+		map.put("modelCls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_CL));
+		map.put("modelHls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_HL));
 		Map plan = planService.selectMap(id);
 		List stations = stationService.selectListByType(String.valueOf(plan.get("sttype")));
         map.put("stations", stations);
-		map.put("models", ModelTypeEnum.getList(Integer.valueOf(String.valueOf(plan.get("MTYPE")))));
 		map.put("plan", plan);
 		return "plan/insert";
 	}
@@ -92,7 +95,7 @@ public class PlanController {
 
     @PostMapping("getPlan")
     @ResponseBody
-    public List getPlan(String stcd, Integer model) {
-        return planService.selectListByStcd(stcd, model);
+    public List getPlan(String stcd) {
+        return planService.selectListByStcd(stcd);
     }
 }

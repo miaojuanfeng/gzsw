@@ -134,14 +134,8 @@ public class ModelController {
 				station.put("stcd", String.valueOf(modelStation.get("STCD")).trim());
 				station.put("stname", String.valueOf(modelStation.get("STNAME")).trim());
 				station.put("sttype", String.valueOf(modelStation.get("STTYPE")).trim());
-				station.put("modelClId", modelStation.get("MODEL_CL"));
-				station.put("modelClName", ModelTypeEnum.getText((Integer)modelStation.get("MODEL_CL")));
-				station.put("planClId", modelStation.get("PLAN_CL_ID"));
-				station.put("planClName", modelStation.get("PLAN_CL_NAME"));
-				station.put("modelHlId", modelStation.get("MODEL_HL"));
-				station.put("modelHlName", ModelTypeEnum.getText((Integer)modelStation.get("MODEL_HL")));
-				station.put("planHlId", modelStation.get("PLAN_HL_ID"));
-				station.put("planHlName", modelStation.get("PLAN_HL_NAME"));
+				station.put("planId", modelStation.get("PLAN_ID"));
+				station.put("planName", modelStation.get("PLAN_NAME"));
 				station.put("intv", modelStation.get("INTV"));
 				station.put("ke", modelStation.get("KE"));
 				station.put("xe", modelStation.get("XE"));
@@ -164,13 +158,10 @@ public class ModelController {
 			ModelStation modelStation = new ModelStation();
 			modelStation.setModelId(modelId);
 			modelStation.setStcd(station.getString("stcd"));
+			modelStation.setPlanId(station.getInteger("planId"));
 			modelStation.setKe(station.getBigDecimal("ke"));
 			modelStation.setXe(station.getBigDecimal("xe"));
 			modelStation.setIntv(station.getBigDecimal("intv"));
-			modelStation.setModelCl(station.getInteger("modelClId"));
-			modelStation.setPlanCl(station.getInteger("planClId"));
-			modelStation.setModelHl(station.getInteger("modelHlId"));
-			modelStation.setPlanHl(station.getInteger("planHlId"));
 			modelStation.setFaStcd(fatherId);
 			retval.add(modelStation);
 
@@ -184,8 +175,8 @@ public class ModelController {
 
 	@PostMapping("getType")
 	@ResponseBody
-	public List getType(Integer mtype) {
-		return ModelTypeEnum.getList(mtype);
+	public List getType(Integer type) {
+		return ModelTypeEnum.getList(type);
 	}
 
 	@PostMapping("getModel")
@@ -208,34 +199,17 @@ public class ModelController {
 			if( modelStation.containsKey("children") && modelStation.getJSONArray("children").size() > 0 ) {
 				setModelStationPlan(modelStation.getJSONArray("children"));
 			}
-			modelStation.put("planCl", setPlan(planService.select(modelStation.getInteger("planClId"))));
-			modelStation.put("planHl", setPlan(planService.select(modelStation.getInteger("planHlId"))));
-//			Plan plan = planService.selectById(modelStation.getInteger("planId"));
-//			Map m = new HashMap();
-//			m.put("name", plan.getName());
-//			m.put("sm", plan.getSM());
-//			m.put("ci", plan.getCI());
-//			m.put("cs", plan.getCS());
-//			m.put("l", plan.getL());
-//			m.put("wu0", plan.getWU0());
-//			m.put("wl0", plan.getWL0());
-//			m.put("wd0", plan.getWD0());
-//			m.put("s0", plan.getS0());
-//			m.put("fr0", plan.getFR0());
-//			m.put("qrs0", plan.getQRS0());
-//			m.put("qrss0", plan.getQRSS0());
-//			m.put("qrg0", plan.getQRG0());
-//			modelStation.put("plan", m);
+			modelStation.put("plan", setPlan(planService.select(modelStation.getInteger("planId"))));
 		}
 	}
 
 	private Map setPlan(Plan plan) {
 		Map m = new HashMap();
- 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModel()) ){
+ 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModelCl()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModel());
+			m.put("MODEL", plan.getModelCl());
 			m.put("WU0", plan.getWU0());
 			m.put("WL0", plan.getWL0());
 			m.put("WD0", plan.getWD0());
@@ -261,17 +235,17 @@ public class ModelController {
 			m.put("QRS0", plan.getQRS0());
 			m.put("QRSS0", plan.getQRSS0());
 			m.put("QRG0", plan.getQRG0());
-		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModel()) ){
+		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModelCl()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModel());
+			m.put("MODEL", plan.getModelCl());
 			m.put("PA", plan.getPA());
-		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModel()) ){
+		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModelCl()) ){
 			m.put("ID", plan.getId());
 			m.put("STCD", plan.getStcd());
 			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModel());
+			m.put("MODEL", plan.getModelCl());
 			m.put("PA", plan.getPA());
 			m.put("KR", plan.getKR());
 			m.put("IM", plan.getIM());

@@ -8,13 +8,19 @@
 </head>
 <style type="text/css">
   .input-tr{
-    padding:0 !important;
+      padding:0 !important;
   }
   .input-tr .layui-input{
-    border: none !important;
+      border: none !important;
   }
-  #model_1, #model_2, #model_3, #model_4, #model_5, #model_6{
-    display: none;
+  #model_cl_1, #model_hl_2, #model_cl_3, #model_hl_4, #model_cl_5, #model_hl_6{
+      display: none;
+  }
+  .layui-form-label{
+      width: 100px;
+  }
+  .layui-input-block {
+      margin-left: 130px;
   }
 </style>
 <body>
@@ -61,43 +67,46 @@
           </div>
 
           <div class="layui-form-item">
-            <label class="layui-form-label">方案类型</label>
+            <label class="layui-form-label">产流方案类型</label>
             <div class="layui-input-block">
-                <div style="width: 30%;float:left;">
-                    <select name="mtype" lay-filter="mtype" lay-verify="required" lay-search="">
-                        <option value="">请选择</option>
-                        <option value="1" <c:if test="${plan.MTYPE==1}">selected</c:if>>新安江</option>
-                        <option value="2" <c:if test="${plan.MTYPE==2}">selected</c:if>>经验单位线</option>
-                        <option value="3" <c:if test="${plan.MTYPE==3}">selected</c:if>>API</option>
-                    </select>
-                </div>
-                <div style="width: 70%;float:right;">
-                    <select name="model" lay-filter="model" lay-verify="required" lay-search="">
-                        <option value="">请选择</option>
-                        <c:forEach items="${models}" var="model" varStatus="id">
-                            <option value="${model.id}" <c:if test="${plan.MODEL==model.id}">selected</c:if>>${model.text}</option>
-                        </c:forEach>
-                    </select>
-                </div>
+                <select name="modelCl" lay-filter="modelCl" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${modelCls}" var="model" varStatus="id">
+                        <option value="${model.id}" <c:if test="${plan.MODEL_CL==model.id}">selected</c:if>>${model.text}</option>
+                    </c:forEach>
+                </select>
             </div>
           </div>
+
+          <div class="layui-form-item">
+            <label class="layui-form-label">汇流方案类型</label>
+            <div class="layui-input-block">
+                <select name="modelHl" lay-filter="modelHl" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${modelHls}" var="model" varStatus="id">
+                        <option value="${model.id}" <c:if test="${plan.MODEL_HL==model.id}">selected</c:if>>${model.text}</option>
+                    </c:forEach>
+                </select>
+            </div>
+          </div>
+
         </form>
 
         <div class="layui-form-item">
-          <label class="layui-form-label">方案参数</label>
+          <label class="layui-form-label">产流方案参数</label>
           <div class="layui-input-block">
-            <table id="model_" class="model_param layui-table" style="margin:0;<c:if test="${not empty plan.MODEL}">display:none;</c:if>">
+            <table id="model_cl_" class="model_param_cl layui-table" style="margin:0;<c:if test="${not empty plan.MODEL_CL}">display:none;</c:if>">
               <colgroup>
                 <col width="100%">
               </colgroup>
               <tbody>
               <tr>
-                <td align="center">请先选择预报河系</td>
+                <td align="center">请先选择产流方案类型</td>
               </tr>
               </tbody>
             </table>
-            <form id="form_model_1">
-              <table id="model_1" lay-filter="model_1" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==1}">display:block;</c:if>">
+            <form id="form_model_cl_1">
+              <table id="model_cl_1" lay-filter="model_cl_1" class="model_param_cl layui-table" style="margin:0;<c:if test="${plan.MODEL_CL==1}">display:table;</c:if>">
                 <colgroup>
                     <col width="10%">
                     <col width="15%">
@@ -161,43 +170,8 @@
                 </tbody>
               </table>
             </form>
-            <form id="form_model_2">
-              <table id="model_2" lay-filter="model_2" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==2}">display:block;</c:if>">
-                <colgroup>
-                    <col width="10%">
-                    <col width="15%">
-                    <col width="10%">
-                    <col width="15%">
-                    <col width="10%">
-                    <col width="15%">
-                    <col width="10%">
-                    <col width="15%">
-                </colgroup>
-                <tbody>
-                <tr>
-                  <td>CS</td>
-                  <td class="input-tr"><input type="text" name="CS" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
-                  <td>CI</td>
-                  <td class="input-tr"><input type="text" name="CI" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
-                  <td>CG</td>
-                  <td class="input-tr"><input type="text" name="CG" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
-                  <td>L</td>
-                  <td class="input-tr"><input type="text" name="L" autocomplete="off" class="layui-input" value="${plan.L}"></td>
-                </tr>
-                <tr>
-                  <td>QRS0</td>
-                  <td class="input-tr"><input type="text" name="QRS0" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
-                  <td>QRSS0</td>
-                  <td class="input-tr"><input type="text" name="QRSS0" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
-                  <td>QRG0</td>
-                  <td class="input-tr"><input type="text" name="QRG0" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
-                  <td colspan="2"></td>
-                </tr>
-                </tbody>
-              </table>
-            </form>
-            <form id="form_model_3">
-              <table id="model_3" lay-filter="model_3" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==3}">display:block;</c:if>;">
+            <form id="form_model_cl_3">
+              <table id="model_cl_3" lay-filter="model_cl_3" class="model_param_cl layui-table" style="margin:0;<c:if test="${plan.MODEL_CL==3}">display:table;</c:if>;">
                 <colgroup>
                     <col width="10%">
                     <col width="15%">
@@ -217,27 +191,8 @@
                 </tbody>
               </table>
             </form>
-            <form id="form_model_4">
-              <table id="model_4" lay-filter="model_4" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==4}">display:block;</c:if>;">
-                  <colgroup>
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
-                  </colgroup>
-                  <tbody>
-                  <tr>
-                      <td colspan="8">无需参数</td>
-                  </tr>
-                  </tbody>
-              </table>
-            </form>
-            <form id="form_model_5">
-              <table id="model_5" lay-filter="model_5" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==5}">display:block;</c:if>;">
+            <form id="form_model_cl_5">
+              <table id="model_cl_5" lay-filter="model_cl_5" class="model_param_cl layui-table" style="margin:0;<c:if test="${plan.MODEL_CL==5}">display:table;</c:if>;">
                 <colgroup>
                   <col width="10%">
                   <col width="15%">
@@ -267,32 +222,95 @@
                 </tbody>
               </table>
             </form>
-            <form id="form_model_6">
-              <table id="model_6" lay-filter="model_6" class="model_param layui-table" style="margin:0;<c:if test="${plan.MODEL==6}">display:block;</c:if>;">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">汇流方案参数</label>
+          <div class="layui-input-block">
+              <table id="model_hl_" class="model_param_hl layui-table" style="margin:0;<c:if test="${not empty plan.MODEL_HL}">display:none;</c:if>">
                   <colgroup>
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
-                      <col width="10%">
-                      <col width="15%">
+                      <col width="100%">
                   </colgroup>
                   <tbody>
                   <tr>
-                      <td>NA</td>
-                      <td class="input-tr"><input type="text" name="NA"  autocomplete="off" class="layui-input" value="${plan.NA}"></td>
-                      <td>NU</td>
-                      <td class="input-tr"><input type="text" name="NU"  autocomplete="off" class="layui-input" value="${plan.NU}"></td>
-                      <td>KG</td>
-                      <td class="input-tr"><input type="text" name="KG"  autocomplete="off" class="layui-input" value="${plan.KG}"></td>
-                      <td>KU</td>
-                      <td class="input-tr"><input type="text" name="KU"  autocomplete="off" class="layui-input" value="${plan.KU}"></td>
+                      <td align="center">请先选择汇流方案类型</td>
                   </tr>
                   </tbody>
               </table>
-            </form>
+              <form id="form_model_hl_2">
+                  <table id="model_hl_2" lay-filter="model_hl_2" class="model_param_hl layui-table" style="margin:0;<c:if test="${plan.MODEL_HL==2}">display:table;</c:if>">
+                      <colgroup>
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                      </colgroup>
+                      <tbody>
+                      <tr>
+                          <td>CS</td>
+                          <td class="input-tr"><input type="text" name="CS" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
+                          <td>CI</td>
+                          <td class="input-tr"><input type="text" name="CI" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
+                          <td>CG</td>
+                          <td class="input-tr"><input type="text" name="CG" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
+                          <td>L</td>
+                          <td class="input-tr"><input type="text" name="L" autocomplete="off" class="layui-input" value="${plan.L}"></td>
+                      </tr>
+                      <tr>
+                          <td>QRS0</td>
+                          <td class="input-tr"><input type="text" name="QRS0" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
+                          <td>QRSS0</td>
+                          <td class="input-tr"><input type="text" name="QRSS0" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
+                          <td>QRG0</td>
+                          <td class="input-tr"><input type="text" name="QRG0" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
+                          <td colspan="2"></td>
+                      </tr>
+                      </tbody>
+                  </table>
+              </form>
+              <form id="form_model_hl_4">
+                  <table id="model_hl_4" lay-filter="model_hl_4" class="model_param_hl layui-table" style="margin:0;<c:if test="${plan.MODEL_HL==4}">display:table;</c:if>;">
+                      <colgroup>
+                          <col width="100%">
+                      </colgroup>
+                      <tbody>
+                      <tr>
+                          <td align="center" colspan="8">无需参数</td>
+                      </tr>
+                      </tbody>
+                  </table>
+              </form>
+              <form id="form_model_hl_6">
+                  <table id="model_hl_6" lay-filter="model_hl_6" class="model_param_hl layui-table" style="margin:0;<c:if test="${plan.MODEL_HL==6}">display:table;</c:if>;">
+                      <colgroup>
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                          <col width="10%">
+                          <col width="15%">
+                      </colgroup>
+                      <tbody>
+                      <tr>
+                          <td>NA</td>
+                          <td class="input-tr"><input type="text" name="NA"  autocomplete="off" class="layui-input" value="${plan.NA}"></td>
+                          <td>NU</td>
+                          <td class="input-tr"><input type="text" name="NU"  autocomplete="off" class="layui-input" value="${plan.NU}"></td>
+                          <td>KG</td>
+                          <td class="input-tr"><input type="text" name="KG"  autocomplete="off" class="layui-input" value="${plan.KG}"></td>
+                          <td>KU</td>
+                          <td class="input-tr"><input type="text" name="KU"  autocomplete="off" class="layui-input" value="${plan.KU}"></td>
+                      </tr>
+                      </tbody>
+                  </table>
+              </form>
           </div>
         </div>
 
@@ -341,32 +359,36 @@
             );
         }
     });
-    form.on('select(mtype)', function(data){
-        $("select[name=model]").html('<option value="">请选择</option>');
-        form.render('select');
-        $(".model_param").hide();
-        $("#model_").show();
-        var mtype = $("select[name=mtype]").val();
-        if( mtype != "" ){
-            var loading = layer.load(0);
-            $.post(
-                '${pageContext.request.contextPath}/model/getType',
-                {mtype: mtype},
-                function (data) {
-                    var html = '';
-                    $.each(data, function (key, value) {
-                        html += '<option value="' + value.id + '">' + value.text + '</option>';
-                    });
-                    $("select[name=model]").append(html);
-                    form.render('select');
-                    layer.close(loading);
-                }
-            );
-        }
+    <%--form.on('select(modelCl)', function(data){--%>
+        <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
+        <%--form.render('select');--%>
+        <%--$(".model_param").hide();--%>
+        <%--$("#model_").show();--%>
+        <%--var mtype = $("select[name=mtype]").val();--%>
+        <%--if( mtype != "" ){--%>
+            <%--var loading = layer.load(0);--%>
+            <%--$.post(--%>
+                <%--'${pageContext.request.contextPath}/model/getType',--%>
+                <%--{mtype: mtype},--%>
+                <%--function (data) {--%>
+                    <%--var html = '';--%>
+                    <%--$.each(data, function (key, value) {--%>
+                        <%--html += '<option value="' + value.id + '">' + value.text + '</option>';--%>
+                    <%--});--%>
+                    <%--$("select[name=model]").append(html);--%>
+                    <%--form.render('select');--%>
+                    <%--layer.close(loading);--%>
+                <%--}--%>
+            <%--);--%>
+        <%--}--%>
+    <%--});--%>
+    form.on('select(modelCl)', function(data){
+        $(".model_param_cl").hide();
+        $("#model_cl_" + data.value).show();
     });
-    form.on('select(model)', function(data){
-        $(".model_param").hide();
-        $("#model_" + data.value).show();
+    form.on('select(modelHl)', function(data){
+        $(".model_param_hl").hide();
+        $("#model_hl_" + data.value).show();
     });
     
     // form.render(null, 'component-form-group');
@@ -400,20 +422,24 @@
             return false;
         }
         var action = $("input[name=id]").val() == '' ? 'insert' : 'update/' + $("input[name=id]").val();
-        var d = {};
-        var t = $("#form_model_" + $("select[name=model]").val()).serializeArray();
-        $.each(t, function() {
-            d[this.name] = this.value;
+        var data = {};
+        var cl = $("#form_model_cl_" + $("select[name=modelCl]").val()).serializeArray();
+        var hl = $("#form_model_hl_" + $("select[name=modelHl]").val()).serializeArray();
+        $.each(cl, function() {
+            data[this.name] = this.value;
         });
-        d.name = $("input[name=name]").val();
-        d.stcd = $("select[name=station]").val();
-        d.mtype = $("select[name=mtype]").val();
-        d.model = $("select[name=model]").val();
+        $.each(hl, function() {
+            data[this.name] = this.value;
+        });
+        data.name = $("input[name=name]").val();
+        data.stcd = $("select[name=station]").val();
+        data.modelCl = $("select[name=modelCl]").val();
+        data.modelHl = $("select[name=modelHl]").val();
 
         $.post({
             url: "${pageContext.request.contextPath}/plan/" + action,
             contentType: "application/x-www-form-urlencoded",
-            data: d,
+            data: data,
             success : function(result) {
                 parent.layer.alert("数据保存成功", function (index) {
                     parent.layer.close(index);

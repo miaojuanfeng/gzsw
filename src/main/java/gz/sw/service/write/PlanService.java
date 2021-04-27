@@ -15,5 +15,5 @@ public interface PlanService {
 
     int selectCount(String sttp, String stcd, String name);
     List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
-    List selectListByStcd(String stcd, Integer model);
+    List selectListByStcd(String stcd);
 }

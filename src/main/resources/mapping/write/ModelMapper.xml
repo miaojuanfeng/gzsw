@@ -45,6 +45,12 @@
         where stcd = #{stcd}
         order by id desc
     </select>
+    <select id="selectAll" resultType="java.util.Map">
+        select
+        	id, name
+        from model
+        order by id desc
+    </select>
     <select id="select" resultType="gz.sw.entity.write.Model">
         select m.* from model m
         where m.id = #{id}

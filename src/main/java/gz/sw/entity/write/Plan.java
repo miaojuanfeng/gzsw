@@ -10,8 +10,8 @@ public class Plan {
 	private Integer id;
 	private String stcd;
 	private String name;
-	private Integer mtype;
-	private Integer model;
+	private Integer modelCl;
+	private Integer modelHl;
 	private Long createUser;
 	private Date createTime;
 	/**
@@ -88,23 +88,23 @@ public class Plan {
 		this.name = name;
 	}
 
-	public Integer getMtype() {
-		return mtype;
+	public Integer getModelCl() {
+		return modelCl;
 	}
 
-	public void setMtype(Integer mtype) {
-		this.mtype = mtype;
+	public void setModelCl(Integer modelCl) {
+		this.modelCl = modelCl;
 	}
 
-	public Integer getModel() {
-		return model;
+	public Integer getModelHl() {
+		return modelHl;
 	}
 
-	public void setModel(Integer model) {
-		this.model = model;
+	public void setModelHl(Integer modelHl) {
+		this.modelHl = modelHl;
 	}
 
-//	public String getUserId() {
+	//	public String getUserId() {
 //		return userId;
 //	}
 //

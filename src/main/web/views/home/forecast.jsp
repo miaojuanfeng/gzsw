@@ -51,6 +51,9 @@
               <td class="input-tr">
                 <select name="model" lay-filter="model" lay-verify="required" lay-search="">
                   <option value="">请选择</option>
+                  <c:forEach items="${models}" var="model" varStatus="id">
+                    <option value="${model.id}">${model.name}</option>
+                  </c:forEach>
                 </select>
               </td>
             </tr>
@@ -333,29 +336,31 @@
 
       /* 根据河系获取流域河系 */
       form.on('select(model)', function(data){
-          var loading = layer.load(0);
           data1 = {};
           tree.reload('area', {
               data: data1
           });
-          $.post(
-              '${pageContext.request.contextPath}/model/getArea',
-              {
-                  modelId: data.value
-              },
-              function (data) {
-                  data1 = $.parseJSON(data);
-                  // if(data1.length > 0){
-                  //     setParam(data1[0]);
-                  // }else{
-                  //     clearParam();
-                  // }
-                  tree.reload('area', {
-                      data: data1
-                  });
-                  layer.close(loading);
-              }
-          );
+          if( data.value != '' ){
+            var loading = layer.load(0);
+            $.post(
+                '${pageContext.request.contextPath}/model/getArea',
+                {
+                    modelId: data.value
+                },
+                function (data) {
+                    data1 = $.parseJSON(data);
+                    // if(data1.length > 0){
+                    //     setParam(data1[0]);
+                    // }else{
+                    //     clearParam();
+                    // }
+                    tree.reload('area', {
+                        data: data1
+                    });
+                    layer.close(loading);
+                }
+            );
+          }
       });
 
       function loadStation(stcd) {

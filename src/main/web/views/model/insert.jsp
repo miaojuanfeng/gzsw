@@ -70,25 +70,9 @@
                   <td>站点名称</td>
                   <td id="td-stname"></td>
                 </tr>
-                <%--<tr>--%>
-                  <%--<td>产流河系</td>--%>
-                  <%--<td id="td-model-cl"></td>--%>
-                <%--</tr>--%>
-                <%--<tr>--%>
-                  <%--<td>产流方案</td>--%>
-                  <%--<td id="td-plan-cl"></td>--%>
-                <%--</tr>--%>
-                <%--<tr>--%>
-                  <%--<td>汇流河系</td>--%>
-                  <%--<td id="td-model-hl"></td>--%>
-                <%--</tr>--%>
-                <%--<tr>--%>
-                  <%--<td>汇流方案</td>--%>
-                  <%--<td id="td-plan-hl"></td>--%>
-                <%--</tr>--%>
                 <tr>
                   <td>预报方案</td>
-                  <td id="td-plan-hl"></td>
+                  <td id="td-plan"></td>
                 </tr>
                 <tr>
                   <td>KE</td>
@@ -143,40 +127,6 @@
               </div>
           </td>
         </tr>
-        <%--<tr>--%>
-          <%--<td>产流河系</td>--%>
-          <%--<td class="input-tr">--%>
-            <%--<select name="model_cl" lay-filter="model_cl" lay-verify="required" lay-search="">--%>
-              <%--<option value="">请选择</option>--%>
-              <%--<option value="1">新安江</option>--%>
-              <%--<option value="2">经验单位线</option>--%>
-              <%--<option value="3">API</option>--%>
-            <%--</select>--%>
-          <%--</td>--%>
-        <%--</tr>--%>
-        <%--<tr>--%>
-          <%--<td>产流方案</td>--%>
-          <%--<td class="input-tr">--%>
-            <%--<select name="plan_cl" lay-verify="required" lay-search=""></select>--%>
-          <%--</td>--%>
-        <%--</tr>--%>
-        <%--<tr>--%>
-          <%--<td>汇流河系</td>--%>
-          <%--<td class="input-tr">--%>
-            <%--<select name="model_hl" lay-filter="model_hl" lay-verify="required" lay-search="">--%>
-              <%--<option value="">请选择</option>--%>
-              <%--<option value="1">新安江</option>--%>
-              <%--<option value="2">经验单位线</option>--%>
-              <%--<option value="3">API</option>--%>
-            <%--</select>--%>
-          <%--</td>--%>
-        <%--</tr>--%>
-        <%--<tr>--%>
-          <%--<td>汇流方案</td>--%>
-          <%--<td class="input-tr">--%>
-            <%--<select name="plan_hl" lay-verify="required" lay-search=""></select>--%>
-          <%--</td>--%>
-        <%--</tr>--%>
         <tr>
           <td>预报方案</td>
           <td class="input-tr">
@@ -233,10 +183,7 @@
         ,click: function(obj){
             var data = obj.data;
             $('#td-stname').html(data.stname);
-            $('#td-model-cl').html(data.modelClName);
-            $('#td-plan-cl').html(data.planClName);
-            $('#td-model-hl').html(data.modelHlName);
-            $('#td-plan-hl').html(data.planHlName);
+            $('#td-plan').html(data.planName);
             $('#td-ke').html(data.ke);
             $('#td-xe').html(data.xe);
         }
@@ -275,37 +222,33 @@
 
     function clearForm() {
         $("#addform select[name=station]").val('');
-        $("#addform select[name=model_cl]").val('');
-        $("#addform select[name=plan_cl]").val('');
-        $("#addform select[name=model_hl]").val('');
-        $("#addform select[name=plan_hl]").val('');
+        $("#addform select[name=plan]").val('');
         $("#addform input[name=KE]").val('');
         $("#addform input[name=XE]").val('');
+        $("#addform input[name=INTV]").val('');
         form.render();
     }
 
-    function setForm(type, stcd, model, planId) {
-        $("#addform select[name=plan_" + type + "]").html('<option value="">请选择</option>');
+    function setForm(stcd, planId) {
+        $("#addform select[name=plan]").html('<option value="">请选择</option>');
         form.render('select');
         var loading = layer.load(0);
         $.post(
             '${pageContext.request.contextPath}/plan/getPlan',
             {
-                stcd: stcd,
-                model: model
+                stcd: stcd
             },
             function (data) {
                 var html = '';
                 $.each(data, function (key, value) {
                     html += '<option value="' + value.id + '">' + value.name + '</option>';
                 });
-                $("#addform select[name=plan_" + type + "]").append(html);
-                $("#addform select[name=plan_" + type + "]").val(planId);
+                $("#addform select[name=plan]").append(html);
+                $("#addform select[name=plan]").val(planId);
                 form.render('select');
                 layer.close(loading);
             }
         );
-        $("#addform select[name=model_" + type + "]").val(model);
     }
 
     function openForm(action, deptId){
@@ -314,18 +257,15 @@
             ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
             ,id: 'layerDemo1' //防止重复弹出
             ,content: $('#addform')
-            ,area:["500px","320px"]
+            ,area:["500px","420px"]
             ,btn: ['确定', '取消']
             ,btnAlign: 'c' //按钮居中
-            ,shade: 0 //不显示遮罩
+            ,shade: 0.2 //不显示遮罩
             ,btn1: function(index, layero){
                 if(action == "new" || action == "add") {
                     var submit = true;
                     if ($("#addform select[name=station]").val() == "" ||
-                        $("#addform select[name=model_cl]").val() == "" ||
-                        $("#addform select[name=plan_cl]").val() == "" ||
-                        $("#addform select[name=model_hl]").val() == "" ||
-                        $("#addform select[name=plan_hl]").val() == "" ||
+                        $("#addform select[name=plan]").val() == "" ||
                         $("#addform input[name=KE]").val() == "" ||
                         $("#addform input[name=XE]").val() == "") {
                         submit = false;
@@ -339,14 +279,8 @@
                         stcd: $("#addform select[name=station]").val(),
                         sttype: $("#addform select[name=sttp]").val(),
                         stname: $("#addform select[name=station]").find("option:selected").text(),
-                        modelClId: $("#addform select[name=model_cl]").val(),
-                        modelClName: $("#addform select[name=model_cl]").find("option:selected").text(),
-                        planClId: $("#addform select[name=plan_cl]").val(),
-                        planClName: $("#addform select[name=plan_cl]").find("option:selected").text(),
-                        modelHlId: $("#addform select[name=model_hl]").val(),
-                        modelHlName: $("#addform select[name=model_hl]").find("option:selected").text(),
-                        planHlId: $("#addform select[name=plan_hl]").val(),
-                        planHlName: $("#addform select[name=plan_hl]").find("option:selected").text(),
+                        planId: $("#addform select[name=plan]").val(),
+                        planName: $("#addform select[name=plan]").find("option:selected").text(),
                         ke: $("#addform input[name=KE]").val(),
                         xe: $("#addform input[name=XE]").val(),
                         id: new Date().getTime(),
@@ -387,14 +321,8 @@
                                 e.stcd = $("#addform select[name=station]").val();
                                 e.sttype = $("#addform select[name=sttp]").val();
                                 e.stname = $("#addform select[name=station]").find("option:selected").text();
-                                e.modelClId = $("#addform select[name=model_cl]").val();
-                                e.modelClName = $("#addform select[name=model_cl]").find("option:selected").text();
-                                e.planClId = $("#addform select[name=plan_cl]").val();
-                                e.planClName = $("#addform select[name=plan_cl]").find("option:selected").text();
-                                e.modelHlId = $("#addform select[name=model_hl]").val();
-                                e.modelHlName = $("#addform select[name=model_hl]").find("option:selected").text();
-                                e.planHlId = $("#addform select[name=plan_hl]").val();
-                                e.planHlName = $("#addform select[name=plan_hl]").find("option:selected").text();
+                                e.planId = $("#addform select[name=plan]").val();
+                                e.planName = $("#addform select[name=plan]").find("option:selected").text();
                                 e.ke = $("#addform input[name=KE]").val();
                                 e.xe = $("#addform input[name=XE]").val();
                             }
@@ -437,10 +365,9 @@
                         return undefined;
                     }
                     var e = each(data1);
-                    console.log(e);
+                    // console.log(e);
                     clearForm();
-                    setForm("cl", e.stcd, e.modelClId, e.planClId);
-                    setForm("hl", e.stcd, e.modelHlId, e.planHlId);
+                    setForm(e.stcd, e.planId);
                     $("#addform select[name=sttp]").val(e.sttype);
                     getStation(e.sttype, e.stcd);
                     $("#addform input[name=KE]").val(e.ke);
@@ -488,54 +415,30 @@
             $("#addform #oq-tr").hide();
         }
     });
-    /* 根据站点获取方案 */
+
     form.on('select(station)', function(data){
-        loadPlan("cl", $("select[name=station]").val(), $("select[name=model_cl]").val());
-        loadPlan("hl", $("select[name=station]").val(), $("select[name=model_hl]").val());
-    });
-    form.on('select(model_cl)', function(data){
-        if(!checkModel()) return;
-        loadPlan("cl", $("select[name=station]").val(), $("select[name=model_cl]").val());
-    });
-    form.on('select(model_hl)', function(data){
-        if(!checkModel()) return;
-        loadPlan("hl", $("select[name=station]").val(), $("select[name=model_hl]").val());
-    });
-
-    function checkModel() {
-        if( $("select[name=model_cl]").val() != 1 && $("select[name=model_hl]").val() == 1 ){
-            $("select[name=model_hl]").val('');
-            $("select[name=plan_hl]").val('');
-            form.render('select');
-            layer.msg('新安江汇流只可与新安江产流组合计算');
-            return false;
-        }
-        return true;
-    }
-
-    function loadPlan(type, stcd, model){
-        $("#addform select[name=plan_" + type + "]").html('<option value="">请选择</option>');
+        $("#addform select[name=plan]").html('<option value="">请选择</option>');
         form.render('select');
-        if( stcd != "" && model != "" ){
-          var loading = layer.load(0);
-          $.post(
-              '${pageContext.request.contextPath}/plan/getPlan',
-              {
-                  stcd: stcd,
-                  model: model
-              },
-              function (data) {
-                  var html = '';
-                  $.each(data, function (key, value) {
-                      html += '<option value="' + value.id + '">' + value.name + '</option>';
-                  });
-                  $("#addform select[name=plan_" + type + "]").append(html);
-                  form.render('select');
-                  layer.close(loading);
-              }
-          );
+        var stcd = $("select[name=station]").val();
+        if( stcd != "" ){
+            var loading = layer.load(0);
+            $.post(
+                '${pageContext.request.contextPath}/plan/getPlan',
+                {
+                    stcd: stcd
+                },
+                function (data) {
+                    var html = '';
+                    $.each(data, function (key, value) {
+                        html += '<option value="' + value.id + '">' + value.name + '</option>';
+                    });
+                    $("#addform select[name=plan]").append(html);
+                    form.render('select');
+                    layer.close(loading);
+                }
+            );
         }
-    }
+    });
     
     form.render(null, 'component-form-group');
     
@@ -550,14 +453,6 @@
       ,content: function(value){
         layedit.sync(editIndex);
       }
-    });
-    
-    /* 监听指定开关 */
-    form.on('switch(component-form-switchTest)', function(data){
-      layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
-        offset: '6px'
-      });
-      layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
     });
 
     /* 插入根节点 */

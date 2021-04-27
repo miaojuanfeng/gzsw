@@ -44,7 +44,6 @@
         from [plan]
         where 1=1
         and stcd = #{stcd}
-        and model = #{model}
         order by id desc
     </select>
     <select id="select" resultType="gz.sw.entity.write.Plan">
@@ -59,16 +58,16 @@
     </select>
     <insert id="insert" parameterType="gz.sw.entity.write.Plan" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into [plan]
-        (stcd, name, mtype, model, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, create_user, create_time)
         values
-        (#{stcd},#{name},#{mtype},#{model},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{E},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{createUser},#{createTime})
+        (#{stcd},#{name},#{modelCl},#{modelHl},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{E},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{PA},#{KR},#{IMM},#{AREA},#{NA},#{NU},#{KU},#{createUser},#{createTime})
     </insert>
     <insert id="insertBatch" parameterType="java.util.List">
         insert into [plan]
-        (stcd, name, mtype, model, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, create_user, create_time)
+        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, create_user, create_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.stcd},#{item.name},#{item.mtype},#{item.model},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.E},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.createUser},#{item.createTime})
+            (#{item.stcd},#{item.name},#{item.modelCl},#{item.modelHl},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.E},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.PA},#{item.KR},#{item.IMM},#{item.AREA},#{item.NA},#{item.NU},#{item.KU},#{item.createUser},#{item.createTime})
         </foreach>
     </insert>
     <update id="update" parameterType="gz.sw.entity.write.Plan">
@@ -76,8 +75,8 @@
         <set>
             <if test="stcd != null" >stcd = #{stcd},</if>
             <if test="name != null" >name = #{name},</if>
-            <if test="mtype != null" >mtype = #{mtype},</if>
-            <if test="model != null" >model = #{model},</if>
+            <if test="modelCl != null" >model_cl = #{modelCl},</if>
+            <if test="modelHl != null" >model_hl = #{modelHl},</if>
             <if test="WU0 != null" >WU0 = #{WU0},</if>
             <if test="WL0 != null" >WL0 = #{WL0},</if>
             <if test="WD0 != null" >WD0 = #{WD0},</if>
@@ -98,7 +97,7 @@
             <if test="L != null" >L = #{L},</if>
             <if test="T != null" >T = #{T},</if>
             <if test="F != null" >F = #{F},</if>
-            <if test="s0 != null" >S0 = #{S0},</if>
+            <if test="S0 != null" >S0 = #{S0},</if>
             <if test="FR0 != null" >FR0 = #{FR0},</if>
             <if test="QRS0 != null" >QRS0 = #{QRS0},</if>
             <if test="QRSS0 != null" >QRSS0 = #{QRSS0},</if>
