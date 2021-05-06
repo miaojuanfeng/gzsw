@@ -40,14 +40,14 @@
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
-        	id, name
+        	id, name, stcd
         from model
         where stcd = #{stcd}
         order by id desc
     </select>
     <select id="selectAll" resultType="java.util.Map">
         select
-        	id, name
+        	id, name, stcd
         from model
         order by id desc
     </select>

@@ -106,7 +106,7 @@ public class XajCalc {
         BigDecimal CI = plan.getCI();
         BigDecimal CG = plan.getCG();
         BigDecimal CS = plan.getCS();
-        Integer LAG = plan.getL();
+        Integer LAG = plan.getL().intValue();
         BigDecimal T = plan.getT();
         BigDecimal KE = plan.getKE();
         BigDecimal XE = plan.getXE();
@@ -322,7 +322,7 @@ public class XajCalc {
     public static List<BigDecimal> getQTRR(Plan plan, List<BigDecimal> listR){
         List<BigDecimal> listQTRR = new ArrayList<>();
 
-        Integer LAG = plan.getL();
+        Integer LAG = plan.getL().intValue();
         BigDecimal KE = plan.getKE();
 
         for(int i = 0; i < LAG; i++){
@@ -417,7 +417,7 @@ public class XajCalc {
         plan.setCI(new BigDecimal("0.112"));
         plan.setCG(new BigDecimal("0.95"));
         plan.setCS(new BigDecimal("0.948"));
-        plan.setL(4);
+        plan.setL(new BigDecimal("4"));
         plan.setT(new BigDecimal("1"));
         plan.setKE(new BigDecimal("11"));
         plan.setXE(new BigDecimal("0.335"));

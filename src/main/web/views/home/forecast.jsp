@@ -52,7 +52,7 @@
                 <select name="model" lay-filter="model" lay-verify="required" lay-search="">
                   <option value="">请选择</option>
                   <c:forEach items="${models}" var="model" varStatus="id">
-                    <option value="${model.id}">${model.name}</option>
+                    <option value="${model.id}" stcd="${model.stcd}">${model.name}</option>
                   </c:forEach>
                 </select>
               </td>
@@ -592,7 +592,7 @@
               contentType: "application/x-www-form-urlencoded",
               data: {
                   type: 1,
-                  stcd: $("select[name=station]").val(),
+                  stcd: $("select[name=model]").find("option:selected").attr("stcd"),
                   forecastTime: $("input[name=forecastTime]").val(),
                   affectTime: $("input[name=affectTime]").val(),
                   day: $("select[name=day]").val(),

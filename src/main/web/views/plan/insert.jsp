@@ -120,51 +120,51 @@
                 <tbody>
                 <tr>
                   <td>WU0</td>
-                  <td class="input-tr"><input type="text" name="WU0" autocomplete="off" class="layui-input" value="${plan.WU0}"></td>
+                  <td class="input-tr"><input type="text" name="WU0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WU0}"></td>
                   <td>WL0</td>
-                  <td class="input-tr"><input type="text" name="WL0" autocomplete="off" class="layui-input" value="${plan.WL0}"></td>
+                  <td class="input-tr"><input type="text" name="WL0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WL0}"></td>
                   <td>WD0</td>
-                  <td class="input-tr"><input type="text" name="WD0" autocomplete="off" class="layui-input" value="${plan.WD0}"></td>
+                  <td class="input-tr"><input type="text" name="WD0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WD0}"></td>
                   <td>WUM</td>
-                  <td class="input-tr"><input type="text" name="WUM" autocomplete="off" class="layui-input" value="${plan.WUM}"></td>
+                  <td class="input-tr"><input type="text" name="WUM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WUM}"></td>
                 </tr>
                 <tr>
                   <td>WLM</td>
-                  <td class="input-tr"><input type="text" name="WLM" autocomplete="off" class="layui-input" value="${plan.WLM}"></td>
+                  <td class="input-tr"><input type="text" name="WLM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WLM}"></td>
                   <td>WDM</td>
-                  <td class="input-tr"><input type="text" name="WDM" autocomplete="off" class="layui-input" value="${plan.WDM}"></td>
+                  <td class="input-tr"><input type="text" name="WDM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WDM}"></td>
                   <td>B</td>
-                  <td class="input-tr"><input type="text" name="B" autocomplete="off" class="layui-input" value="${plan.B}"></td>
+                  <td class="input-tr"><input type="text" name="B" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.B}"></td>
                   <td>K</td>
-                  <td class="input-tr"><input type="text" name="K" autocomplete="off" class="layui-input" value="${plan.K}"></td>
+                  <td class="input-tr"><input type="text" name="K" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.K}"></td>
                 </tr>
                 <tr>
                   <td>C</td>
-                  <td class="input-tr"><input type="text" name="C" autocomplete="off" class="layui-input" value="${plan.C}"></td>
+                  <td class="input-tr"><input type="text" name="C" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.C}"></td>
                   <td>SM</td>
-                  <td class="input-tr"><input type="text" name="SM" autocomplete="off" class="layui-input" value="${plan.SM}"></td>
+                  <td class="input-tr"><input type="text" name="SM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.SM}"></td>
                   <td>EX</td>
-                  <td class="input-tr"><input type="text" name="EX" autocomplete="off" class="layui-input" value="${plan.EX}"></td>
+                  <td class="input-tr"><input type="text" name="EX" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.EX}"></td>
                   <td>KSS</td>
-                  <td class="input-tr"><input type="text" name="KSS" autocomplete="off" class="layui-input" value="${plan.KSS}"></td>
+                  <td class="input-tr"><input type="text" name="KSS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KSS}"></td>
                 </tr>
                 <tr>
                   <td>KG</td>
-                  <td class="input-tr"><input type="text" name="KG" autocomplete="off" class="layui-input" value="${plan.KG}"></td>
+                  <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KG}"></td>
                   <td>IM</td>
-                  <td class="input-tr"><input type="text" name="IM" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
+                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
                   <td>T</td>
-                  <td class="input-tr"><input type="text" name="T" autocomplete="off" class="layui-input" value="${plan.T}"></td>
+                  <td class="input-tr"><input type="text" name="T" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.T}"></td>
                   <td>F</td>
-                  <td class="input-tr"><input type="text" name="F" autocomplete="off" class="layui-input" value="${plan.F}"></td>
+                  <td class="input-tr"><input type="text" name="F" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.F}"></td>
                 </tr>
                 <tr>
                   <td>S0</td>
-                  <td class="input-tr"><input type="text" name="S0" autocomplete="off" class="layui-input" value="${plan.S0}"></td>
+                  <td class="input-tr"><input type="text" name="S0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.S0}"></td>
                   <td>FR0</td>
-                  <td class="input-tr"><input type="text" name="FR0" autocomplete="off" class="layui-input" value="${plan.FR0}"></td>
+                  <td class="input-tr"><input type="text" name="FR0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.FR0}"></td>
                   <td>E</td>
-                  <td class="input-tr"><input type="text" name="E" autocomplete="off" class="layui-input" value="${plan.E}"></td>
+                  <td class="input-tr"><input type="text" name="E" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.E}"></td>
                   <td colspan="2"></td>
                 </tr>
                 </tbody>
@@ -185,7 +185,7 @@
                 <tbody>
                 <tr>
                   <td>PA</td>
-                  <td class="input-tr"><input type="text" name="PA" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
+                  <td class="input-tr"><input type="text" name="PA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
                   <td colspan="6"></td>
                 </tr>
                 </tbody>
@@ -206,17 +206,17 @@
                 <tbody>
                 <tr>
                   <td>KR</td>
-                  <td class="input-tr"><input type="text" name="KR"  autocomplete="off" class="layui-input" value="${plan.KR}"></td>
+                  <td class="input-tr"><input type="text" name="KR" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KR}"></td>
                   <td>IM</td>
-                  <td class="input-tr"><input type="text" name="IM"  autocomplete="off" class="layui-input" value="${plan.IM}"></td>
+                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
                   <td>IMM</td>
-                  <td class="input-tr"><input type="text" name="IMM"  autocomplete="off" class="layui-input" value="${plan.IMM}"></td>
+                  <td class="input-tr"><input type="text" name="IMM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IMM}"></td>
                   <td>AREA</td>
-                  <td class="input-tr"><input type="text" name="AREA"  autocomplete="off" class="layui-input" value="${plan.AREA}"></td>
+                  <td class="input-tr"><input type="text" name="AREA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.AREA}"></td>
                 </tr>
                 <tr>
                   <td>PA</td>
-                  <td class="input-tr"><input type="text" name="PA" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
+                  <td class="input-tr"><input type="text" name="PA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
                   <td colspan="6"></td>
                 </tr>
                 </tbody>
@@ -253,21 +253,21 @@
                       <tbody>
                       <tr>
                           <td>CS</td>
-                          <td class="input-tr"><input type="text" name="CS" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
+                          <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
                           <td>CI</td>
-                          <td class="input-tr"><input type="text" name="CI" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
+                          <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
                           <td>CG</td>
-                          <td class="input-tr"><input type="text" name="CG" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
+                          <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
                           <td>L</td>
-                          <td class="input-tr"><input type="text" name="L" autocomplete="off" class="layui-input" value="${plan.L}"></td>
+                          <td class="input-tr"><input type="text" name="L" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.L}"></td>
                       </tr>
                       <tr>
                           <td>QRS0</td>
-                          <td class="input-tr"><input type="text" name="QRS0" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
+                          <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
                           <td>QRSS0</td>
-                          <td class="input-tr"><input type="text" name="QRSS0" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
+                          <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
                           <td>QRG0</td>
-                          <td class="input-tr"><input type="text" name="QRG0" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
+                          <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
                           <td colspan="2"></td>
                       </tr>
                       </tbody>
@@ -300,13 +300,13 @@
                       <tbody>
                       <tr>
                           <td>NA</td>
-                          <td class="input-tr"><input type="text" name="NA"  autocomplete="off" class="layui-input" value="${plan.NA}"></td>
+                          <td class="input-tr"><input type="text" name="NA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.NA}"></td>
                           <td>NU</td>
-                          <td class="input-tr"><input type="text" name="NU"  autocomplete="off" class="layui-input" value="${plan.NU}"></td>
+                          <td class="input-tr"><input type="text" name="NU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.NU}"></td>
                           <td>KG</td>
-                          <td class="input-tr"><input type="text" name="KG"  autocomplete="off" class="layui-input" value="${plan.KG}"></td>
+                          <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KG}"></td>
                           <td>KU</td>
-                          <td class="input-tr"><input type="text" name="KU"  autocomplete="off" class="layui-input" value="${plan.KU}"></td>
+                          <td class="input-tr"><input type="text" name="KU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KU}"></td>
                       </tr>
                       </tbody>
                   </table>
@@ -359,83 +359,64 @@
             );
         }
     });
-    <%--form.on('select(modelCl)', function(data){--%>
-        <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
-        <%--form.render('select');--%>
-        <%--$(".model_param").hide();--%>
-        <%--$("#model_").show();--%>
-        <%--var mtype = $("select[name=mtype]").val();--%>
-        <%--if( mtype != "" ){--%>
-            <%--var loading = layer.load(0);--%>
-            <%--$.post(--%>
-                <%--'${pageContext.request.contextPath}/model/getType',--%>
-                <%--{mtype: mtype},--%>
-                <%--function (data) {--%>
-                    <%--var html = '';--%>
-                    <%--$.each(data, function (key, value) {--%>
-                        <%--html += '<option value="' + value.id + '">' + value.text + '</option>';--%>
-                    <%--});--%>
-                    <%--$("select[name=model]").append(html);--%>
-                    <%--form.render('select');--%>
-                    <%--layer.close(loading);--%>
-                <%--}--%>
-            <%--);--%>
-        <%--}--%>
-    <%--});--%>
+
     form.on('select(modelCl)', function(data){
         $(".model_param_cl").hide();
         $("#model_cl_" + data.value).show();
     });
+
     form.on('select(modelHl)', function(data){
         $(".model_param_hl").hide();
         $("#model_hl_" + data.value).show();
     });
-    
-    // form.render(null, 'component-form-group');
-
-    // laydate.render({
-    //   elem: '#LAY-component-form-group-date'
-    // });
-    
-    // /* 自定义验证规则 */
-    // form.verify({
-    //   title: function(value){
-    //     if(value.length < 5){
-    //       return '标题至少得5个字符啊';
-    //     }
-    //   }
-    //   ,pass: [/(.+){6,12}$/, '密码必须6到12位']
-    //   ,content: function(value){
-    //     layedit.sync(editIndex);
-    //   }
-    // });
 
     form.on('submit(save)', function(data){
-        var submit = true;
-        if ($("input[name=name]").val() == "" ||
-            $("select[name=station]").val() == "" ||
-            $("select[name=model]").val() == "" ) {
-            submit = false;
+        if( $("input[name=name]").val() == "" ){
+            layer.msg('请填妥方案名称');
+            return false;
         }
-        if (!submit) {
-            layer.msg('请填妥相关信息');
+        if( $("select[name=station]").val() == "" ){
+            layer.msg('请填妥预报站点');
+            return false;
+        }
+        if( $("select[name=modelCl]").val() == "" ){
+            layer.msg('请填妥产流方案');
+            return false;
+        }
+        if( $("select[name=modelHl]").val() == "" ){
+            layer.msg('请填妥汇流方案');
             return false;
         }
         var action = $("input[name=id]").val() == '' ? 'insert' : 'update/' + $("input[name=id]").val();
         var data = {};
         var cl = $("#form_model_cl_" + $("select[name=modelCl]").val()).serializeArray();
         var hl = $("#form_model_hl_" + $("select[name=modelHl]").val()).serializeArray();
+        var emptyCl = false;
+        var emptyHl = false;
         $.each(cl, function() {
+            if( this.value == "" ){
+                emptyCl = true;
+                return false;
+            }
             data[this.name] = this.value;
         });
         $.each(hl, function() {
+            if( this.value == "" ){
+                emptyHl = true;
+                return false;
+            }
             data[this.name] = this.value;
         });
+        if( emptyCl || emptyHl ){
+            layer.msg('请填妥相关参数');
+            return false;
+        }
         data.name = $("input[name=name]").val();
         data.stcd = $("select[name=station]").val();
         data.modelCl = $("select[name=modelCl]").val();
         data.modelHl = $("select[name=modelHl]").val();
 
+        var loading = layer.load(0);
         $.post({
             url: "${pageContext.request.contextPath}/plan/" + action,
             contentType: "application/x-www-form-urlencoded",
@@ -445,9 +426,11 @@
                     parent.layer.close(index);
                     parent.layui.admin.events.closeThisTabs();
                 })
+                layer.close(loading);
             }
         }).fail(function(response) {
             parent.layer.alert("数据保存失败");
+            layer.close(loading);
         });
         return false;
     });
@@ -456,6 +439,15 @@
         parent.layui.admin.events.closeThisTabs();
     });
   });
+
+  function zhzs(value) {
+      value = parseFloat(value.replace(/^0{1,}/g, '')).toFixed(3);
+      if( !isNaN(value) ){
+          return value;
+      }else{
+          return parseFloat(0).toFixed(3);
+      }
+  }
   </script>
 </body>
 </html>

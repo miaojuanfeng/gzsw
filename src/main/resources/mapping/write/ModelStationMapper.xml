@@ -6,7 +6,7 @@
 			ms.*,
 			ms.plan_id as PLAN_ID,
 			(select s.stname from station s where ms.stcd = s.stcd) as STNAME,
-			(select s.type from station s where ms.stcd = s.stcd) as STTYPE,
+			(select s.type from station s where ms.stcd = s.stcd) as STTP,
 			(select p.name from [plan] p where ms.plan_id = p.id) as PLAN_NAME
 		from model_station ms
 		where 1=1

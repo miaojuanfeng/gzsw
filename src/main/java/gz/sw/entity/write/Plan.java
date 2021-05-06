@@ -41,7 +41,7 @@ public class Plan {
 	private BigDecimal CS;
 	private BigDecimal CI;
 	private BigDecimal CG;
-	private Integer L;
+	private BigDecimal L;
 	private BigDecimal T;
 	private BigDecimal F;
 	private BigDecimal S0;
@@ -304,11 +304,11 @@ public class Plan {
 		this.CG = CG;
 	}
 
-	public Integer getL() {
+	public BigDecimal getL() {
 		return L;
 	}
 
-	public void setL(Integer l) {
+	public void setL(BigDecimal l) {
 		L = l;
 	}
 

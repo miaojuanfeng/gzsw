@@ -87,7 +87,7 @@ public class ModelController {
 		JSONArray m = getModelStationData("0", t);
 		map.put("id", model.getId());
 		map.put("name", model.getName());
-		map.put("stcd", model.getStcd());
+		map.put("stcd", model.getStcd().trim());
 		map.put("data", m.toString());
 		return "model/insert";
 	}
@@ -130,10 +130,15 @@ public class ModelController {
 			String m = (String)modelStation.get("FA_STCD");
 			if( fatherId.trim().equals(String.valueOf(modelStation.get("FA_STCD")).trim()) ){
 				JSONObject station = new JSONObject();
-				station.put("title", String.valueOf(modelStation.get("STNAME")).trim());
+				String title = String.valueOf(modelStation.get("STNAME")).trim();
+				title += "（";
+				title += StationTypeEnum.getText(String.valueOf(modelStation.get("STTP")).trim());
+				title += "）";
+				station.put("title", title);
 				station.put("stcd", String.valueOf(modelStation.get("STCD")).trim());
 				station.put("stname", String.valueOf(modelStation.get("STNAME")).trim());
-				station.put("sttype", String.valueOf(modelStation.get("STTYPE")).trim());
+				station.put("sttp", String.valueOf(modelStation.get("STTP")).trim());
+                station.put("sttpName", StationTypeEnum.getText(String.valueOf(modelStation.get("STTP")).trim()));
 				station.put("planId", modelStation.get("PLAN_ID"));
 				station.put("planName", modelStation.get("PLAN_NAME"));
 				station.put("intv", modelStation.get("INTV"));

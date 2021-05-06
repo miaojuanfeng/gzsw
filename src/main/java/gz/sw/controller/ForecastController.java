@@ -645,7 +645,7 @@ public class ForecastController {
 			plan.setCI(p.getBigDecimal("CI"));
 			plan.setCG(p.getBigDecimal("CG"));
 			plan.setCS(p.getBigDecimal("CS"));
-			plan.setL(p.getInteger("L"));
+			plan.setL(p.getBigDecimal("L"));
 			plan.setT(p.getBigDecimal("T"));
 			plan.setKE(KE);
 			plan.setXE(XE);
@@ -686,13 +686,13 @@ public class ForecastController {
 		Integer len = rainfallP.size();
 
 		if( KE != null ) {
-			if (NumberUtil.gt(new BigDecimal(plan.getL()), KE)) {
-				len += plan.getL();
+			if (NumberUtil.gt(new BigDecimal(plan.getL().intValue()), KE)) {
+				len += plan.getL().intValue();
 			} else {
 				len += KE.intValue();
 			}
 		}else{
-			len += plan.getL();
+			len += plan.getL().intValue();
 		}
 		for (int i = 0; i<len; i++){
 			QTR_List.add(new BigDecimal(-999));
@@ -720,7 +720,7 @@ public class ForecastController {
 			if( initQTR == null ){
 //                initQTR = StepFourUtil.QTR;
 			}
-			if( i<plan.getL() ){
+			if( i<plan.getL().intValue() ){
 				QTR_List.set(i, initQTR);
 			}
 //            QTR_List.set(plan.getL() + i, StepFourUtil.QTR);
