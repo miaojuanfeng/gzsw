@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface RainRunDao {
+public interface RainRunPointDao {
 	Model select(Integer id);
 	int insert(Model model);
 	int update(Model model);

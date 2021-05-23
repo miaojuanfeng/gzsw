@@ -352,11 +352,11 @@
             ,success: function(layero, index){  //弹出成功的回调
                 clearForm();
                 if( action == "new" ){
-                    $("#addform #ke-tr").hide();
-                    $("#addform #xe-tr").hide();
+                    // $("#addform #ke-tr").hide();
+                    // $("#addform #xe-tr").hide();
                 }else if( action == "add" ){
-                    $("#addform #ke-tr").show();
-                    $("#addform #xe-tr").show();
+                    // $("#addform #ke-tr").show();
+                    // $("#addform #xe-tr").show();
                 }else if( action == "update" ){
                     function each(data) {
                         for(var i=0; i<data.length; i++){
@@ -374,13 +374,13 @@
                         return undefined;
                     }
                     var e = each(data1);
-                    if( e.stcd != $("input[name=stcd]").val() ){
-                        $("#addform #ke-tr").show();
-                        $("#addform #xe-tr").show();
-                    }else{
-                        $("#addform #ke-tr").hide();
-                        $("#addform #xe-tr").hide();
-                    }
+                    // if( e.stcd != $("input[name=stcd]").val() ){
+                    //     $("#addform #ke-tr").show();
+                    //     $("#addform #xe-tr").show();
+                    // }else{
+                    //     $("#addform #ke-tr").hide();
+                    //     $("#addform #xe-tr").hide();
+                    // }
                     if( e.sttp == 'RR' ){
                         $("#addform #intv-tr").show();
                     }else{
@@ -495,7 +495,8 @@
         if ($("#addform select[name=sttp]").val() == "" ||
             $("#addform select[name=station]").val() == "" ||
             $("#addform select[name=plan]").val() == "" ||
-            (action != "new" && ($("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "")) ||
+            // (action != "new" && ($("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "")) ||
+            $("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "" ||
             ($("#addform select[name=sttp]").val() == "RR" && $("#addform input[name=INTV]").val() == "")
         ) {
             return true;

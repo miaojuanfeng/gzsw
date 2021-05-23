@@ -220,48 +220,6 @@
 
       var data1 = [];
       var paramStcd = '';
-      // var data1 = [{
-      //     title: '江西'
-      //     ,id: 1
-      //     ,children: [{
-      //         title: '南昌'
-      //         ,id: 1000
-      //         ,children: [{
-      //             title: '青山湖区'
-      //             ,id: 10001
-      //         },{
-      //             title: '高新区'
-      //             ,id: 10002
-      //         }]
-      //     },{
-      //         title: '九江'
-      //         ,id: 1001
-      //     },{
-      //         title: '赣州'
-      //         ,id: 1002
-      //     }]
-      // },{
-      //     title: '广西'
-      //     ,id: 2
-      //     ,children: [{
-      //         title: '南宁'
-      //         ,id: 2000
-      //     },{
-      //         title: '桂林'
-      //         ,id: 2001
-      //     }]
-      // },{
-      //     title: '陕西'
-      //     ,id: 3
-      //     ,children: [{
-      //         title: '西安'
-      //         ,id: 3000
-      //     },{
-      //         title: '延安'
-      //         ,id: 3001
-      //     }]
-      // }];
-
 
       laydate.render({
           elem: '#forecastTime'
@@ -287,52 +245,52 @@
           }
       });
 
-      form.on('select(sttp)', function(data){
-          $("select[name=station]").html('<option value="">请选择</option>');
-          $("select[name=model]").html('<option value="">请选择</option>');
-          form.render('select');
-          var sttp = $("select[name=sttp]").val();
-          if( sttp != "" ){
-              var loading = layer.load(0);
-              $.post(
-                  '${pageContext.request.contextPath}/station/getStation',
-                  {
-                      sttp: sttp
-                  },
-                  function (data) {
-                      var html = '';
-                      $.each(data, function (key, value) {
-                          html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
-                      });
-                      $("select[name=station]").append(html);
-                      form.render('select');
-                      layer.close(loading);
-                  }
-              );
-          }
-      });
+      <%--form.on('select(sttp)', function(data){--%>
+          <%--$("select[name=station]").html('<option value="">请选择</option>');--%>
+          <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
+          <%--form.render('select');--%>
+          <%--var sttp = $("select[name=sttp]").val();--%>
+          <%--if( sttp != "" ){--%>
+              <%--var loading = layer.load(0);--%>
+              <%--$.post(--%>
+                  <%--'${pageContext.request.contextPath}/station/getStation',--%>
+                  <%--{--%>
+                      <%--sttp: sttp--%>
+                  <%--},--%>
+                  <%--function (data) {--%>
+                      <%--var html = '';--%>
+                      <%--$.each(data, function (key, value) {--%>
+                          <%--html += '<option value="' + value.stcd + '">' + value.stname + '</option>';--%>
+                      <%--});--%>
+                      <%--$("select[name=station]").append(html);--%>
+                      <%--form.render('select');--%>
+                      <%--layer.close(loading);--%>
+                  <%--}--%>
+              <%--);--%>
+          <%--}--%>
+      <%--});--%>
 
-      /* 根据站点获取河系 */
-      form.on('select(station)', function(data){
-          var loading = layer.load(0);
-          $("select[name=model]").html('<option value="">请选择</option>');
-          form.render('select');
-          $.post(
-              '${pageContext.request.contextPath}/model/getModel',
-              {
-                  stcd: data.value
-              },
-              function (data) {
-                  var html = '';
-                  $.each(data, function (key, value) {
-                      html += '<option value="' + value.id + '">' + value.name + '</option>';
-                  });
-                  $("select[name=model]").append(html);
-                  form.render('select');
-                  layer.close(loading);
-              }
-          );
-      });
+      <%--/* 根据站点获取河系 */--%>
+      <%--form.on('select(station)', function(data){--%>
+          <%--var loading = layer.load(0);--%>
+          <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
+          <%--form.render('select');--%>
+          <%--$.post(--%>
+              <%--'${pageContext.request.contextPath}/model/getModel',--%>
+              <%--{--%>
+                  <%--stcd: data.value--%>
+              <%--},--%>
+              <%--function (data) {--%>
+                  <%--var html = '';--%>
+                  <%--$.each(data, function (key, value) {--%>
+                      <%--html += '<option value="' + value.id + '">' + value.name + '</option>';--%>
+                  <%--});--%>
+                  <%--$("select[name=model]").append(html);--%>
+                  <%--form.render('select');--%>
+                  <%--layer.close(loading);--%>
+              <%--}--%>
+          <%--);--%>
+      <%--});--%>
 
       /* 根据河系获取流域河系 */
       form.on('select(model)', function(data){
@@ -348,7 +306,7 @@
                     modelId: data.value
                 },
                 function (data) {
-                    data1 = $.parseJSON(data);
+                    data1 = data;
                     // if(data1.length > 0){
                     //     setParam(data1[0]);
                     // }else{
@@ -372,8 +330,7 @@
                   stcd: stcd,
               },
               success : function(data) {
-                  var result = $.parseJSON(data);
-                  draw(result.timeArr, result.P, result.QTRR, result.QTRR);
+                  draw(data);
                   layer.close(loading);
               }
           }).fail(function(response) {
@@ -461,7 +418,8 @@
 
       var chart = echarts.init(document.getElementById('chart'));
 
-      function draw(xTitle, xData1, xData2, xData3) {
+      function draw(data) {
+          console.log(data);
           var option = {
               title: {
                   text: '今日流量趋势',
@@ -476,14 +434,25 @@
               legend: {
                   data: ['', '']
               },
-              xAxis: [{
-                  type: 'category',
-                  boundaryGap: false,
-                  data: xTitle
-              }],
-              yAxis: [{
-                  type: 'value'
-              }],
+              xAxis: [
+                  {
+                      type: 'category',
+                      boundaryGap: false,
+                      data: data.timeArr
+                  }
+              ],
+              yAxis: [
+                  {
+                      type: 'value'
+                  },
+                  {
+                      name: '降雨量(mm)',
+                      nameLocation: 'start',
+                      max: data.rainfallMax,
+                      type: 'value',
+                      inverse: true
+                  }
+              ],
               series: [
                   {
                       name:'降雨量',
@@ -495,12 +464,12 @@
                       //     }
                       // },
                       // barWidth: '40%',
-                      // yAxisIndex:1,
+                      yAxisIndex:1,
                       // animation: true,
-                      data: xData1
+                      data: data.P
                   },
                   {
-                      name:'实测水位',
+                      name:'QTRR',
                       type:'line',
                       animation: true,
                       smooth: true,
@@ -520,10 +489,10 @@
                               shadowOffsetY: 10
                           }
                       },
-                      data: xData2
+                      data: data.QTRR
                   },
                   {
-                      name:'预报水位',
+                      name:'QT',
                       type:'line',
                       animation: true,
                       smooth: true,
@@ -544,7 +513,7 @@
                               shadowOffsetY: 10
                           }
                       },
-                      data: xData3,
+                      data: data.QT,
                       // markLine: {
                       //     itemStyle: {
                       //         normal: { lineStyle: { color:'#CD2626' },
@@ -592,7 +561,7 @@
               contentType: "application/x-www-form-urlencoded",
               data: {
                   type: 1,
-                  stcd: $("select[name=model]").find("option:selected").attr("stcd"),
+                  stcd: data1[0].stcd,
                   forecastTime: $("input[name=forecastTime]").val(),
                   affectTime: $("input[name=affectTime]").val(),
                   day: $("select[name=day]").val(),
@@ -600,8 +569,7 @@
                   data: JSON.stringify(data1)
               },
               success : function(data) {
-                  var result = $.parseJSON(data);
-                  draw(result.timeArr, result.P, result.QTRR, result.QTRR);
+                  draw(data);
                   layer.close(loading);
               }
           }).fail(function(response) {

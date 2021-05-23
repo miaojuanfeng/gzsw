@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.write.UnitLineDao">
+<mapper namespace="gz.sw.mapper.write.RainRunDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
         	count(m.id)
@@ -40,10 +40,19 @@
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
-        	id, name, stcd
-        from model
+        	class as id, name, stcd
+        from rainrun
         where stcd = #{stcd}
-        order by id desc
+        group by class, name, stcd
+        order by class desc
+    </select>
+    <select id="selectRainRunPoint" resultType="java.util.Map">
+        select
+        	r.PA, rp.D, rp.R
+        from rainrun_point rp
+        left join rainrun r on rp.lid = r.lid
+        where r.class = #{rainRun}
+        order by r.pa, rp.pino asc
     </select>
     <select id="selectAll" resultType="java.util.Map">
         select
@@ -51,14 +60,14 @@
         from model
         order by id desc
     </select>
-    <select id="select" resultType="gz.sw.entity.write.UnitLine">
+    <select id="select" resultType="gz.sw.entity.write.RainRun">
         select m.* from model m
         where m.id = #{id}
     </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.UnitLine" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="gz.sw.entity.write.RainRun" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
     </insert>
-    <update id="update" parameterType="gz.sw.entity.write.UnitLine">
+    <update id="update" parameterType="gz.sw.entity.write.RainRun">
         update model
         <set>
             <if test="name != null" > name = #{name},</if>

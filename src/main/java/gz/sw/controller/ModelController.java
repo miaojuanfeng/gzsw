@@ -120,6 +120,8 @@ public class ModelController {
 		JSONObject retval = new JSONObject();
 		modelService.delete(id);
 		modelStationService.deleteByModel(id);
+		retval.put("code", 200);
+		retval.put("msg", "");
 		return retval;
 	}
 
@@ -192,10 +194,10 @@ public class ModelController {
 
 	@PostMapping("getArea")
 	@ResponseBody
-	public String getArea(@RequestParam("modelId") Integer modelId) {
+	public JSONArray getArea(@RequestParam("modelId") Integer modelId) {
 		JSONArray modelStationList = getModelStationData("0", modelStationService.selectByModel(modelId));
 		setModelStationPlan(modelStationList);
-		return modelStationList.toString();
+		return modelStationList;
 	}
 
 	private void setModelStationPlan(JSONArray modelStationList){
@@ -204,63 +206,63 @@ public class ModelController {
 			if( modelStation.containsKey("children") && modelStation.getJSONArray("children").size() > 0 ) {
 				setModelStationPlan(modelStation.getJSONArray("children"));
 			}
-			modelStation.put("plan", setPlan(planService.select(modelStation.getInteger("planId"))));
+			modelStation.put("plan", planService.selectMap(modelStation.getInteger("planId")));
 		}
 	}
 
-	private Map setPlan(Plan plan) {
-		Map m = new HashMap();
- 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModelCl()) ){
-			m.put("ID", plan.getId());
-			m.put("STCD", plan.getStcd());
-			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModelCl());
-			m.put("WU0", plan.getWU0());
-			m.put("WL0", plan.getWL0());
-			m.put("WD0", plan.getWD0());
-			m.put("WUM", plan.getWUM());
-			m.put("WLM", plan.getWLM());
-			m.put("WDM", plan.getWDM());
-			m.put("B", plan.getB());
-			m.put("K", plan.getK());
-			m.put("C", plan.getC());
-			m.put("SM", plan.getSM());
-			m.put("EX", plan.getEX());
-			m.put("KSS", plan.getKSS());
-			m.put("KG", plan.getKG());
-			m.put("IM", plan.getIM());
-			m.put("CI", plan.getCI());
-			m.put("CG", plan.getCG());
-			m.put("CS", plan.getCS());
-			m.put("L", plan.getL());
-			m.put("T", plan.getT());
-			m.put("F", plan.getF());
-			m.put("S0", plan.getS0());
-			m.put("FR0", plan.getFR0());
-			m.put("QRS0", plan.getQRS0());
-			m.put("QRSS0", plan.getQRSS0());
-			m.put("QRG0", plan.getQRG0());
-		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModelCl()) ){
-			m.put("ID", plan.getId());
-			m.put("STCD", plan.getStcd());
-			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModelCl());
-			m.put("PA", plan.getPA());
-		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModelCl()) ){
-			m.put("ID", plan.getId());
-			m.put("STCD", plan.getStcd());
-			m.put("NAME", plan.getName());
-			m.put("MODEL", plan.getModelCl());
-			m.put("PA", plan.getPA());
-			m.put("KR", plan.getKR());
-			m.put("IM", plan.getIM());
-			m.put("IMM", plan.getIMM());
-			m.put("NA", plan.getNA());
-			m.put("NU", plan.getNU());
-			m.put("KG", plan.getKG());
-			m.put("KU", plan.getKU());
-			m.put("AREA", plan.getAREA());
-		}
-		return m;
-	}
+//	private Map setPlan(Plan plan) {
+//		Map m = new HashMap();
+// 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModelCl()) ){
+//			m.put("ID", plan.getId());
+//			m.put("STCD", plan.getStcd());
+//			m.put("NAME", plan.getName());
+//			m.put("MODEL", plan.getModelCl());
+//			m.put("WU0", plan.getWU0());
+//			m.put("WL0", plan.getWL0());
+//			m.put("WD0", plan.getWD0());
+//			m.put("WUM", plan.getWUM());
+//			m.put("WLM", plan.getWLM());
+//			m.put("WDM", plan.getWDM());
+//			m.put("B", plan.getB());
+//			m.put("K", plan.getK());
+//			m.put("C", plan.getC());
+//			m.put("SM", plan.getSM());
+//			m.put("EX", plan.getEX());
+//			m.put("KSS", plan.getKSS());
+//			m.put("KG", plan.getKG());
+//			m.put("IM", plan.getIM());
+//			m.put("CI", plan.getCI());
+//			m.put("CG", plan.getCG());
+//			m.put("CS", plan.getCS());
+//			m.put("L", plan.getL());
+//			m.put("T", plan.getT());
+//			m.put("F", plan.getF());
+//			m.put("S0", plan.getS0());
+//			m.put("FR0", plan.getFR0());
+//			m.put("QRS0", plan.getQRS0());
+//			m.put("QRSS0", plan.getQRSS0());
+//			m.put("QRG0", plan.getQRG0());
+//		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModelCl()) ){
+//			m.put("ID", plan.getId());
+//			m.put("STCD", plan.getStcd());
+//			m.put("NAME", plan.getName());
+//			m.put("MODEL", plan.getModelCl());
+//			m.put("PA", plan.getPA());
+//		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModelCl()) ){
+//			m.put("ID", plan.getId());
+//			m.put("STCD", plan.getStcd());
+//			m.put("NAME", plan.getName());
+//			m.put("MODEL", plan.getModelCl());
+//			m.put("PA", plan.getPA());
+//			m.put("KR", plan.getKR());
+//			m.put("IM", plan.getIM());
+//			m.put("IMM", plan.getIMM());
+//			m.put("NA", plan.getNA());
+//			m.put("NU", plan.getNU());
+//			m.put("KG", plan.getKG());
+//			m.put("KU", plan.getKU());
+//			m.put("AREA", plan.getAREA());
+//		}
+//		return m;
+//	}
 }

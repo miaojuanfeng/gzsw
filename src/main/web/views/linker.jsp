@@ -23,7 +23,11 @@
                     id: obj.data.id
                 },
                 function (data) {
-                    obj.del();
+                    if( data.code == 200 ) {
+                        obj.del();
+                    }else{
+                        layer.msg(data.msg);
+                    }
                     layer.close(index);
                     layer.close(loading);
                 }

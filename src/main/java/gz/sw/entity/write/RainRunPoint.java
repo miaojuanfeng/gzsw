@@ -1,6 +1,6 @@
 package gz.sw.entity.write;
 
-public class RAINRUN {
+public class RainRunPoint {
 
 	private Integer id;
 

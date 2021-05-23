@@ -13,7 +13,14 @@
   .input-tr .layui-input{
       border: none !important;
   }
-  #model_cl_1, #model_hl_2, #model_cl_3, #model_hl_4, #model_cl_5, #model_hl_6{
+  #model_cl_1,
+  #model_hl_2,
+  #model_cl_3,
+  #model_hl_4,
+  #model_cl_5,
+  #model_hl_6,
+  #rainRun,
+  #unitLine{
       display: none;
   }
   .layui-form-label{
@@ -78,6 +85,18 @@
             </div>
           </div>
 
+          <div id="rainRun" class="layui-form-item" style="<c:if test="${plan.MODEL_CL==3}">display:block;</c:if>">
+            <label class="layui-form-label">降雨径流关系线</label>
+            <div class="layui-input-block">
+                <select name="rainRun" lay-filter="rainRun" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${rainRuns}" var="rainRun" varStatus="id">
+                        <option value="${rainRun.id}" <c:if test="${plan.RAINRUN==rainRun.id}">selected</c:if>>${rainRun.name}</option>
+                    </c:forEach>
+                </select>
+            </div>
+          </div>
+
           <div class="layui-form-item">
             <label class="layui-form-label">汇流方案类型</label>
             <div class="layui-input-block">
@@ -85,6 +104,18 @@
                     <option value="">请选择</option>
                     <c:forEach items="${modelHls}" var="model" varStatus="id">
                         <option value="${model.id}" <c:if test="${plan.MODEL_HL==model.id}">selected</c:if>>${model.text}</option>
+                    </c:forEach>
+                </select>
+            </div>
+          </div>
+
+          <div id="unitLine" class="layui-form-item" style="<c:if test="${plan.MODEL_HL==4}">display:block;</c:if>">
+            <label class="layui-form-label">单位线</label>
+            <div class="layui-input-block">
+                <select name="unitLine" lay-filter="unitLine" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${unitLines}" var="unitLine" varStatus="id">
+                        <option value="${unitLine.id}" <c:if test="${plan.UNITLINE==unitLine.id}">selected</c:if>>${unitLine.name}</option>
                     </c:forEach>
                 </select>
             </div>
@@ -163,9 +194,25 @@
                   <td class="input-tr"><input type="text" name="S0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.S0}"></td>
                   <td>FR0</td>
                   <td class="input-tr"><input type="text" name="FR0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.FR0}"></td>
+                  <td>CS</td>
+                  <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
+                  <td>CI</td>
+                  <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
+                </tr>
+                <tr>
+                  <td>CG</td>
+                  <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
+                  <td>QRS0</td>
+                  <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
+                  <td>QRSS0</td>
+                  <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
+                  <td>QRG0</td>
+                  <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
+                </tr>
+                <tr>
                   <td>E</td>
                   <td class="input-tr"><input type="text" name="E" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.E}"></td>
-                  <td colspan="2"></td>
+                  <td colspan="6"></td>
                 </tr>
                 </tbody>
               </table>
@@ -252,23 +299,9 @@
                       </colgroup>
                       <tbody>
                       <tr>
-                          <td>CS</td>
-                          <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
-                          <td>CI</td>
-                          <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
-                          <td>CG</td>
-                          <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
                           <td>L</td>
                           <td class="input-tr"><input type="text" name="L" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.L}"></td>
-                      </tr>
-                      <tr>
-                          <td>QRS0</td>
-                          <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
-                          <td>QRSS0</td>
-                          <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
-                          <td>QRG0</td>
-                          <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
-                          <td colspan="2"></td>
+                          <td colspan="6"></td>
                       </tr>
                       </tbody>
                   </table>
@@ -360,12 +393,68 @@
         }
     });
 
+    form.on('select(station)', function(data){
+        $("select[name=modelCl]").val('');
+        $("select[name=rainrun]").html('<option value="">请选择</option>');
+        $("select[name=modelHl]").val('');
+        $("select[name=unitline]").html('<option value="">请选择</option>');
+        form.render('select');
+    });
+
     form.on('select(modelCl)', function(data){
+        if( data.value == 3 ){
+            $("select[name=rainRun]").html('<option value="">请选择</option>');
+            form.render('select');
+            var stcd = $("select[name=station]").val();
+            if( stcd != "" ){
+                var loading = layer.load(0);
+                $.post(
+                    '${pageContext.request.contextPath}/plan/getRainRun',
+                    {stcd: stcd},
+                    function (data) {
+                        var html = '';
+                        $.each(data, function (key, value) {
+                            html += '<option value="' + value.id + '">' + value.name + '</option>';
+                        });
+                        $("select[name=rainRun]").append(html);
+                        form.render('select');
+                        layer.close(loading);
+                    }
+                );
+            }
+            $("#rainRun").show();
+        }else{
+            $("#rainRun").hide();
+        }
         $(".model_param_cl").hide();
         $("#model_cl_" + data.value).show();
     });
 
     form.on('select(modelHl)', function(data){
+        if( data.value == 4 ){
+            $("select[name=unitLine]").html('<option value="">请选择</option>');
+            form.render('select');
+            var stcd = $("select[name=station]").val();
+            if( stcd != "" ){
+                var loading = layer.load(0);
+                $.post(
+                    '${pageContext.request.contextPath}/plan/getUnitLine',
+                    {stcd: stcd},
+                    function (data) {
+                        var html = '';
+                        $.each(data, function (key, value) {
+                            html += '<option value="' + value.id + '">' + value.name + '</option>';
+                        });
+                        $("select[name=unitLine]").append(html);
+                        form.render('select');
+                        layer.close(loading);
+                    }
+                );
+            }
+            $("#unitLine").show();
+        }else{
+            $("#unitLine").hide();
+        }
         $(".model_param_hl").hide();
         $("#model_hl_" + data.value).show();
     });
@@ -383,8 +472,16 @@
             layer.msg('请填妥产流方案');
             return false;
         }
+        if( $("select[name=modelCl]").val() == 3 && $("select[name=rainrun]").val() == '' ){
+            layer.msg('请填妥降雨径流关系线');
+            return false;
+        }
         if( $("select[name=modelHl]").val() == "" ){
             layer.msg('请填妥汇流方案');
+            return false;
+        }
+        if( $("select[name=modelHl]").val() == 4 && $("select[name=unitline]").val() == '' ){
+            layer.msg('请填妥单位线');
             return false;
         }
         var action = $("input[name=id]").val() == '' ? 'insert' : 'update/' + $("input[name=id]").val();
@@ -414,7 +511,9 @@
         data.name = $("input[name=name]").val();
         data.stcd = $("select[name=station]").val();
         data.modelCl = $("select[name=modelCl]").val();
+        data.rainRun = $("select[name=rainRun]").val();
         data.modelHl = $("select[name=modelHl]").val();
+        data.unitLine = $("select[name=unitLine]").val();
 
         var loading = layer.load(0);
         $.post({

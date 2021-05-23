@@ -110,7 +110,7 @@ public class ComCalc {
                 QS2 = QX2;
                 QX1 = QX2;
             }
-            listQT.set(i + K.intValue(), QX2);
+            listQT.set(i + K.intValue(), QX2.setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         /**
          * For i = 0 To K - 1

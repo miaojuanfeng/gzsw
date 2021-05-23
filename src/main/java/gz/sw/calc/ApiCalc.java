@@ -1,5 +1,6 @@
 package gz.sw.calc;
 
+import com.alibaba.fastjson.JSONObject;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Plan;
 import gz.sw.util.NumberUtil;
@@ -22,43 +23,43 @@ public class ApiCalc {
      * 产流
      * @return
      */
-    public static List<BigDecimal> getR(Plan plan, List<BigDecimal> listP){
+    public static List<BigDecimal> getR(JSONObject plan, List<BigDecimal> listP){
         List<BigDecimal> listR = new ArrayList<>();
         /**
          * 读取参数
          */
-        BigDecimal Kr = plan.getKR();
-        BigDecimal Im = plan.getIM();
-        BigDecimal Imm = plan.getIMM();
-        BigDecimal Pa = plan.getPA();
+        BigDecimal KR = plan.getBigDecimal("KR");
+        BigDecimal IM = plan.getBigDecimal("IM");
+        BigDecimal IMM = plan.getBigDecimal("IMM");
+        BigDecimal PA = plan.getBigDecimal("PA");
         /**
          * B = Imm / Im
          * B = Round(B, 6)
          */
-        BigDecimal B = Imm.divide(Im, NumberConst.DIGIT, NumberConst.MODE);
+        BigDecimal B = IMM.divide(IM, NumberConst.DIGIT, NumberConst.MODE);
         /**
          * A = Imm * (1 - (1 - Pa / Im) ^ (1 / B))
          * A = Round(A, 6)
          */
-        BigDecimal base = NumberConst.ONE.subtract(Pa.divide(Im, NumberConst.DIGIT, NumberConst.MODE));
+        BigDecimal base = NumberConst.ONE.subtract(PA.divide(IM, NumberConst.DIGIT, NumberConst.MODE));
         BigDecimal power = NumberConst.ONE.divide(B, NumberConst.DIGIT, NumberConst.MODE);
-        BigDecimal A = Imm.multiply(NumberConst.ONE.subtract(NumberUtil.pow(base, power)));
+        BigDecimal A = IMM.multiply(NumberConst.ONE.subtract(NumberUtil.pow(base, power)));
 
         for(int i = 0; i < listP.size(); i++){
             BigDecimal p = listP.get(i);
             BigDecimal r;
-            if( NumberUtil.lt(p.add(A), Imm) ){
+            if( NumberUtil.lt(p.add(A), IMM) ){
                 /**
                  * R(i) = Kr * (P(i) + Pa - Im + Im * (1 - (P(i) + A) / Imm) ^ B)
                  */
-                base = NumberConst.ONE.subtract(p.add(A).divide(Imm, NumberConst.DIGIT, NumberConst.MODE));
+                base = NumberConst.ONE.subtract(p.add(A).divide(IMM, NumberConst.DIGIT, NumberConst.MODE));
                 power = B;
-                r = Kr.multiply(p.add(Pa).subtract(Im).add(Im.multiply(NumberUtil.pow(base, power))));
+                r = KR.multiply(p.add(PA).subtract(IM).add(IM.multiply(NumberUtil.pow(base, power))));
             }else{
                 /**
                  * R(i) = Kr * (P(i) - Im + Pa)
                  */
-                r = Kr.multiply(p.subtract(Im).add(Pa));
+                r = KR.multiply(p.subtract(IM).add(PA));
             }
             if( NumberUtil.lt(r, NumberConst.ZERO) ){
                 r = NumberConst.ZERO;
@@ -74,16 +75,16 @@ public class ApiCalc {
      * 汇流
      * @return
      */
-    public static List<BigDecimal> getQTRR(Plan plan, List<BigDecimal> listR){
+    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listR){
         List<BigDecimal> listQTRR = new ArrayList<>();
         /**
          * 读取参数
          */
-        BigDecimal NA = plan.getNA();
-        BigDecimal NU = plan.getNU();
-        BigDecimal KG = plan.getKG();
-        BigDecimal KU = plan.getKU();
-        BigDecimal AREA = plan.getAREA();
+        BigDecimal NA = plan.getBigDecimal("NA");
+        BigDecimal NU = plan.getBigDecimal("NU");
+        BigDecimal KG = plan.getBigDecimal("KG");
+        BigDecimal KU = plan.getBigDecimal("KU");
+        BigDecimal AREA = plan.getBigDecimal("AREA");
 
         List<BigDecimal> listQu = new ArrayList<>();
 

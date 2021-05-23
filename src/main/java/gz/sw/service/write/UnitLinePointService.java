@@ -4,7 +4,7 @@ import gz.sw.entity.write.Model;
 
 import java.util.List;
 
-public interface UnitLineService {
+public interface UnitLinePointService {
     Model select(Integer id);
     int insert(Model model);
     int update(Model model);

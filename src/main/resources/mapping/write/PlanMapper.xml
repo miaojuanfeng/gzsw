@@ -47,7 +47,8 @@
         order by id desc
     </select>
     <select id="select" resultType="gz.sw.entity.write.Plan">
-        select p.* from [plan] p
+        select p.*
+        from [plan] p
         where p.id = #{id}
     </select>
     <select id="selectMap" resultType="java.util.Map">
@@ -58,16 +59,16 @@
     </select>
     <insert id="insert" parameterType="gz.sw.entity.write.Plan" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into [plan]
-        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, create_user, create_time)
+        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, RAINRUN, UNITLINE, create_user, create_time)
         values
-        (#{stcd},#{name},#{modelCl},#{modelHl},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{E},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{PA},#{KR},#{IMM},#{AREA},#{NA},#{NU},#{KU},#{createUser},#{createTime})
+        (#{stcd},#{name},#{modelCl},#{modelHl},#{WU0},#{WL0},#{WD0},#{WUM},#{WLM},#{WDM},#{E},#{B},#{K},#{C},#{SM},#{EX},#{KSS},#{KG},#{IM},#{CI},#{CG},#{L},#{T},#{F},#{S0},#{FR0},#{QRS0},#{QRSS0},#{QRG0},#{CS},#{PA},#{KR},#{IMM},#{AREA},#{NA},#{NU},#{KU},#{rainRun},#{unitLine},#{createUser},#{createTime})
     </insert>
     <insert id="insertBatch" parameterType="java.util.List">
         insert into [plan]
-        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, create_user, create_time)
+        (stcd, name, model_cl, model_hl, WU0, WL0, WD0, WUM, WLM, WDM, E, B, K, C, SM, EX, KSS, KG, IM, CI, CG, L, T, F, S0, FR0, QRS0, QRSS0, QRG0, CS, PA, KR, IMM, AREA, NA, NU, KU, RAINRUN, UNITLINE, create_user, create_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.stcd},#{item.name},#{item.modelCl},#{item.modelHl},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.E},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.PA},#{item.KR},#{item.IMM},#{item.AREA},#{item.NA},#{item.NU},#{item.KU},#{item.createUser},#{item.createTime})
+            (#{item.stcd},#{item.name},#{item.modelCl},#{item.modelHl},#{item.WU0},#{item.WL0},#{item.WD0},#{item.WUM},#{item.WLM},#{item.WDM},#{item.E},#{item.B},#{item.K},#{item.C},#{item.SM},#{item.EX},#{item.KSS},#{item.KG},#{item.IM},#{item.CI},#{item.CG},#{item.L},#{item.T},#{item.F},#{item.S0},#{item.FR0},#{item.QRS0},#{item.QRSS0},#{item.QRG0},#{item.CS},#{item.PA},#{item.KR},#{item.IMM},#{item.AREA},#{item.NA},#{item.NU},#{item.KU},#{item.rainRun},#{item.unitLine},#{item.createUser},#{item.createTime})
         </foreach>
     </insert>
     <update id="update" parameterType="gz.sw.entity.write.Plan">
@@ -110,6 +111,8 @@
             <if test="NU != null" >NU = #{NU},</if>
             <if test="KU != null" >KU = #{KU},</if>
             <if test="AREA != null" >AREA = #{AREA},</if>
+            <if test="rainRun != null" >RAINRUN = #{rainRun},</if>
+            <if test="unitLine != null" >UNITLINE = #{unitLine},</if>
         </set>
         where id = #{id}
     </update>

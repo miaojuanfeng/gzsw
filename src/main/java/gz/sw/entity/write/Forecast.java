@@ -1,5 +1,7 @@
 package gz.sw.entity.write;
 
+import gz.sw.constant.NumberConst;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,9 @@ public class Forecast {
 
     private Map<String, List<String>> listTime = new HashMap<>();
 
-    private Map<String, List<BigDecimal>> listResult = new HashMap<>();
+    private Map<String, List<BigDecimal>> listQT = new HashMap<>();
+
+    private Map<String, Integer> listMaxP = new HashMap<>();
 
     private Map<String, Plan> planCl;
 
@@ -70,12 +74,20 @@ public class Forecast {
         this.listTime.put(stcd, listTime);
     }
 
-    public List<BigDecimal> getListResult(String stcd) {
-        return listResult.get(stcd);
+    public List<BigDecimal> getListQT(String stcd) {
+        return listQT.get(stcd);
     }
 
-    public void setListResult(String stcd, List<BigDecimal> listResult) {
-        this.listResult.put(stcd, listResult);
+    public void setListQT(String stcd, List<BigDecimal> listQT) {
+        this.listQT.put(stcd, listQT);
+    }
+
+    public Integer getListMaxP(String stcd) {
+        return listMaxP.get(stcd);
+    }
+
+    public void setListMaxP(String stcd, Integer maxP) {
+        this.listMaxP.put(stcd, maxP);
     }
 
     public Plan getPlanCl(String stcd) {

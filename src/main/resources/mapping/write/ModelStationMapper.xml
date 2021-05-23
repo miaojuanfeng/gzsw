@@ -13,6 +13,13 @@
 		and ms.model_id = #{modelId}
 		order by ms.id asc
 	</select>
+	<select id="selectCountByPlan" resultType="java.lang.Integer">
+		select
+			count(ms.plan_id) as PLAN_COUNT
+		from model_station ms
+		where 1=1
+		and ms.plan_id = #{planId}
+	</select>
 	<delete id="deleteByModel" parameterType="java.lang.Integer">
         delete from model_station where model_id = #{modelId}
     </delete>

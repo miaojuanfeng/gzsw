@@ -4,7 +4,7 @@ import gz.sw.entity.write.Model;
 
 import java.util.List;
 
-public interface RainRunService {
+public interface RainRunPointService {
     Model select(Integer id);
     int insert(Model model);
     int update(Model model);

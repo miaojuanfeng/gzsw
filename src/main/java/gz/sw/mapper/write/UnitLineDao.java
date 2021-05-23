@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ModelDao {
+public interface UnitLineDao {
 	Model select(Integer id);
 	int insert(Model model);
 	int update(Model model);
@@ -16,5 +16,6 @@ public interface ModelDao {
 	int selectCount(@Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
     List selectList(@Param("page") Integer page, @Param("limit") Integer limit, @Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
 	List selectListByStcd(String stcd);
+	List selectLinePoint(Integer id);
 	List selectAll();
 }

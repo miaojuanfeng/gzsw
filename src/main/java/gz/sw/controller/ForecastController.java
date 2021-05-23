@@ -14,8 +14,11 @@ import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.write.ModelService;
+import gz.sw.service.write.RainRunService;
+import gz.sw.service.write.UnitLineService;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
+import gz.sw.util.PUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -50,6 +53,12 @@ public class ForecastController {
 //	@Autowired
 //	private RiverService riverService;
 
+	@Autowired
+	private RainRunService rainRunService;
+
+	@Autowired
+	private UnitLineService unitLineService;
+
 	@GetMapping("home")
 	public String home(ModelMap map) {
 		map.put("date", DateUtil.getDate());
@@ -77,7 +86,8 @@ public class ForecastController {
         retval.put("P", ComCalc.forecast.getListP(stcd));
         retval.put("R", ComCalc.forecast.getListR(stcd));
         retval.put("QTRR", ComCalc.forecast.getListQTRR(stcd));
-        retval.put("resultList", ComCalc.forecast.getListResult(stcd));
+        retval.put("QT", ComCalc.forecast.getListQT(stcd));
+        retval.put("rainfallMax", ComCalc.forecast.getListMaxP(stcd));
         return retval;
     }
 
@@ -87,10 +97,10 @@ public class ForecastController {
      */
     @PostMapping("station")
     @ResponseBody
-    public String station(
+    public JSONObject station(
             @RequestParam("stcd") String stcd
     ) {
-        return getRetval(stcd).toString();
+        return getRetval(stcd);
     }
 
 	/**
@@ -99,7 +109,7 @@ public class ForecastController {
 	 */
 	@PostMapping("compute")
 	@ResponseBody
-	public String compute(
+	public JSONObject compute(
 			@RequestParam("type") Integer type,
 			@RequestParam("stcd") String stcd,
 			@RequestParam("forecastTime") String forecastTime,
@@ -110,7 +120,7 @@ public class ForecastController {
 	) {
 		JSONArray model = JSONArray.parseArray(data);
 		List<BigDecimal> result = modelStation(forecastTime, affectTime, day, unit, model);
-		return getRetval(stcd).toString();
+		return getRetval(stcd);
 
 
 //			/**
@@ -430,68 +440,8 @@ public class ForecastController {
 		/**
 		 * 测试代码开始
 		 */
-		listRainfall.clear();
-		listRainfall.add(new BigDecimal("10.29"));
-		listRainfall.add(new BigDecimal("20.23"));
-		listRainfall.add(new BigDecimal("15.16"));
-		listRainfall.add(new BigDecimal("0.03"));
-		listRainfall.add(new BigDecimal("0.01"));
-		listRainfall.add(new BigDecimal("0.01"));
-		listRainfall.add(new BigDecimal("0"));
-		listRainfall.add(new BigDecimal("0.01"));
-		listRainfall.add(new BigDecimal("0"));
-		listRainfall.add(new BigDecimal("0"));
-		listRainfall.add(new BigDecimal("0.01"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//		listRainfall.add(new BigDecimal("1.62"));
-//		listRainfall.add(new BigDecimal("0.2"));
-//		listRainfall.add(new BigDecimal("0.08"));
-//        listRainfall.add(new BigDecimal("0.48"));
-//        listRainfall.add(new BigDecimal("0.25"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0"));
-//        listRainfall.add(new BigDecimal("0.13"));
-//        listRainfall.add(new BigDecimal("0.33"));
-//        listRainfall.add(new BigDecimal("0.23"));
-//        listRainfall.add(new BigDecimal("0.48"));
-//        listRainfall.add(new BigDecimal("0.36"));
-//        listRainfall.add(new BigDecimal("3.90"));
-//        listRainfall.add(new BigDecimal("4.54"));
-//        listRainfall.add(new BigDecimal("1.34"));
-//        listRainfall.add(new BigDecimal("0.17"));
-//        listRainfall.add(new BigDecimal("0.13"));
-//        listRainfall.add(new BigDecimal("0.17"));
-//        listRainfall.add(new BigDecimal("0.00"));
-//        listRainfall.add(new BigDecimal("0.03"));
-//        listRainfall.add(new BigDecimal("4.19"));
-//        listRainfall.add(new BigDecimal("10.26"));
-//        listRainfall.add(new BigDecimal("8.01"));
-//        listRainfall.add(new BigDecimal("2.74"));
-//        listRainfall.add(new BigDecimal("2.33"));
-//        listRainfall.add(new BigDecimal("1.01"));
-//        listRainfall.add(new BigDecimal("0.46"));
+//		listRainfall.clear();
+//		listRainfall = PUtil.getP2();
         /**
          * 测试代码结束
          */
@@ -525,6 +475,7 @@ public class ForecastController {
 			List<BigDecimal> listQTRR = new ArrayList<>();
 			Integer rainfallMax = 0;
 
+			System.out.println("calc: " + m.getString("stname"));
 			System.out.println("start: " + System.currentTimeMillis());
 			Map rainfallMap = getP(m.getString("stcd"), forecastTime, affectTime, day, unit);
 			System.out.println("enddd: " + System.currentTimeMillis());
@@ -535,6 +486,7 @@ public class ForecastController {
 
             ComCalc.forecast.setListP(stcd, listP);
 			ComCalc.forecast.setListTime(stcd, listTime);
+			ComCalc.forecast.setListMaxP(stcd, rainfallMax);
 
             /**
              * 累加子站降雨量
@@ -548,21 +500,46 @@ public class ForecastController {
                 }
             }
 
+			JSONObject plan = m.getJSONObject("plan");
+            plan.put("KE", m.getBigDecimal("ke"));
+			plan.put("XE", m.getBigDecimal("xe"));
+			plan.put("INTV", m.getBigDecimal("intv"));
 			/**
 			 * 产流
 			 */
-			Integer modelClId = m.getInteger("modelClId");
-			Plan planCl = setPlan(modelClId, m.getJSONObject("planCl"), m.getBigDecimal("ke"), m.getBigDecimal("xe"));
-			if( ModelTypeEnum.XAJ_CL.getId().equals(modelClId) ) {
-				if( ModelTypeEnum.XAJ_CL.getId().equals(m.getInteger("modelHlId")) ){
-					listQTR = XajCalc.getR(planCl, listP, CommonConst.RETURN_TYPE_QTR);
+			Integer planModelCl = plan.getInteger("MODEL_CL");
+			if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ) {
+				if( ModelTypeEnum.XAJ_HL.getId().equals(plan.getInteger("MODEL_HL")) ){
+					listQTR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_QTR);
 				}else{
-					listR = XajCalc.getR(planCl, listP, CommonConst.RETURN_TYPE_R);
+					listR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_R);
 				}
-			}else if( ModelTypeEnum.EXP_CL.getId().equals(modelClId) ){
-				listR = ExpCalc.getR(planCl, listP);
-			}else if( ModelTypeEnum.API_CL.getId().equals(modelClId) ) {
-				listR = ApiCalc.getR(planCl, listP);
+			}else if( ModelTypeEnum.EXP_CL.getId().equals(planModelCl) ){
+				List<Map> listRainRun = rainRunService.selectRainRunPoint(plan.getInteger("RAINRUN"));
+				List<BigDecimal> Pa0 = new ArrayList<>();
+				List<List<BigDecimal>> R0 = new ArrayList<>();
+				List<List<BigDecimal>> P0 = new ArrayList<>();
+				for(Map rainRun : listRainRun){
+					BigDecimal pa = new BigDecimal(String.valueOf(rainRun.get("PA")));
+					BigDecimal p = new BigDecimal(String.valueOf(rainRun.get("R")));
+					BigDecimal r = new BigDecimal(String.valueOf(rainRun.get("D")));
+					Integer index = pa.intValue()/10;
+					if( !Pa0.contains(pa) ){
+						Pa0.add(pa);
+					}
+					if( R0.size() <= index ){
+						R0.add(new ArrayList<>());
+					}
+					if( P0.size() <= index ){
+						P0.add(new ArrayList<>());
+					}
+					R0.get(index).add(r);
+					P0.get(index).add(p);
+				}
+				ExpCalc.init(Pa0, R0, P0);
+				listR = ExpCalc.getR(plan, listP);
+			}else if( ModelTypeEnum.API_CL.getId().equals(planModelCl) ) {
+				listR = ApiCalc.getR(plan, listP);
 			}
 
 			ComCalc.forecast.setListR(stcd, listR);
@@ -571,20 +548,23 @@ public class ForecastController {
 			/**
 			 * 汇流
 			 */
-			Integer modelHlId = m.getInteger("modelHlId");
-			Plan planHl = setPlan(modelHlId, m.getJSONObject("planHl"), m.getBigDecimal("ke"), m.getBigDecimal("xe"));
-			if( ModelTypeEnum.XAJ_CL.getId().equals(modelHlId) ) {
-				listQTRR = XajCalc.getQTRR(planHl, listQTR);
-			}else if( ModelTypeEnum.EXP_CL.getId().equals(modelHlId) ){
-				listQTRR = ExpCalc.getQTRR(planHl, listR);
-			}else if( ModelTypeEnum.API_CL.getId().equals(modelHlId) ) {
-				listQTRR = ApiCalc.getQTRR(planHl, listR);
+			Integer planModelHl = plan.getInteger("MODEL_HL");
+			if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ) {
+				listQTRR = XajCalc.getQTRR(plan, listQTR);
+			}else if( ModelTypeEnum.EXP_HL.getId().equals(planModelHl) ){
+				List listUnitLine = unitLineService.selectLinePoint(plan.getInteger("UNITLINE"));
+				ExpCalc.init(listUnitLine);
+				listQTRR = ExpCalc.getQTRR(plan, listR);
+			}else if( ModelTypeEnum.API_HL.getId().equals(planModelHl) ) {
+				listQTRR = ApiCalc.getQTRR(plan, listR);
 			}
 
             ComCalc.forecast.setListQTRR(stcd, listQTRR);
 
             /**
              * 合并子站QTRR
+			 * QTRR汾坑 = QT宁都 + QT石城 + QTRR汾坑
+			 * 如果QT和QTRR数组数量不一致怎么处理
              */
             if( childList.size() > 0 ) {
                 listQTRR = addList(childList, listQTRR);
@@ -592,20 +572,22 @@ public class ForecastController {
             /**
              * 根据站的类型选择马斯京根或调洪演算
              */
-            List<BigDecimal> listResult = new ArrayList<>();
-            if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("stype")) ){
-                listResult = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
+            List<BigDecimal> listQT = new ArrayList<>();
+            if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp")) ){
+                List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
+				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
             }else {
-                listResult = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
+				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
             }
-            result.add(listResult);
+            result.add(listQT);
             /**
              *
              */
-			ComCalc.forecast.setListResult(stcd, listResult);
+			ComCalc.forecast.setListQT(stcd, listQT);
 		}
 		/**
 		 * 返回本站结果
+		 * QTRR汾坑 = QT宁都 + QT石城 + QTRR汾坑
 		 */
         for(int i = 0; i < result.size(); i++){
             if( retval.size() == 0 ){
@@ -619,61 +601,63 @@ public class ForecastController {
 
 	private List<BigDecimal> addList(List<BigDecimal> list1, List<BigDecimal> list2){
 	    List<BigDecimal> retval = new ArrayList<>();
-	    if( list1.size() == list2.size() ) {
-            for (int i = 0; i < list1.size(); i++) {
-                retval.add(list1.get(i).add(list2.get(i)));
-            }
-        }
+	    if( list1.size() != list2.size() ) {
+			System.out.println("list1.size() != list2.size() : " + list1.size() + ", " + list2.size());
+	    }
+	    int size = list1.size() < list2.size() ? list1.size() : list2.size();
+		for (int i = 0; i < size; i++) {
+			retval.add(list1.get(i).add(list2.get(i)));
+		}
         return retval;
     }
 
-	private Plan setPlan(Integer model, JSONObject p, BigDecimal KE, BigDecimal XE){
-		Plan plan = new Plan();
-		if( ModelTypeEnum.XAJ_CL.getId().equals(model) ) {
-			plan.setF(p.getBigDecimal("F"));
-			plan.setK(p.getBigDecimal("K"));
-			plan.setIM(p.getBigDecimal("IM"));
-			plan.setWUM(p.getBigDecimal("WUM"));
-			plan.setWLM(p.getBigDecimal("WLM"));
-			plan.setWDM(p.getBigDecimal("WDM"));
-			plan.setB(p.getBigDecimal("B"));
-			plan.setC(p.getBigDecimal("C"));
-			plan.setKSS(p.getBigDecimal("KSS"));
-			plan.setKG(p.getBigDecimal("KG"));
-			plan.setSM(p.getBigDecimal("SM"));
-			plan.setEX(p.getBigDecimal("EX"));
-			plan.setCI(p.getBigDecimal("CI"));
-			plan.setCG(p.getBigDecimal("CG"));
-			plan.setCS(p.getBigDecimal("CS"));
-			plan.setL(p.getBigDecimal("L"));
-			plan.setT(p.getBigDecimal("T"));
-			plan.setKE(KE);
-			plan.setXE(XE);
-			plan.setWU0(p.getBigDecimal("WU0"));
-			plan.setWL0(p.getBigDecimal("WL0"));
-			plan.setWD0(p.getBigDecimal("WD0"));
-			plan.setS0(p.getBigDecimal("S0"));
-			plan.setFR0(p.getBigDecimal("FR0"));
-			plan.setQRS0(p.getBigDecimal("QRS0"));
-			plan.setQRSS0(p.getBigDecimal("QRSS0"));
-			plan.setQRG0(p.getBigDecimal("QRG0"));
-		}else if( ModelTypeEnum.EXP_CL.getId().equals(model) ){
-			plan.setKE(KE);
-			plan.setXE(XE);
-			plan.setPA(p.getBigDecimal("PA"));
-		}else if( ModelTypeEnum.API_CL.getId().equals(model) ) {
-			plan.setKR(p.getBigDecimal("KR"));
-			plan.setIM(p.getBigDecimal("IM"));
-			plan.setIMM(p.getBigDecimal("IMM"));
-			plan.setPA(p.getBigDecimal("PA"));
-			plan.setNA(p.getBigDecimal("NA"));
-			plan.setNU(p.getBigDecimal("NU"));
-			plan.setKG(p.getBigDecimal("KG"));
-			plan.setKU(p.getBigDecimal("KU"));
-			plan.setAREA(p.getBigDecimal("AREA"));
-		}
-		return plan;
-	}
+//	private Plan setPlan(Integer model, JSONObject p, BigDecimal KE, BigDecimal XE){
+//		Plan plan = new Plan();
+//		if( ModelTypeEnum.XAJ_CL.getId().equals(model) ) {
+//			plan.setF(p.getBigDecimal("F"));
+//			plan.setK(p.getBigDecimal("K"));
+//			plan.setIM(p.getBigDecimal("IM"));
+//			plan.setWUM(p.getBigDecimal("WUM"));
+//			plan.setWLM(p.getBigDecimal("WLM"));
+//			plan.setWDM(p.getBigDecimal("WDM"));
+//			plan.setB(p.getBigDecimal("B"));
+//			plan.setC(p.getBigDecimal("C"));
+//			plan.setKSS(p.getBigDecimal("KSS"));
+//			plan.setKG(p.getBigDecimal("KG"));
+//			plan.setSM(p.getBigDecimal("SM"));
+//			plan.setEX(p.getBigDecimal("EX"));
+//			plan.setCI(p.getBigDecimal("CI"));
+//			plan.setCG(p.getBigDecimal("CG"));
+//			plan.setCS(p.getBigDecimal("CS"));
+//			plan.setL(p.getBigDecimal("L"));
+//			plan.setT(p.getBigDecimal("T"));
+//			plan.setKE(KE);
+//			plan.setXE(XE);
+//			plan.setWU0(p.getBigDecimal("WU0"));
+//			plan.setWL0(p.getBigDecimal("WL0"));
+//			plan.setWD0(p.getBigDecimal("WD0"));
+//			plan.setS0(p.getBigDecimal("S0"));
+//			plan.setFR0(p.getBigDecimal("FR0"));
+//			plan.setQRS0(p.getBigDecimal("QRS0"));
+//			plan.setQRSS0(p.getBigDecimal("QRSS0"));
+//			plan.setQRG0(p.getBigDecimal("QRG0"));
+//		}else if( ModelTypeEnum.EXP_CL.getId().equals(model) ){
+//			plan.setKE(KE);
+//			plan.setXE(XE);
+//			plan.setPA(p.getBigDecimal("PA"));
+//		}else if( ModelTypeEnum.API_CL.getId().equals(model) ) {
+//			plan.setKR(p.getBigDecimal("KR"));
+//			plan.setIM(p.getBigDecimal("IM"));
+//			plan.setIMM(p.getBigDecimal("IMM"));
+//			plan.setPA(p.getBigDecimal("PA"));
+//			plan.setNA(p.getBigDecimal("NA"));
+//			plan.setNU(p.getBigDecimal("NU"));
+//			plan.setKG(p.getBigDecimal("KG"));
+//			plan.setKU(p.getBigDecimal("KU"));
+//			plan.setAREA(p.getBigDecimal("AREA"));
+//		}
+//		return plan;
+//	}
 
 	private List<BigDecimal> doCalc(Plan plan, List<BigDecimal> rainfallP, BigDecimal KE, BigDecimal XE){
 //	    StepCommonUtil.init(plan);

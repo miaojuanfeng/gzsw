@@ -1,5 +1,6 @@
 package gz.sw.calc;
 
+import com.alibaba.fastjson.JSONObject;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Plan;
 import gz.sw.util.NumberUtil;
@@ -34,20 +35,28 @@ public class ExpCalc {
     /**
      * 初始化数据
      */
-    public static void init(List<BigDecimal> LINE){
-        LINE = LINE;
+    public static void init(List<BigDecimal> listPa0, List<List<BigDecimal>> listR0, List<List<BigDecimal>> listP0){
+        Pa0 = listPa0;
+        R0 = listR0;
+        P0 = listP0;
+        Pa_num = Pa0.size();
+        for (List r : R0){
+            PR_num.add(r.size());
+        }
     }
-
+    public static void init(List<BigDecimal> listLine){
+        LINE = listLine;
+    }
     /**
      * 产流
      * @return
      */
-    public static List<BigDecimal> getR(Plan plan, List<BigDecimal> listP){
+    public static List<BigDecimal> getR(JSONObject plan, List<BigDecimal> listP){
         List<BigDecimal> listR = new ArrayList<>();
         /**
          * 读取参数
          */
-        BigDecimal Pa = plan.getPA();
+        BigDecimal PA = plan.getBigDecimal("PA");
         /**
          * 读初始状态
          */
@@ -55,7 +64,7 @@ public class ExpCalc {
         Integer R_num02 = 0;
 
         for (int i = 0; i < Pa_num - 1; i++){
-            if (NumberUtil.ge(Pa, Pa0.get(i)) && NumberUtil.le(Pa, Pa0.get(i + 1))) {
+            if (NumberUtil.ge(PA, Pa0.get(i)) && NumberUtil.le(PA, Pa0.get(i + 1))) {
                 R_num01 = i;
                 R_num02 = i + 1;
             }
@@ -104,7 +113,7 @@ public class ExpCalc {
                 /**
                  * R_h(i) = (Pa - Pa0(R_num01)) / (Pa0(R_num02) - Pa0(R_num01)) * (R02(i) - R01(i)) + R01(i)
                  */
-                BigDecimal temp1 = Pa.subtract(Pa0.get(R_num01));
+                BigDecimal temp1 = PA.subtract(Pa0.get(R_num01));
                 BigDecimal temp2 = Pa0.get(R_num02).subtract(Pa0.get(R_num01));
                 BigDecimal temp3 = R02.get(i).subtract(R01.get(i));
                 BigDecimal temp4 = R01.get(i);
@@ -123,10 +132,9 @@ public class ExpCalc {
 
     /**
      * 汇流
-     * 算法有误差，需要核实
      * @return
      */
-    public static List<BigDecimal> getQTRR(Plan plan, List<BigDecimal> listR){
+    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listR){
         listQu.clear();
         List<BigDecimal> listQTRR = new ArrayList<>();
         /**
@@ -231,231 +239,231 @@ public class ExpCalc {
 //        }
 //    }
 
-    public static void main(String[] args){
-        /**
-         * 读降雨径流关系线
-         */
-        for (int i = 0; i <= 60; i+=10){
-            Pa0.add(new BigDecimal(i));
-            R0.add(TempUtil.getR(i));
-            P0.add(TempUtil.getP(i));
-            //
-            PR_num.add(R0.get(0).size());
-        }
-        Pa_num = Pa0.size();
-        /**
-         *
-         */
-        Plan plan = new Plan();
-//        plan.setF(new BigDecimal("911"));
-//        plan.setK(new BigDecimal("0.735"));
-//        plan.setIM(new BigDecimal("0.044"));
-//        plan.setWUM(new BigDecimal("10.562"));
-//        plan.setWLM(new BigDecimal("68.412"));
-//        plan.setWDM(new BigDecimal("1.042"));
-//        plan.setB(new BigDecimal("0.5"));
-//        plan.setC(new BigDecimal("0.199"));
-//        plan.setKSS(new BigDecimal("0.403"));
-//        plan.setKG(new BigDecimal("0.297"));
-//        plan.setSM(new BigDecimal("25.174"));
-//        plan.setEX(new BigDecimal("1.5"));
-//        plan.setCI(new BigDecimal("0.112"));
-//        plan.setCG(new BigDecimal("0.95"));
-//        plan.setCS(new BigDecimal("0.948"));
-//        plan.setL(4);
-//        plan.setT(new BigDecimal("1"));
-        plan.setKE(new BigDecimal("18"));
-        plan.setXE(new BigDecimal("0.15"));
-//        plan.setWU0(new BigDecimal("10"));
-//        plan.setWL0(new BigDecimal("60"));
-//        plan.setWD0(new BigDecimal("10"));
-//        plan.setS0(new BigDecimal("6"));
-//        plan.setFR0(new BigDecimal("0.7"));
-//        plan.setQRS0(new BigDecimal("3"));
-//        plan.setQRSS0(new BigDecimal("38"));
-//        plan.setQRG0(new BigDecimal("7"));
-        plan.setPA(new BigDecimal(60));
-
-        List<BigDecimal> listP = new ArrayList<>();
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.30"));
-        listP.add(new BigDecimal("0.40"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("2.00"));
-        listP.add(new BigDecimal("0.50"));
-        listP.add(new BigDecimal("0.40"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.20"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("2.60"));
-        listP.add(new BigDecimal("2.80"));
-        listP.add(new BigDecimal("1.80"));
-        listP.add(new BigDecimal("2.30"));
-        listP.add(new BigDecimal("2.80"));
-        listP.add(new BigDecimal("0.90"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.20"));
-        listP.add(new BigDecimal("1.10"));
-        listP.add(new BigDecimal("2.10"));
-        listP.add(new BigDecimal("2.90"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.80"));
-        listP.add(new BigDecimal("2.40"));
-        listP.add(new BigDecimal("2.40"));
-        listP.add(new BigDecimal("1.90"));
-        listP.add(new BigDecimal("1.60"));
-        listP.add(new BigDecimal("1.10"));
-        listP.add(new BigDecimal("1.20"));
-        listP.add(new BigDecimal("2.10"));
-        listP.add(new BigDecimal("1.50"));
-        listP.add(new BigDecimal("0.90"));
-        listP.add(new BigDecimal("0.60"));
-        listP.add(new BigDecimal("0.40"));
-        listP.add(new BigDecimal("0.70"));
-        listP.add(new BigDecimal("1.30"));
-        listP.add(new BigDecimal("1.50"));
-        listP.add(new BigDecimal("0.90"));
-        listP.add(new BigDecimal("0.30"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.00"));
-        listP.add(new BigDecimal("0.10"));
-
-//        listP.add(new BigDecimal("10"));
-//        listP.add(new BigDecimal("20"));
-//        listP.add(new BigDecimal("30"));
-//        listP.add(new BigDecimal("40"));
-//        listP.add(new BigDecimal("50"));
-//        listP.add(new BigDecimal("40"));
-//        listP.add(new BigDecimal("30"));
-//        listP.add(new BigDecimal("20"));
-//        listP.add(new BigDecimal("10"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-//        listP.add(new BigDecimal("0"));
-
-        List<BigDecimal> listR = getR(plan, listP);
-        List<BigDecimal> listQTRR = getQTRR(plan, listR);
-//        CommonUtil.getQT();
-    }
+//    public static void main(String[] args){
+//        /**
+//         * 读降雨径流关系线
+//         */
+//        for (int i = 0; i <= 60; i+=10){
+//            Pa0.add(new BigDecimal(i));
+//            R0.add(TempUtil.getR(i));
+//            P0.add(TempUtil.getP(i));
+//            //
+//            PR_num.add(R0.get(0).size());
+//        }
+//        Pa_num = Pa0.size();
+//        /**
+//         *
+//         */
+//        Plan plan = new Plan();
+////        plan.setF(new BigDecimal("911"));
+////        plan.setK(new BigDecimal("0.735"));
+////        plan.setIM(new BigDecimal("0.044"));
+////        plan.setWUM(new BigDecimal("10.562"));
+////        plan.setWLM(new BigDecimal("68.412"));
+////        plan.setWDM(new BigDecimal("1.042"));
+////        plan.setB(new BigDecimal("0.5"));
+////        plan.setC(new BigDecimal("0.199"));
+////        plan.setKSS(new BigDecimal("0.403"));
+////        plan.setKG(new BigDecimal("0.297"));
+////        plan.setSM(new BigDecimal("25.174"));
+////        plan.setEX(new BigDecimal("1.5"));
+////        plan.setCI(new BigDecimal("0.112"));
+////        plan.setCG(new BigDecimal("0.95"));
+////        plan.setCS(new BigDecimal("0.948"));
+////        plan.setL(4);
+////        plan.setT(new BigDecimal("1"));
+//        plan.setKE(new BigDecimal("18"));
+//        plan.setXE(new BigDecimal("0.15"));
+////        plan.setWU0(new BigDecimal("10"));
+////        plan.setWL0(new BigDecimal("60"));
+////        plan.setWD0(new BigDecimal("10"));
+////        plan.setS0(new BigDecimal("6"));
+////        plan.setFR0(new BigDecimal("0.7"));
+////        plan.setQRS0(new BigDecimal("3"));
+////        plan.setQRSS0(new BigDecimal("38"));
+////        plan.setQRG0(new BigDecimal("7"));
+//        plan.setPA(new BigDecimal(60));
+//
+//        List<BigDecimal> listP = new ArrayList<>();
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.30"));
+//        listP.add(new BigDecimal("0.40"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("2.00"));
+//        listP.add(new BigDecimal("0.50"));
+//        listP.add(new BigDecimal("0.40"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.20"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("2.60"));
+//        listP.add(new BigDecimal("2.80"));
+//        listP.add(new BigDecimal("1.80"));
+//        listP.add(new BigDecimal("2.30"));
+//        listP.add(new BigDecimal("2.80"));
+//        listP.add(new BigDecimal("0.90"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.20"));
+//        listP.add(new BigDecimal("1.10"));
+//        listP.add(new BigDecimal("2.10"));
+//        listP.add(new BigDecimal("2.90"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.80"));
+//        listP.add(new BigDecimal("2.40"));
+//        listP.add(new BigDecimal("2.40"));
+//        listP.add(new BigDecimal("1.90"));
+//        listP.add(new BigDecimal("1.60"));
+//        listP.add(new BigDecimal("1.10"));
+//        listP.add(new BigDecimal("1.20"));
+//        listP.add(new BigDecimal("2.10"));
+//        listP.add(new BigDecimal("1.50"));
+//        listP.add(new BigDecimal("0.90"));
+//        listP.add(new BigDecimal("0.60"));
+//        listP.add(new BigDecimal("0.40"));
+//        listP.add(new BigDecimal("0.70"));
+//        listP.add(new BigDecimal("1.30"));
+//        listP.add(new BigDecimal("1.50"));
+//        listP.add(new BigDecimal("0.90"));
+//        listP.add(new BigDecimal("0.30"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.00"));
+//        listP.add(new BigDecimal("0.10"));
+//
+////        listP.add(new BigDecimal("10"));
+////        listP.add(new BigDecimal("20"));
+////        listP.add(new BigDecimal("30"));
+////        listP.add(new BigDecimal("40"));
+////        listP.add(new BigDecimal("50"));
+////        listP.add(new BigDecimal("40"));
+////        listP.add(new BigDecimal("30"));
+////        listP.add(new BigDecimal("20"));
+////        listP.add(new BigDecimal("10"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+////        listP.add(new BigDecimal("0"));
+//
+//        List<BigDecimal> listR = getR(plan, listP);
+//        List<BigDecimal> listQTRR = getQTRR(plan, listR);
+////        CommonUtil.getQT();
+//    }
 }

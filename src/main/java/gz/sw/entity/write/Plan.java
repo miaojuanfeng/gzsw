@@ -12,6 +12,8 @@ public class Plan {
 	private String name;
 	private Integer modelCl;
 	private Integer modelHl;
+	private Integer rainRun;
+	private Integer unitLine;
 	private Long createUser;
 	private Date createTime;
 	/**
@@ -102,6 +104,22 @@ public class Plan {
 
 	public void setModelHl(Integer modelHl) {
 		this.modelHl = modelHl;
+	}
+
+	public Integer getRainRun() {
+		return rainRun;
+	}
+
+	public void setRainRun(Integer rainRun) {
+		this.rainRun = rainRun;
+	}
+
+	public Integer getUnitLine() {
+		return unitLine;
+	}
+
+	public void setUnitLine(Integer unitLine) {
+		this.unitLine = unitLine;
 	}
 
 	//	public String getUserId() {

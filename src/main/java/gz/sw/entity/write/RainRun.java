@@ -1,6 +1,6 @@
 package gz.sw.entity.write;
 
-public class UnitLine {
+public class RainRun {
 
 	private Integer id;
 

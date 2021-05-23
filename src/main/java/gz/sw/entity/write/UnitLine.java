@@ -1,16 +1,14 @@
 package gz.sw.entity.write;
 
-import java.util.Date;
-
-public class Model {
+public class UnitLine {
 
 	private Integer id;
 
-	private String name;
-
 	private String stcd;
 
-	private Date createTime;
+	private String name;
+
+	private Integer lid;
 
 	public Integer getId() {
 		return id;
@@ -36,11 +34,11 @@ public class Model {
 		this.stcd = stcd;
 	}
 
-	public Date getCreateTime() {
-		return createTime;
+	public Integer getLid() {
+		return lid;
 	}
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setLid(Integer lid) {
+		this.lid = lid;
 	}
 }

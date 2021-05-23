@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.write.ModelDao">
+<mapper namespace="gz.sw.mapper.write.UnitLineDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
         	count(m.id)
@@ -41,9 +41,16 @@
     <select id="selectListByStcd" resultType="java.util.Map">
         select
         	id, name, stcd
-        from model
+        from unitline
         where stcd = #{stcd}
         order by id desc
+    </select>
+    <select id="selectLinePoint" resultType="java.math.BigDecimal">
+        select
+        	up.f
+        from unitline_point up
+        left join unitline u on up.lid = u.lid
+        where u.id = #{id}
     </select>
     <select id="selectAll" resultType="java.util.Map">
         select
@@ -51,14 +58,14 @@
         from model
         order by id desc
     </select>
-    <select id="select" resultType="gz.sw.entity.write.Model">
+    <select id="select" resultType="gz.sw.entity.write.UnitLine">
         select m.* from model m
         where m.id = #{id}
     </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.Model" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="gz.sw.entity.write.UnitLine" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
     </insert>
-    <update id="update" parameterType="gz.sw.entity.write.Model">
+    <update id="update" parameterType="gz.sw.entity.write.UnitLine">
         update model
         <set>
             <if test="name != null" > name = #{name},</if>

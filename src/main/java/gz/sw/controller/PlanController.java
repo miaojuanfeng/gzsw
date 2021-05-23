@@ -5,8 +5,7 @@ import gz.sw.entity.write.Model;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
-import gz.sw.service.write.PlanService;
-import gz.sw.service.write.StationService;
+import gz.sw.service.write.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +26,15 @@ public class PlanController {
 
 	@Autowired
 	private PlanService planService;
+
+	@Autowired
+	private ModelStationService modelStationService;
+
+	@Autowired
+	private RainRunService rainRunService;
+
+	@Autowired
+	private UnitLineService unitLineService;
 
 	@GetMapping("list")
 	public String list(ModelMap map) {
@@ -69,8 +77,9 @@ public class PlanController {
 		map.put("modelCls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_CL));
 		map.put("modelHls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_HL));
 		Map plan = planService.selectMap(id);
-		List stations = stationService.selectListByType(String.valueOf(plan.get("sttype")));
-        map.put("stations", stations);
+		map.put("stations", stationService.selectListByType(String.valueOf(plan.get("sttype"))));
+		map.put("rainRuns", rainRunService.selectListByStcd(String.valueOf(plan.get("STCD"))));
+		map.put("unitLines", unitLineService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("plan", plan);
 		return "plan/insert";
 	}
@@ -89,7 +98,15 @@ public class PlanController {
 	@Transactional
 	public JSONObject delete(Integer id) {
 		JSONObject retval = new JSONObject();
+		int count = modelStationService.selectCountByPlan(id);
+		if( count > 0 ){
+			retval.put("code", 500);
+			retval.put("msg", "有" + count + "个河系正在使用该方案，请取消使用后再删除");
+			return retval;
+		}
 		planService.delete(id);
+		retval.put("code", 200);
+		retval.put("msg", "");
 		return retval;
 	}
 
@@ -98,4 +115,16 @@ public class PlanController {
     public List getPlan(String stcd) {
         return planService.selectListByStcd(stcd);
     }
+
+	@PostMapping("getUnitLine")
+	@ResponseBody
+	public List getUnitLine(String stcd) {
+		return unitLineService.selectListByStcd(stcd);
+	}
+
+	@PostMapping("getRainRun")
+	@ResponseBody
+	public List getRainRun(String stcd) {
+		return rainRunService.selectListByStcd(stcd);
+	}
 }
