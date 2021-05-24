@@ -23,7 +23,10 @@
         from model m1
         left join station s on m1.stcd = s.stcd
         left join sttype t on s.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from model) m2
+        (select TOP ${page*limit} row_number() OVER (order by m.id desc, m.ID desc) n, m.ID
+        from model m
+        left join station s on m.stcd = s.stcd
+        left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
             and t.code = #{sttp}
@@ -32,8 +35,10 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and m1.name like '%' + #{name} + '%'
+            and m.name like '%' + #{name} + '%'
         </if>
+        ) m2
+        where 1=1
         and m1.id = m2.id
         and m2.n > ${(page-1)*limit}
         order by m2.n asc

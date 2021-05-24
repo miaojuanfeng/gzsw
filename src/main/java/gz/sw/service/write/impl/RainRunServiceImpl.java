@@ -2,9 +2,7 @@ package gz.sw.service.write.impl;
 
 import gz.sw.entity.write.Model;
 import gz.sw.mapper.write.RainRunDao;
-import gz.sw.mapper.write.UnitLineDao;
 import gz.sw.service.write.RainRunService;
-import gz.sw.service.write.UnitLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +55,7 @@ public class RainRunServiceImpl implements RainRunService {
 	}
 
 	@Override
-	public List selectAll() {
-		return rainRunDao.selectAll();
+	public List selectPointList(Integer lid) {
+		return rainRunDao.selectPointList(lid);
 	}
 }

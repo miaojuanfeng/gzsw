@@ -21,7 +21,9 @@
         select s1.id, s1.stcd, s1.stname, t.name as sttype
         from station s1
         left join sttype t on s1.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from station) s2
+        (select TOP ${page*limit} row_number() OVER (order by s.id desc, s.ID desc) n, s.ID
+        from station s
+        left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
             and t.code = #{sttp}
@@ -30,8 +32,10 @@
             and s1.stcd like '%' + #{stcd} + '%'
         </if>
         <if test="name != null and name != ''" >
-            and s1.stname like '%' + #{name} + '%'
+            and s.stname like '%' + #{name} + '%'
         </if>
+        ) s2
+        where 1=1
         and s1.id = s2.id
         and s2.n > ${(page-1)*limit}
         order by s2.n asc

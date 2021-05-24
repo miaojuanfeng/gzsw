@@ -23,7 +23,10 @@
         from [plan] p1
         left join station s on p1.stcd = s.stcd
         left join sttype t on s.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from [plan]) p2
+        (select TOP ${page*limit} row_number() OVER (order by p.id desc, p.ID desc) n, p.ID
+        from [plan] p
+        left join station s on p.stcd = s.stcd
+        left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
             and t.code = #{sttp}
@@ -32,8 +35,10 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and p1.name like '%' + #{name} + '%'
+            and p.name like '%' + #{name} + '%'
         </if>
+        ) p2
+        where 1=1
         and p1.id = p2.id
         and p2.n > ${(page-1)*limit}
         order by p2.n asc

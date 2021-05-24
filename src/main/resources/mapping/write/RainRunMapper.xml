@@ -3,9 +3,9 @@
 <mapper namespace="gz.sw.mapper.write.RainRunDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
-        	count(m.id)
-        from model m
-        left join station s on m.stcd = s.stcd
+        	count(r.id)
+        from rainrun r
+        left join station s on r.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
@@ -15,15 +15,18 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and m.name like '%' + #{name} + '%'
+            and r.name like '%' + #{name} + '%'
         </if>
     </select>
     <select id="selectList" resultType="java.util.Map">
-        select m1.id, m1.name, CONVERT(varchar(100), m1.create_time, 20) as createTime, s.stname, t.name as sttype
-        from model m1
-        left join station s on m1.stcd = s.stcd
+        select r1.id, r1.name, r1.lname, r1.lid, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from rainrun r1
+        left join station s on r1.stcd = s.stcd
         left join sttype t on s.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from model) m2
+        (select TOP ${page*limit} row_number() OVER (order by r.id desc, r.ID desc) n, r.ID
+        from rainrun r
+        left join station s on r.stcd = s.stcd
+        left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
             and t.code = #{sttp}
@@ -32,11 +35,13 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and m1.name like '%' + #{name} + '%'
+            and r.name like '%' + #{name} + '%'
         </if>
-        and m1.id = m2.id
-        and m2.n > ${(page-1)*limit}
-        order by m2.n asc
+        ) r2
+        where 1=1
+        and r1.id = r2.id
+        and r2.n > ${(page-1)*limit}
+        order by r2.n asc
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
@@ -54,11 +59,12 @@
         where r.class = #{rainRun}
         order by r.pa, rp.pino asc
     </select>
-    <select id="selectAll" resultType="java.util.Map">
+    <select id="selectPointList" resultType="java.util.Map">
         select
-        	id, name, stcd
-        from model
-        order by id desc
+        	id, pino, d, r
+        from rainrun_point
+        where lid = #{lid}
+        order by pino asc
     </select>
     <select id="select" resultType="gz.sw.entity.write.RainRun">
         select m.* from model m

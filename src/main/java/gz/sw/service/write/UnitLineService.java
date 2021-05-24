@@ -14,5 +14,5 @@ public interface UnitLineService {
     List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
     List selectListByStcd(String stcd);
     List selectLinePoint(Integer id);
-    List selectAll();
+    List selectPointList(Integer lid);
 }

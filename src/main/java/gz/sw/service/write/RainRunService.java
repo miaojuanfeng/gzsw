@@ -14,5 +14,5 @@ public interface RainRunService {
     List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
     List selectListByStcd(String stcd);
     List selectRainRunPoint(Integer rainRun);
-    List selectAll();
+    List selectPointList(Integer lid);
 }

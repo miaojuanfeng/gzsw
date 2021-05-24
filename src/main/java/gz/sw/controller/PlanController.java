@@ -121,10 +121,4 @@ public class PlanController {
 	public List getUnitLine(String stcd) {
 		return unitLineService.selectListByStcd(stcd);
 	}
-
-	@PostMapping("getRainRun")
-	@ResponseBody
-	public List getRainRun(String stcd) {
-		return rainRunService.selectListByStcd(stcd);
-	}
 }

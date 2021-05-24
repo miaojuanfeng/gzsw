@@ -41,12 +41,10 @@ public class ComCalc {
     /**
      * 初始化数据
      */
-    public static void init(Plan plan,
-                            List<BigDecimal> Z_CUR,
+    public static void init(List<BigDecimal> Z_CUR,
                             List<BigDecimal> V_CUR,
                             List<BigDecimal> Z0,
                             List<BigDecimal> HCOQ){
-        plan = plan;
         Z_CUR = Z_CUR;
         V_CUR = V_CUR;
         Z0 = Z0;

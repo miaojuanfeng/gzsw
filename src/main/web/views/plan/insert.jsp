@@ -86,7 +86,7 @@
           </div>
 
           <div id="rainRun" class="layui-form-item" style="<c:if test="${plan.MODEL_CL==3}">display:block;</c:if>">
-            <label class="layui-form-label">降雨径流关系线</label>
+            <label class="layui-form-label">降径关系线</label>
             <div class="layui-input-block">
                 <select name="rainRun" lay-filter="rainRun" lay-verify="required" lay-search="">
                     <option value="">请选择</option>
@@ -110,7 +110,7 @@
           </div>
 
           <div id="unitLine" class="layui-form-item" style="<c:if test="${plan.MODEL_HL==4}">display:block;</c:if>">
-            <label class="layui-form-label">单位线</label>
+            <label class="layui-form-label">经验单位线</label>
             <div class="layui-input-block">
                 <select name="unitLine" lay-filter="unitLine" lay-verify="required" lay-search="">
                     <option value="">请选择</option>
@@ -258,13 +258,8 @@
                   <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
                   <td>IMM</td>
                   <td class="input-tr"><input type="text" name="IMM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IMM}"></td>
-                  <td>AREA</td>
-                  <td class="input-tr"><input type="text" name="AREA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.AREA}"></td>
-                </tr>
-                <tr>
                   <td>PA</td>
                   <td class="input-tr"><input type="text" name="PA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
-                  <td colspan="6"></td>
                 </tr>
                 </tbody>
               </table>
@@ -341,6 +336,11 @@
                           <td>KU</td>
                           <td class="input-tr"><input type="text" name="KU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KU}"></td>
                       </tr>
+                      <tr>
+                          <td>AREA</td>
+                          <td class="input-tr"><input type="text" name="AREA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.AREA}"></td>
+                          <td colspan="6"></td>
+                      </tr>
                       </tbody>
                   </table>
               </form>
@@ -409,7 +409,7 @@
             if( stcd != "" ){
                 var loading = layer.load(0);
                 $.post(
-                    '${pageContext.request.contextPath}/plan/getRainRun',
+                    '${pageContext.request.contextPath}/rainRun/getRainRun',
                     {stcd: stcd},
                     function (data) {
                         var html = '';
@@ -438,7 +438,7 @@
             if( stcd != "" ){
                 var loading = layer.load(0);
                 $.post(
-                    '${pageContext.request.contextPath}/plan/getUnitLine',
+                    '${pageContext.request.contextPath}/unitLine/getUnitLine',
                     {stcd: stcd},
                     function (data) {
                         var html = '';

@@ -55,7 +55,7 @@ public class UnitLineServiceImpl implements UnitLineService {
 	}
 
 	@Override
-	public List selectAll() {
-		return unitLineDao.selectAll();
+	public List selectPointList(Integer lid) {
+		return unitLineDao.selectPointList(lid);
 	}
 }

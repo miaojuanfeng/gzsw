@@ -13,6 +13,7 @@ import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.read.RainfallService;
+import gz.sw.service.read.ZvarlService;
 import gz.sw.service.write.ModelService;
 import gz.sw.service.write.RainRunService;
 import gz.sw.service.write.UnitLineService;
@@ -58,6 +59,9 @@ public class ForecastController {
 
 	@Autowired
 	private UnitLineService unitLineService;
+
+	@Autowired
+	private ZvarlService zvarlService;
 
 	@GetMapping("home")
 	public String home(ModelMap map) {
@@ -504,12 +508,14 @@ public class ForecastController {
             plan.put("KE", m.getBigDecimal("ke"));
 			plan.put("XE", m.getBigDecimal("xe"));
 			plan.put("INTV", m.getBigDecimal("intv"));
+
+			Integer planModelCl = plan.getInteger("MODEL_CL");
+			Integer planModelHl = plan.getInteger("MODEL_HL");
 			/**
 			 * 产流
 			 */
-			Integer planModelCl = plan.getInteger("MODEL_CL");
 			if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ) {
-				if( ModelTypeEnum.XAJ_HL.getId().equals(plan.getInteger("MODEL_HL")) ){
+				if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ){
 					listQTR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_QTR);
 				}else{
 					listR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_R);
@@ -548,9 +554,12 @@ public class ForecastController {
 			/**
 			 * 汇流
 			 */
-			Integer planModelHl = plan.getInteger("MODEL_HL");
 			if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ) {
-				listQTRR = XajCalc.getQTRR(plan, listQTR);
+				if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ){
+					listQTRR = XajCalc.getQTRR(plan, listQTR);
+				}else{
+					listQTRR = XajCalc.getQTRR(plan, listR);
+				}
 			}else if( ModelTypeEnum.EXP_HL.getId().equals(planModelHl) ){
 				List listUnitLine = unitLineService.selectLinePoint(plan.getInteger("UNITLINE"));
 				ExpCalc.init(listUnitLine);
@@ -574,6 +583,13 @@ public class ForecastController {
              */
             List<BigDecimal> listQT = new ArrayList<>();
             if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp")) ){
+                List<Map> listZvarl = zvarlService.selectList(stcd, "2013-04-02 08:00:00");
+            	List<BigDecimal> Z_CUR = new ArrayList<>();
+            	List<BigDecimal> V_CUR = new ArrayList<>();
+            	for(Map zvarl : listZvarl){
+            		Z_CUR.add(new BigDecimal(String.valueOf(zvarl.get("rz"))));
+					V_CUR.add(new BigDecimal(String.valueOf(zvarl.get("w"))));
+				}
                 List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
 				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
             }else {

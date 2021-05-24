@@ -98,6 +98,16 @@
                       <a lay-href="<c:url value="station/list"></c:url>">站点列表</a>
                   </dd>
               </dl>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="rainRun/list"></c:url>">降径关系线</a>
+                </dd>
+              </dl>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="unitLine/list"></c:url>">经验单位线</a>
+                </dd>
+              </dl>
             </li>
             <li data-name="home" class="layui-nav-item">
               <a href="javascript:;" lay-tips="方案" lay-direction="2">
