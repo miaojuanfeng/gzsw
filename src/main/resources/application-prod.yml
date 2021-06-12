@@ -1,0 +1,20 @@
+spring:
+
+  mvc:
+    view:
+      prefix: /views/
+      suffix: .jsp
+
+  datasource:
+    read:
+      jdbc-url: jdbc:sqlserver://10.36.162.18:1433;databasename=ycreal_all
+      password: gzsw
+      username: gzsw_1220
+    read2:
+      jdbc-url: jdbc:sqlserver://10.36.162.20:1433;databasename=rwdb
+      password: gzsw
+      username: gzsw_1220
+    write:
+      jdbc-url: jdbc:sqlserver://10.36.162.20:1433;databasename=my_forecast
+      password: gzsw
+      username: gzsw_1220

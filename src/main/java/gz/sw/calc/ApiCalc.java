@@ -195,8 +195,8 @@ public class ApiCalc {
         return listQTRR;
     }
 
-    public static void main(String[] args){
-        List<BigDecimal> listP = new ArrayList<>();
+//    public static void main(String[] args){
+//        List<BigDecimal> listP = new ArrayList<>();
 //        listP.add(new BigDecimal("0.00"));
 //        listP.add(new BigDecimal("10.00"));
 //        listP.add(new BigDecimal("20.00"));
@@ -343,39 +343,39 @@ public class ApiCalc {
 //        listP.add(new BigDecimal("0.00"));
 //        listP.add(new BigDecimal("0.10"));
 
-        listP.add(new BigDecimal("20"));
-        listP.add(new BigDecimal("40"));
-        listP.add(new BigDecimal("60"));
-        listP.add(new BigDecimal("80"));
-        listP.add(new BigDecimal("100"));
-        listP.add(new BigDecimal("80"));
-        listP.add(new BigDecimal("60"));
-        listP.add(new BigDecimal("40"));
-        listP.add(new BigDecimal("20"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
-        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("20"));
+//        listP.add(new BigDecimal("40"));
+//        listP.add(new BigDecimal("60"));
+//        listP.add(new BigDecimal("80"));
+//        listP.add(new BigDecimal("100"));
+//        listP.add(new BigDecimal("80"));
+//        listP.add(new BigDecimal("60"));
+//        listP.add(new BigDecimal("40"));
+//        listP.add(new BigDecimal("20"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
+//        listP.add(new BigDecimal("0.0"));
 
 //        getR(plan, );
 //        getQTRR();
 //        CommonUtil.getQT();
 //        CommonUtil.getOQ();
-    }
+//    }
 }

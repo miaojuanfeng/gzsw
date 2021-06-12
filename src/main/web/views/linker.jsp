@@ -35,13 +35,14 @@
         });
     }
 
-    function refreshConfirm(url, title) {
+    function commonConfirm(url, title, call) {
         layer.confirm(title, function(index){
             var loading = layer.load(0);
             layui.$.post(
                 '${pageContext.request.contextPath}' + '/' + url,
                 {},
                 function (data) {
+                    if( typeof call === 'function' ) call();
                     layer.close(index);
                     layer.close(loading);
                 }

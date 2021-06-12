@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.write.UnitLinePointDao">
+<mapper namespace="gz.sw.mapper.write.DischargeDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
-        	count(m.id)
-        from model m
-        left join station s on m.stcd = s.stcd
+        	count(u.id)
+        from unitline u
+        left join station s on u.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
@@ -15,15 +15,18 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and m.name like '%' + #{name} + '%'
+            and u.name like '%' + #{name} + '%'
         </if>
     </select>
     <select id="selectList" resultType="java.util.Map">
-        select m1.id, m1.name, CONVERT(varchar(100), m1.create_time, 20) as createTime, s.stname, t.name as sttype
-        from model m1
-        left join station s on m1.stcd = s.stcd
+        select u1.id, u1.name, u1.lname, u1.lid, CONVERT(varchar(100), u1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from unitline u1
+        left join station s on u1.stcd = s.stcd
         left join sttype t on s.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from model) m2
+        (select TOP ${page*limit} row_number() OVER (order by u.id desc, u.ID desc) n, u.ID
+        from unitline u
+        left join station s on u.stcd = s.stcd
+        left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
             and t.code = #{sttp}
@@ -32,33 +35,29 @@
             and s.stcd = #{stcd}
         </if>
         <if test="name != null and name != ''" >
-            and m1.name like '%' + #{name} + '%'
+            and u.name like '%' + #{name} + '%'
         </if>
-        and m1.id = m2.id
-        and m2.n > ${(page-1)*limit}
-        order by m2.n asc
+        ) u2
+        where 1=1
+        and u1.id = u2.id
+        and u2.n > ${(page-1)*limit}
+        order by u2.n asc
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
-        	id, name, stcd
-        from model
-        where stcd = #{stcd}
-        order by id desc
+        	id, z0, hcoq
+        from discharge
+        where 1=1
+        order by id asc
     </select>
-    <select id="selectAll" resultType="java.util.Map">
-        select
-        	id, name, stcd
-        from model
-        order by id desc
-    </select>
-    <select id="select" resultType="gz.sw.entity.write.UnitLinePoint">
+    <select id="select" resultType="gz.sw.entity.write.UnitLine">
         select m.* from model m
         where m.id = #{id}
     </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.UnitLinePoint" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="gz.sw.entity.write.UnitLine" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
     </insert>
-    <update id="update" parameterType="gz.sw.entity.write.UnitLinePoint">
+    <update id="update" parameterType="gz.sw.entity.write.UnitLine">
         update model
         <set>
             <if test="name != null" > name = #{name},</if>

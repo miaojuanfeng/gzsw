@@ -54,13 +54,13 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>陈济天</cite>
+              <cite>${sessionUser.userName}</cite>
             </a>
             <dl class="layui-nav-child">
-              <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-              <dd><a lay-href="set/user/password.html">修改密码</a></dd>
-              <hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+              <%--<dd><a lay-href="set/user/info.html">基本资料</a></dd>--%>
+              <%--<dd><a lay-href="set/user/password.html">修改密码</a></dd>--%>
+              <%--<hr>--%>
+              <dd style="text-align: center;"><a id="logout" href="javascript:;">退出</a></dd>
             </dl>
           </li>
           <li class="layui-nav-item layui-show-xs-inline-block" style="width: 20px" lay-unselect></li>
@@ -97,6 +97,11 @@
                   <dd data-name="console">
                       <a lay-href="<c:url value="station/list"></c:url>">站点列表</a>
                   </dd>
+              </dl>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="station/unusual"></c:url>">异常雨量</a>
+                </dd>
               </dl>
               <dl class="layui-nav-child">
                 <dd data-name="console">
@@ -195,11 +200,22 @@
   </div>
 
   <script>
-  layui.config({
-    base: base //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use('index');
+    layui.config({
+        base: base //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index', function () {
+        var $ = layui.$
+            ,admin = layui.admin;
+
+        $("#logout").click(function () {
+            commonConfirm("logout", "确认登出吗？", function () {
+                admin.exit(function(){
+                    location.href = "login";
+                });
+            });
+        });
+    });
   </script>
 </body>
 </html>

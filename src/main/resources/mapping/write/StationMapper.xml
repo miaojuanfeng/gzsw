@@ -18,10 +18,53 @@
         </if>
     </select>
 	<select id="selectList" resultType="java.util.Map">
-        select s1.id, s1.stcd, s1.stname, t.name as sttype
+        select s1.id, s1.stcd, s1.stname, s1.lgtd, s1.lttd, s1.dis, t.name as sttype,
+        (select stcd from station where stcd = s1.near_stcd) as nearStcd,
+        (select stname from station where stcd = s1.near_stcd) as nearStname
         from station s1
         left join sttype t on s1.type = t.code,
         (select TOP ${page*limit} row_number() OVER (order by s.id desc, s.ID desc) n, s.ID
+        from station s
+        left join sttype t on s.type = t.code
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s1.stcd like '%' + #{stcd} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and s.stname like '%' + #{name} + '%'
+        </if>
+        ) s2
+        where 1=1
+        and s1.id = s2.id
+        and s2.n > ${(page-1)*limit}
+        order by s2.n asc
+    </select>
+    <select id="selectRainCount" resultType="java.lang.Integer">
+        select
+        count(s.id)
+        from station s
+        left join sttype t on s.type = t.code
+        where 1=1
+        <if test="sttp != null and sttp != ''" >
+            and t.code = #{sttp}
+        </if>
+        <if test="stcd != null and stcd != ''" >
+            and s.stcd like '%' + #{stcd} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and s.stname like '%' + #{name} + '%'
+        </if>
+    </select>
+    <select id="selectRainList" resultType="java.util.Map">
+        select s1.id, s1.stcd, s1.stname, s1.dis, s1.self_p as selfP, s1.near_p as nearP, s1.diff_p as diffP, s1.date_p as dateP, t.name as sttype,
+        (select stcd from station where stcd = s1.near_stcd) as nearStcd,
+        (select stname from station where stcd = s1.near_stcd) as nearStname
+        from station s1
+        left join sttype t on s1.type = t.code,
+        (select TOP ${page*limit} row_number() OVER (order by s.diff_p desc, s.ID desc) n, s.ID
         from station s
         left join sttype t on s.type = t.code
         where 1=1
@@ -47,12 +90,17 @@
         where type = #{type}
         order by stcd asc
     </select>
+    <select id="selectAll" resultType="gz.sw.entity.write.Station">
+        select id,stcd,stname,type,lgtd,lttd,near_stcd as nearStcd,dis
+        from station
+        order by id asc
+    </select>
 	<insert id="insertBatch" parameterType="java.util.List">
 		insert into station
-		(stcd,stname,type)
+		(stcd,stname,type,lgtd,lttd,near_stcd,dis,self_p,near_p,diff_p,date_p)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.stcd},#{item.stname},#{item.type})
+			(#{item.stcd},#{item.stname},#{item.type},#{item.lgtd},#{item.lttd},#{item.nearStcd},#{item.dis},#{item.selfP},#{item.nearP},#{item.diffP},#{item.dateP})
 		</foreach>
 	</insert>
 	<delete id="clear">

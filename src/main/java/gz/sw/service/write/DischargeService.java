@@ -4,7 +4,7 @@ import gz.sw.entity.write.Model;
 
 import java.util.List;
 
-public interface RainRunPointService {
+public interface DischargeService {
     Model select(Integer id);
     int insert(Model model);
     int update(Model model);
@@ -13,5 +13,4 @@ public interface RainRunPointService {
     int selectCount(String sttp, String stcd, String name);
     List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
     List selectListByStcd(String stcd);
-    List selectAll();
 }

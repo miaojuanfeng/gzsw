@@ -6,24 +6,31 @@ import gz.sw.calc.ApiCalc;
 import gz.sw.calc.ComCalc;
 import gz.sw.calc.ExpCalc;
 import gz.sw.calc.XajCalc;
+import gz.sw.common.SessionUser;
+import gz.sw.common.XajParam;
 import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
+import gz.sw.exception.ParamException;
 import gz.sw.service.read.RainfallService;
-import gz.sw.service.read.ZvarlService;
+import gz.sw.service.read.ReadService;
+import gz.sw.service.write.DischargeService;
 import gz.sw.service.write.ModelService;
 import gz.sw.service.write.RainRunService;
 import gz.sw.service.write.UnitLineService;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
 import gz.sw.util.PUtil;
+//import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +38,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("forecast")
+//@Slf4j
 public class ForecastController {
 
 //	@Autowired
@@ -61,7 +69,10 @@ public class ForecastController {
 	private UnitLineService unitLineService;
 
 	@Autowired
-	private ZvarlService zvarlService;
+	private ReadService readService;
+
+	@Autowired
+	private DischargeService dischargeService;
 
 	@GetMapping("home")
 	public String home(ModelMap map) {
@@ -84,14 +95,18 @@ public class ForecastController {
 		return "home/forecast";
 	}
 
-	private JSONObject getRetval(String stcd){
+	private JSONObject getRetval(HttpServletRequest request, String stcd){
         JSONObject retval = new JSONObject();
-        retval.put("timeArr", ComCalc.forecast.getListTime(stcd));
-        retval.put("P", ComCalc.forecast.getListP(stcd));
-        retval.put("R", ComCalc.forecast.getListR(stcd));
-        retval.put("QTRR", ComCalc.forecast.getListQTRR(stcd));
-        retval.put("QT", ComCalc.forecast.getListQT(stcd));
-        retval.put("rainfallMax", ComCalc.forecast.getListMaxP(stcd));
+        JSONObject data = new JSONObject();
+		SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
+		data.put("timeArr", sessionUser.getForecast().getListTime(stcd));
+		data.put("P", sessionUser.getForecast().getListP(stcd));
+		data.put("R", sessionUser.getForecast().getListR(stcd));
+		data.put("QTRR", sessionUser.getForecast().getListQTRR(stcd));
+		data.put("QT", sessionUser.getForecast().getListQT(stcd));
+		data.put("rainfallMax", sessionUser.getForecast().getListMaxP(stcd));
+		retval.put("code", 200);
+		retval.put("data", data);
         return retval;
     }
 
@@ -102,9 +117,10 @@ public class ForecastController {
     @PostMapping("station")
     @ResponseBody
     public JSONObject station(
+    		HttpServletRequest request,
             @RequestParam("stcd") String stcd
     ) {
-        return getRetval(stcd);
+        return getRetval(request, stcd);
     }
 
 	/**
@@ -114,6 +130,7 @@ public class ForecastController {
 	@PostMapping("compute")
 	@ResponseBody
 	public JSONObject compute(
+			HttpServletRequest request,
 			@RequestParam("type") Integer type,
 			@RequestParam("stcd") String stcd,
 			@RequestParam("forecastTime") String forecastTime,
@@ -123,8 +140,15 @@ public class ForecastController {
 			@RequestParam("data") String data
 	) {
 		JSONArray model = JSONArray.parseArray(data);
-		List<BigDecimal> result = modelStation(forecastTime, affectTime, day, unit, model);
-		return getRetval(stcd);
+		try {
+			modelStation(request, forecastTime, affectTime, day, unit, model);
+		} catch (ParamException e) {
+			JSONObject retval = new JSONObject();
+			retval.put("code", 500);
+			retval.put("msg", e.getMessage());
+			return retval;
+		}
+		return getRetval(request, stcd);
 
 
 //			/**
@@ -445,7 +469,7 @@ public class ForecastController {
 		 * 测试代码开始
 		 */
 //		listRainfall.clear();
-//		listRainfall = PUtil.getP2();
+//		listRainfall = PUtil.getP3();
         /**
          * 测试代码结束
          */
@@ -456,7 +480,7 @@ public class ForecastController {
 		return retval;
 	}
 
-	private List<BigDecimal> modelStation(String forecastTime, String affectTime, Integer day, Integer unit, JSONArray model){
+	private List<BigDecimal> modelStation(HttpServletRequest request, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray model) throws ParamException {
 		List<BigDecimal> retval = new ArrayList<>();
 	    List<List<BigDecimal>> result = new ArrayList<>();
 	    for( int i = 0; i < model.size(); i++ ){
@@ -467,7 +491,7 @@ public class ForecastController {
 			 * 子站输出数据
 			 */
 			if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
-                childList = modelStation(forecastTime, affectTime, day, unit, m.getJSONArray("children"));
+                childList = modelStation(request, forecastTime, affectTime, day, unit, m.getJSONArray("children"));
 			}
 			/**
 			 * 子站数据和本站数据做运算
@@ -479,18 +503,20 @@ public class ForecastController {
 			List<BigDecimal> listQTRR = new ArrayList<>();
 			Integer rainfallMax = 0;
 
-			System.out.println("calc: " + m.getString("stname"));
-			System.out.println("start: " + System.currentTimeMillis());
+			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
+
+//			log.info("calc: " + m.getString("stname"));
+//			log.info("start: " + System.currentTimeMillis());
 			Map rainfallMap = getP(m.getString("stcd"), forecastTime, affectTime, day, unit);
-			System.out.println("enddd: " + System.currentTimeMillis());
+//			log.info("enddd: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");
 			listTime = (List<String>)rainfallMap.get("timeList");
 			rainfallMax = (Integer)rainfallMap.get("rainfallMax");
 
-            ComCalc.forecast.setListP(stcd, listP);
-			ComCalc.forecast.setListTime(stcd, listTime);
-			ComCalc.forecast.setListMaxP(stcd, rainfallMax);
+			sessionUser.getForecast().setListP(stcd, listP);
+			sessionUser.getForecast().setListTime(stcd, listTime);
+			sessionUser.getForecast().setListMaxP(stcd, rainfallMax);
 
             /**
              * 累加子站降雨量
@@ -499,7 +525,7 @@ public class ForecastController {
                 for( int j = 0; j < m.getJSONArray("children").size(); j++ ){
                     JSONObject c = m.getJSONArray("children").getJSONObject(j);
                     String cstcd = m.getString("stcd");
-                    List<BigDecimal> childP = ComCalc.forecast.getListP(cstcd);
+                    List<BigDecimal> childP = sessionUser.getForecast().getListP(cstcd);
                     listP = addList(listP, childP);
                 }
             }
@@ -511,17 +537,22 @@ public class ForecastController {
 
 			Integer planModelCl = plan.getInteger("MODEL_CL");
 			Integer planModelHl = plan.getInteger("MODEL_HL");
+
+			XajParam xajParam = new XajParam();
 			/**
 			 * 产流
 			 */
 			if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ) {
 				if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ){
-					listQTR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_QTR);
+					listQTR = XajCalc.getR(plan, listP, xajParam, CommonConst.RETURN_TYPE_QTR);
 				}else{
-					listR = XajCalc.getR(plan, listP, CommonConst.RETURN_TYPE_R);
+					listR = XajCalc.getR(plan, listP, xajParam, CommonConst.RETURN_TYPE_R);
 				}
 			}else if( ModelTypeEnum.EXP_CL.getId().equals(planModelCl) ){
 				List<Map> listRainRun = rainRunService.selectRainRunPoint(plan.getInteger("RAINRUN"));
+				if( listRainRun.isEmpty() ){
+					throw new ParamException("降径关系线为空(RAINRUN: PA,R,D)");
+				}
 				List<BigDecimal> Pa0 = new ArrayList<>();
 				List<List<BigDecimal>> R0 = new ArrayList<>();
 				List<List<BigDecimal>> P0 = new ArrayList<>();
@@ -548,27 +579,30 @@ public class ForecastController {
 				listR = ApiCalc.getR(plan, listP);
 			}
 
-			ComCalc.forecast.setListR(stcd, listR);
-			ComCalc.forecast.setListQTR(stcd, listQTR);
+			sessionUser.getForecast().setListR(stcd, listR);
+			sessionUser.getForecast().setListQTR(stcd, listQTR);
 
 			/**
 			 * 汇流
 			 */
 			if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ) {
 				if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ){
-					listQTRR = XajCalc.getQTRR(plan, listQTR);
+					listQTRR = XajCalc.getQTRR(plan, listP, listQTR, xajParam);
 				}else{
-					listQTRR = XajCalc.getQTRR(plan, listR);
+					listQTRR = XajCalc.getQTRR(plan, listP, listR, xajParam);
 				}
 			}else if( ModelTypeEnum.EXP_HL.getId().equals(planModelHl) ){
 				List listUnitLine = unitLineService.selectLinePoint(plan.getInteger("UNITLINE"));
+				if( listUnitLine.isEmpty() ){
+					throw new ParamException("经验单位线为空(UNITLINE: F)");
+				}
 				ExpCalc.init(listUnitLine);
 				listQTRR = ExpCalc.getQTRR(plan, listR);
 			}else if( ModelTypeEnum.API_HL.getId().equals(planModelHl) ) {
 				listQTRR = ApiCalc.getQTRR(plan, listR);
 			}
 
-            ComCalc.forecast.setListQTRR(stcd, listQTRR);
+			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
 
             /**
              * 合并子站QTRR
@@ -583,13 +617,40 @@ public class ForecastController {
              */
             List<BigDecimal> listQT = new ArrayList<>();
             if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp")) ){
-                List<Map> listZvarl = zvarlService.selectList(stcd, "2013-04-02 08:00:00");
-            	List<BigDecimal> Z_CUR = new ArrayList<>();
+                SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+            	SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMdd");
+            	List<Map> listZvarl = readService.selectZvarlList(stcd, forecastTime);
+            	Date fTime = DateUtil.str2date(forecastTime, "yyyy-MM-dd");
+            	Map initData = readService.selectInitData(stcd, forecastTime, yearFormat.format(fTime), monthDayFormat.format(fTime));
+                List<Map> listDischarge = dischargeService.selectListByStcd(stcd);
+                List<BigDecimal> Z_CUR = new ArrayList<>();
             	List<BigDecimal> V_CUR = new ArrayList<>();
+				List<BigDecimal> Z0 = new ArrayList<>();
+				List<BigDecimal> HCOQ = new ArrayList<>();
+				if( initData.get("rz") == null ){
+					throw new ParamException("起调水位参数为空(ST_RSVR_R: RZ)");
+				}
+				if( initData.get("oq") == null ){
+					throw new ParamException("初始出库流量参数为空(ST_RSVR_R: OTQ)");
+				}
+				if( initData.get("lim") == null ){
+					throw new ParamException("汛限水位参数为空(ST_RSVRFSR_B: FSLTDZ)");
+				}
             	for(Map zvarl : listZvarl){
             		Z_CUR.add(new BigDecimal(String.valueOf(zvarl.get("rz"))));
 					V_CUR.add(new BigDecimal(String.valueOf(zvarl.get("w"))));
 				}
+				for(Map discharge : listDischarge){
+					Z0.add(new BigDecimal(String.valueOf(discharge.get("z0"))));
+					HCOQ.add(new BigDecimal(String.valueOf(discharge.get("hcoq"))));
+				}
+				BigDecimal RZ = new BigDecimal(String.valueOf(initData.get("rz")));
+				BigDecimal OTQ = new BigDecimal(String.valueOf(initData.get("oq")));
+				BigDecimal FSLTDZ = new BigDecimal(String.valueOf(initData.get("lim")));
+//				BigDecimal RZ = new BigDecimal(240);
+//				BigDecimal OTQ = new BigDecimal(20);
+//				BigDecimal FSLTDZ = new BigDecimal(242);
+				ComCalc.init(Z_CUR, V_CUR, Z0, HCOQ, RZ, OTQ, FSLTDZ);
                 List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
 				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
             }else {
@@ -599,7 +660,7 @@ public class ForecastController {
             /**
              *
              */
-			ComCalc.forecast.setListQT(stcd, listQT);
+			sessionUser.getForecast().setListQT(stcd, listQT);
 		}
 		/**
 		 * 返回本站结果
@@ -618,7 +679,7 @@ public class ForecastController {
 	private List<BigDecimal> addList(List<BigDecimal> list1, List<BigDecimal> list2){
 	    List<BigDecimal> retval = new ArrayList<>();
 	    if( list1.size() != list2.size() ) {
-			System.out.println("list1.size() != list2.size() : " + list1.size() + ", " + list2.size());
+//			log.info("list1.size() != list2.size() : " + list1.size() + ", " + list2.size());
 	    }
 	    int size = list1.size() < list2.size() ? list1.size() : list2.size();
 		for (int i = 0; i < size; i++) {

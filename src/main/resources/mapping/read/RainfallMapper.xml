@@ -38,4 +38,16 @@
         group by tm
         order by tm asc
     </select>
+
+    <select id="selectNearStationRainfall" resultType="java.util.Map">
+        select
+          stcd as stcd,
+          drp as p
+        from st_pptn_r s
+        where s.tm = #{date}
+        and s.stcd in
+        <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
+            #{stcd}
+        </foreach>
+    </select>
 </mapper>

@@ -1,0 +1,9 @@
+server:
+  port: 10011
+  servlet:
+    context-path: /XAJ
+
+#spring 配置文件
+spring:
+  profiles:
+    active: dev

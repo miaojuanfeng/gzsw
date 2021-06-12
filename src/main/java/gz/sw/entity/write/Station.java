@@ -1,77 +1,112 @@
 package gz.sw.entity.write;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 public class Station {
+	private Integer id;
 	private String stcd;
 	private String type;
 	private String stname;
-	private String dis;
-	private String wea;
-	private String fileCd;
-	private Float jbLine;
-	private Float jjLine;
-	private String userStcd;
+//	private String wea;
+//	private String fileCd;
+//	private Float jbLine;
+//	private Float jjLine;
+//	private String userStcd;
+	private BigDecimal lgtd;
+	private BigDecimal lttd;
+	private BigDecimal dis;
+	private String nearStcd;
+	private BigDecimal selfP;
+	private BigDecimal nearP;
+	private String diffP;
+	private String dateP;
+
 	public String getStcd() {
 		return stcd;
 	}
+
 	public void setStcd(String stcd) {
 		this.stcd = stcd;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	public String getStname() {
 		return stname;
 	}
+
 	public void setStname(String stname) {
 		this.stname = stname;
 	}
-	public String getDis() {
+
+	public BigDecimal getLgtd() {
+		return lgtd;
+	}
+
+	public void setLgtd(BigDecimal lgtd) {
+		this.lgtd = lgtd;
+	}
+
+	public BigDecimal getLttd() {
+		return lttd;
+	}
+
+	public void setLttd(BigDecimal lttd) {
+		this.lttd = lttd;
+	}
+
+	public BigDecimal getDis() {
 		return dis;
 	}
-	public void setDis(String dis) {
+
+	public void setDis(BigDecimal dis) {
 		this.dis = dis;
 	}
 
-	public String getWea() {
-		return wea;
+	public String getNearStcd() {
+		return nearStcd;
 	}
 
-	public void setWea(String wea) {
-		this.wea = wea;
+	public void setNearStcd(String nearStcd) {
+		this.nearStcd = nearStcd;
 	}
 
-	public String getFileCd() {
-		return fileCd;
+	public BigDecimal getSelfP() {
+		return selfP;
 	}
 
-	public void setFileCd(String fileCd) {
-		this.fileCd = fileCd;
+	public void setSelfP(BigDecimal selfP) {
+		this.selfP = selfP;
 	}
 
-	public Float getJbLine() {
-		return jbLine;
+	public BigDecimal getNearP() {
+		return nearP;
 	}
 
-	public void setJbLine(Float jbLine) {
-		this.jbLine = jbLine;
+	public void setNearP(BigDecimal nearP) {
+		this.nearP = nearP;
 	}
 
-	public Float getJjLine() {
-		return jjLine;
+	public String getDiffP() {
+		return diffP;
 	}
 
-	public void setJjLine(Float jjLine) {
-		this.jjLine = jjLine;
+	public void setDiffP(String diffP) {
+		this.diffP = diffP;
 	}
 
-	public String getUserStcd() {
-		return userStcd;
+	public String getDateP() {
+		return dateP;
 	}
 
-	public void setUserStcd(String userStcd) {
-		this.userStcd = userStcd;
+	public void setDateP(String dateP) {
+		this.dateP = dateP;
 	}
 }

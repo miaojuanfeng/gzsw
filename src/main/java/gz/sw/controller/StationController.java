@@ -1,17 +1,15 @@
 package gz.sw.controller;
 
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.read.River;
-import gz.sw.entity.read.Stbprp;
 import gz.sw.entity.write.Station;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.RiverService;
-import gz.sw.service.read.StbprpService;
+import gz.sw.service.read.ReadService;
 import gz.sw.service.write.StationService;
 import gz.sw.util.NumberUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ public class StationController {
 	private StationService stationService;
 
 	@Autowired
-	private StbprpService stbprpService;
+	private ReadService readService;
 
 	@Autowired
 	private RainfallService rainfallService;
@@ -73,33 +71,137 @@ public class StationController {
 		return stationService.selectListByType(sttp);
 	}
 
+	@GetMapping("unusual")
+	public String unusual(ModelMap map) {
+		map.put("sttps", StationTypeEnum.getList());
+		return "station/unusual";
+	}
+
+	@PostMapping("unusual")
+	@ResponseBody
+	public Map unusual(Integer page, Integer limit, String sttp, String stcd, String name) {
+		Map retval = new HashMap();
+		retval.put("code", 0);
+		retval.put("count", stationService.selectRainCount(sttp, stcd, name));
+		retval.put("data", stationService.selectRainList(page, limit, sttp, stcd, name));
+		return retval;
+	}
+
 	@PostMapping("refresh")
 	@ResponseBody
 	@Transactional
 	public Map refresh() {
-		Map retval = new HashMap();
-		List<Stbprp> stbprpList = stbprpService.selectList();
-		if( stbprpList.size() > 0 ){
-			List<Station> stationList = new ArrayList<>();
-			stationService.clear();
-			stationService.dbcc();
-			for(Stbprp stbprp : stbprpList){
-				Station station = new Station();
-				station.setStcd(stbprp.getStcd());
-				station.setStname(stbprp.getStnm());
-				station.setType(stbprp.getSttp());
-				stationList.add(station);
-				if( stationList.size() > 500 ){
+		synchronized (CommonConst.stationLock) {
+			Map retval = new HashMap();
+			List<Map> stbprpList = readService.selectStbprpList();
+			if (stbprpList.size() > 0) {
+				List<Station> stationList = new ArrayList<>();
+				stationService.clear();
+				stationService.dbcc();
+				for (Map stbprp : stbprpList) {
+					Station station = new Station();
+					station.setStcd(String.valueOf(stbprp.get("STCD")));
+					station.setStname(String.valueOf(stbprp.get("STNM")));
+					station.setType(String.valueOf(stbprp.get("STTP")));
+					if (stbprp.get("LGTD") != null) {
+						station.setLgtd(new BigDecimal(String.valueOf(stbprp.get("LGTD"))));
+					}
+					if (stbprp.get("LTTD") != null) {
+						station.setLttd(new BigDecimal(String.valueOf(stbprp.get("LTTD"))));
+					}
+					stationList.add(station);
+					if (stationList.size() > 100) {
+						stationService.insertBatch(stationList);
+						stationList.clear();
+					}
+				}
+				if (stationList.size() > 0) {
 					stationService.insertBatch(stationList);
 					stationList.clear();
 				}
 			}
-			if( stationList.size() > 0 ){
-				stationService.insertBatch(stationList);
-				stationList.clear();
-			}
+			return retval;
 		}
-		return retval;
+	}
+
+	@PostMapping("adsorb")
+	@ResponseBody
+	@Transactional
+	public Map adsorb() {
+		synchronized (CommonConst.stationLock) {
+			Map retval = new HashMap();
+			List<Station> stations = stationService.selectAll();
+			if (stations.size() > 0) {
+				stationService.clear();
+				stationService.dbcc();
+				for (Station s1 : stations) {
+					BigDecimal lgtd1 = s1.getLgtd();
+					BigDecimal lttd1 = s1.getLttd();
+					if (lgtd1 == null || lttd1 == null ||
+							NumberUtil.le(lgtd1, NumberConst.ZERO) ||
+							NumberUtil.le(lttd1, NumberConst.ZERO)) {
+						continue;
+					}
+					for (Station s2 : stations) {
+						BigDecimal lgtd2 = s2.getLgtd();
+						BigDecimal lttd2 = s2.getLttd();
+						if (s1.getStcd().equals(s2.getStcd()) ||
+								lgtd2 == null || lttd2 == null ||
+								NumberUtil.le(lgtd2, NumberConst.ZERO) ||
+								NumberUtil.le(lttd2, NumberConst.ZERO)) {
+							continue;
+						}
+						BigDecimal dis = getDistance(lgtd1.doubleValue(), lttd1.doubleValue(), lgtd2.doubleValue(), lttd2.doubleValue());
+						if (s1.getDis() == null || NumberUtil.gt(s1.getDis(), dis)) {
+							s1.setDis(dis);
+							s1.setNearStcd(s2.getStcd());
+						}
+						if (s2.getDis() == null || NumberUtil.gt(s2.getDis(), dis)) {
+							s2.setDis(dis);
+							s2.setNearStcd(s1.getStcd());
+						}
+						//					station.setStcd(String.valueOf(stbprp.get("STCD")));
+						//					station.setStname(String.valueOf(stbprp.get("STNM")));
+						//					station.setType(String.valueOf(stbprp.get("STTP")));
+						//					if (stbprp.get("LGTD") != null) {
+						//						station.setLgtd(new BigDecimal(String.valueOf(stbprp.get("LGTD"))));
+						//					}
+						//					if (stbprp.get("LTTD") != null) {
+						//						station.setLttd(new BigDecimal(String.valueOf(stbprp.get("LTTD"))));
+						//					}
+						//					stationList.add(station);
+						//					if (stationList.size() > 100) {
+						//						stationService.insertBatch(stationList);
+						//						stationList.clear();
+						//					}
+					}
+				}
+				List<Station> stationList = new ArrayList<>();
+				for (Station s : stations) {
+					stationList.add(s);
+					if (stationList.size() > 100) {
+						stationService.insertBatch(stationList);
+						stationList.clear();
+					}
+				}
+				if (stationList.size() > 0) {
+					stationService.insertBatch(stationList);
+					stationList.clear();
+				}
+			}
+			return retval;
+		}
+	}
+
+	private BigDecimal getDistance(double lon1, double lat1, double lon2, double lat2) {
+		double EARTH_RADIUS = 6378137;
+		double radLat1 = lat1 * Math.PI / 180.0;
+		double radLat2 = lat2 * Math.PI / 180.0;
+		double a = radLat1 - radLat2;
+		double b = (lon1 * Math.PI / 180.0) - ( lon2 * Math.PI / 180.0 );
+		double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b/2), 2)));
+		s = s * EARTH_RADIUS / 1000;
+		return new BigDecimal(s).setScale(3, NumberConst.MODE);
 	}
 
 	@PostMapping("chart1")

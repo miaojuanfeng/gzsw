@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RainfallServiceImpl implements RainfallService {
@@ -27,5 +28,10 @@ public class RainfallServiceImpl implements RainfallService {
     @Override
     public List<Rainfall> selectRainfallRange(List<String> list, String forecastTime, String affectTime) {
         return rainfallDao.selectRainfallRange(list, forecastTime, affectTime);
+    }
+
+    @Override
+    public List<Map> selectNearStationRainfall(List list, String date) {
+        return rainfallDao.selectNearStationRainfall(list, date);
     }
 }

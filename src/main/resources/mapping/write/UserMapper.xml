@@ -4,26 +4,31 @@
 	<select id="selectCount" resultType="java.lang.Integer">
         select
         	count(u.id)
-        from user u
+        from [user] u
         where 1=1
     </select>
 	<select id="selectList" resultType="java.util.Map">
         select u1.id, u1.user_phone, u1.user_name, u1.create_time
-        from user u1
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from user) u2
+        from [user] u1
+        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from [user]) u2
         where 1=1
         and u1.id = u2.id
         and u2.n > ${(page-1)*limit}
         order by u2.n asc
     </select>
+    <select id="selectByPhone" resultType="gz.sw.entity.write.User">
+        select u.*
+        from [user] u
+        where u.phone = #{phone}
+    </select>
 	<insert id="insert" parameterType="gz.sw.entity.write.User">
-		insert into user
+		insert into [user]
 		(user_phone,user_name,user_pwd,create_time,update_time)
 		values
 		(#{item.userPhone},#{item.userName},#{item.userPwd},#{item.createTime},#{item.updateTime})
 	</insert>
     <update id="update" parameterType="gz.sw.entity.write.User">
-        update user
+        update [user]
         <set>
             <if test="user_name != null" > user_name = #{userName},</if>
             <if test="user_pwd != null" > user_pwd = #{userPwd},</if>

@@ -151,68 +151,50 @@
                 <tbody>
                 <tr>
                   <td>WU0</td>
-                  <td class="input-tr"><input type="text" name="WU0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WU0}"></td>
+                  <td class="input-tr"><input type="text" name="WU0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WU0}">${plan.WU0}</c:when><c:otherwise>10</c:otherwise></c:choose>"></td>
                   <td>WL0</td>
-                  <td class="input-tr"><input type="text" name="WL0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WL0}"></td>
+                  <td class="input-tr"><input type="text" name="WL0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WL0}">${plan.WL0}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
                   <td>WD0</td>
-                  <td class="input-tr"><input type="text" name="WD0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WD0}"></td>
+                  <td class="input-tr"><input type="text" name="WD0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WD0}">${plan.WD0}</c:when><c:otherwise>5</c:otherwise></c:choose>"></td>
                   <td>WUM</td>
-                  <td class="input-tr"><input type="text" name="WUM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WUM}"></td>
+                  <td class="input-tr"><input type="text" name="WUM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WUM}">${plan.WUM}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
                 </tr>
                 <tr>
                   <td>WLM</td>
-                  <td class="input-tr"><input type="text" name="WLM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WLM}"></td>
+                  <td class="input-tr"><input type="text" name="WLM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WLM}">${plan.WLM}</c:when><c:otherwise>80</c:otherwise></c:choose>"></td>
                   <td>WDM</td>
-                  <td class="input-tr"><input type="text" name="WDM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.WDM}"></td>
+                  <td class="input-tr"><input type="text" name="WDM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.WDM}">${plan.WDM}</c:when><c:otherwise>10</c:otherwise></c:choose>"></td>
                   <td>B</td>
-                  <td class="input-tr"><input type="text" name="B" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.B}"></td>
+                  <td class="input-tr"><input type="text" name="B" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.B}">${plan.B}</c:when><c:otherwise>0.2</c:otherwise></c:choose>"></td>
                   <td>K</td>
-                  <td class="input-tr"><input type="text" name="K" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.K}"></td>
+                  <td class="input-tr"><input type="text" name="K" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.K}">${plan.K}</c:when><c:otherwise>0.98</c:otherwise></c:choose>"></td>
                 </tr>
                 <tr>
                   <td>C</td>
-                  <td class="input-tr"><input type="text" name="C" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.C}"></td>
+                  <td class="input-tr"><input type="text" name="C" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.C}">${plan.C}</c:when><c:otherwise>0.2</c:otherwise></c:choose>"></td>
                   <td>SM</td>
-                  <td class="input-tr"><input type="text" name="SM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.SM}"></td>
+                  <td class="input-tr"><input type="text" name="SM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.SM}">${plan.SM}</c:when><c:otherwise>20</c:otherwise></c:choose>"></td>
                   <td>EX</td>
-                  <td class="input-tr"><input type="text" name="EX" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.EX}"></td>
+                  <td class="input-tr"><input type="text" name="EX" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.EX}">${plan.EX}</c:when><c:otherwise>1.5</c:otherwise></c:choose>"></td>
                   <td>KSS</td>
-                  <td class="input-tr"><input type="text" name="KSS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KSS}"></td>
+                  <td class="input-tr"><input type="text" name="KSS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.KSS}">${plan.KSS}</c:when><c:otherwise>0.15</c:otherwise></c:choose>"></td>
                 </tr>
                 <tr>
                   <td>KG</td>
-                  <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KG}"></td>
+                  <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.KG}">${plan.KG}</c:when><c:otherwise>0.55</c:otherwise></c:choose>"></td>
                   <td>IM</td>
-                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
+                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.IM}">${plan.IM}</c:when><c:otherwise>0.02</c:otherwise></c:choose>"></td>
                   <td>T</td>
-                  <td class="input-tr"><input type="text" name="T" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.T}"></td>
-                  <td>F</td>
-                  <td class="input-tr"><input type="text" name="F" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.F}"></td>
-                </tr>
-                <tr>
+                  <td class="input-tr"><input type="text" name="T" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.T}">${plan.T}</c:when><c:otherwise>1</c:otherwise></c:choose>"></td>
                   <td>S0</td>
-                  <td class="input-tr"><input type="text" name="S0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.S0}"></td>
+                  <td class="input-tr"><input type="text" name="S0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.S0}">${plan.S0}</c:when><c:otherwise>3</c:otherwise></c:choose>"></td>
+                </tr>
+                <tr>
                   <td>FR0</td>
-                  <td class="input-tr"><input type="text" name="FR0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.FR0}"></td>
-                  <td>CS</td>
-                  <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
-                  <td>CI</td>
-                  <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
-                </tr>
-                <tr>
-                  <td>CG</td>
-                  <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
-                  <td>QRS0</td>
-                  <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
-                  <td>QRSS0</td>
-                  <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
-                  <td>QRG0</td>
-                  <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
-                </tr>
-                <tr>
+                  <td class="input-tr"><input type="text" name="FR0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.FR0}">${plan.FR0}</c:when><c:otherwise>0.06</c:otherwise></c:choose>"></td>
                   <td>E</td>
-                  <td class="input-tr"><input type="text" name="E" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.E}"></td>
-                  <td colspan="6"></td>
+                  <td class="input-tr"><input type="text" name="E" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.E}">${plan.E}</c:when><c:otherwise>0.16</c:otherwise></c:choose>"></td>
+                  <td colspan="4"></td>
                 </tr>
                 </tbody>
               </table>
@@ -253,11 +235,11 @@
                 <tbody>
                 <tr>
                   <td>KR</td>
-                  <td class="input-tr"><input type="text" name="KR" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KR}"></td>
+                  <td class="input-tr"><input type="text" name="KR" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.KR}">${plan.KR}</c:when><c:otherwise>0.65</c:otherwise></c:choose>"></td>
                   <td>IM</td>
-                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
+                  <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.IM}">${plan.IM}</c:when><c:otherwise>60</c:otherwise></c:choose>"></td>
                   <td>IMM</td>
-                  <td class="input-tr"><input type="text" name="IMM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IMM}"></td>
+                  <td class="input-tr"><input type="text" name="IMM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.IMM}">${plan.IMM}</c:when><c:otherwise>270</c:otherwise></c:choose>"></td>
                   <td>PA</td>
                   <td class="input-tr"><input type="text" name="PA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.PA}">${plan.PA}</c:when><c:otherwise>30</c:otherwise></c:choose>"></td>
                 </tr>
@@ -294,9 +276,24 @@
                       </colgroup>
                       <tbody>
                       <tr>
+                          <td>F</td>
+                          <td class="input-tr"><input type="text" name="F" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.F}">${plan.F}</c:when><c:otherwise>2373</c:otherwise></c:choose>"></td>
+                          <td>CS</td>
+                          <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.CS}">${plan.CS}</c:when><c:otherwise>0.9</c:otherwise></c:choose>"></td>
+                          <td>CI</td>
+                          <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.CI}">${plan.CI}</c:when><c:otherwise>0.8</c:otherwise></c:choose>"></td>
+                          <td>CG</td>
+                          <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.CG}">${plan.CG}</c:when><c:otherwise>0.99</c:otherwise></c:choose>"></td>
+                      </tr>
+                      <tr>
+                          <td>QRS0</td>
+                          <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.QRS0}">${plan.QRS0}</c:when><c:otherwise>1</c:otherwise></c:choose>"></td>
+                          <td>QRSS0</td>
+                          <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.QRSS0}">${plan.QRSS0}</c:when><c:otherwise>1</c:otherwise></c:choose>"></td>
+                          <td>QRG0</td>
+                          <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.QRG0}">${plan.QRG0}</c:when><c:otherwise>1</c:otherwise></c:choose>"></td>
                           <td>L</td>
-                          <td class="input-tr"><input type="text" name="L" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.L}"></td>
-                          <td colspan="6"></td>
+                          <td class="input-tr"><input type="text" name="L" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.L}">${plan.L}</c:when><c:otherwise>1</c:otherwise></c:choose>"></td>
                       </tr>
                       </tbody>
                   </table>
@@ -328,17 +325,17 @@
                       <tbody>
                       <tr>
                           <td>NA</td>
-                          <td class="input-tr"><input type="text" name="NA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.NA}"></td>
+                          <td class="input-tr"><input type="text" name="NA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.NA}">${plan.NA}</c:when><c:otherwise>4</c:otherwise></c:choose>"></td>
                           <td>NU</td>
-                          <td class="input-tr"><input type="text" name="NU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.NU}"></td>
+                          <td class="input-tr"><input type="text" name="NU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.NU}">${plan.NU}</c:when><c:otherwise>150</c:otherwise></c:choose>"></td>
                           <td>KG</td>
-                          <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KG}"></td>
+                          <td class="input-tr"><input type="text" name="KG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.KG}">${plan.KG}</c:when><c:otherwise>120</c:otherwise></c:choose>"></td>
                           <td>KU</td>
-                          <td class="input-tr"><input type="text" name="KU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.KU}"></td>
+                          <td class="input-tr"><input type="text" name="KU" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.KU}">${plan.KU}</c:when><c:otherwise>2.7</c:otherwise></c:choose>"></td>
                       </tr>
                       <tr>
                           <td>AREA</td>
-                          <td class="input-tr"><input type="text" name="AREA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.AREA}"></td>
+                          <td class="input-tr"><input type="text" name="AREA" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="<c:choose><c:when test="${not empty plan.AREA}">${plan.AREA}</c:when><c:otherwise>3338</c:otherwise></c:choose>"></td>
                           <td colspan="6"></td>
                       </tr>
                       </tbody>
@@ -402,6 +399,14 @@
     });
 
     form.on('select(modelCl)', function(data){
+        if(!checkModel()){
+            $("select[name=modelCl]").val('');
+            $("#rainRun").hide();
+            $(".model_param_cl").hide();
+            $("#model_cl_").show();
+            form.render('select');
+            return;
+        }
         if( data.value == 3 ){
             $("select[name=rainRun]").html('<option value="">请选择</option>');
             form.render('select');
@@ -431,6 +436,14 @@
     });
 
     form.on('select(modelHl)', function(data){
+        if(!checkModel()){
+            $("select[name=modelHl]").val('');
+            $("#unitLine").hide();
+            $(".model_param_hl").hide();
+            $("#model_hl_").show();
+            form.render('select');
+            return;
+        }
         if( data.value == 4 ){
             $("select[name=unitLine]").html('<option value="">请选择</option>');
             form.render('select');
@@ -458,6 +471,14 @@
         $(".model_param_hl").hide();
         $("#model_hl_" + data.value).show();
     });
+
+    function checkModel() {
+        if( $("select[name=modelCl]").val() != 1 && $("select[name=modelHl]").val() == 2 ){
+            layer.msg('滞后演算法只可与蓄满产流法组合计算');
+            return false;
+        }
+        return true;
+    }
 
     form.on('submit(save)', function(data){
         if( $("input[name=name]").val() == "" ){

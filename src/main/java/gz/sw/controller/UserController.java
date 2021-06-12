@@ -1,21 +1,16 @@
 package gz.sw.controller;
 
 
-import gz.sw.entity.read.Stbprp;
-import gz.sw.entity.write.Station;
-import gz.sw.service.read.StbprpService;
+import gz.sw.service.read.ReadService;
 import gz.sw.service.write.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -26,7 +21,7 @@ public class UserController {
 	private StationService stationService;
 
 	@Autowired
-	private StbprpService stbprpService;
+	private ReadService readService;
 
 //	@GetMapping("{stcd}")
 //	public String station(ModelMap map, @PathVariable("stcd") String stcd) {

@@ -1,6 +1,7 @@
 package gz.sw.calc;
 
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.XajParam;
 import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Plan;
@@ -23,14 +24,14 @@ public class XajCalc {
      * 产流
      * @return
      */
-    public static List<BigDecimal> getR(JSONObject plan, List<BigDecimal> listP, Integer returnType){
+    public static List<BigDecimal> getR(JSONObject plan, List<BigDecimal> listP, XajParam xajParam, Integer returnType){
 //        List<BigDecimal> listR = new ArrayList<>();
         /**
          * 中间数据
          */
         List<BigDecimal> listPE = new ArrayList<>();
         List<BigDecimal> listR = new ArrayList<>();
-        List<BigDecimal> listRd = new ArrayList<>();
+//        List<BigDecimal> listRd = new ArrayList<>();
         List<BigDecimal> listA = new ArrayList<>();
         List<BigDecimal> listWU = new ArrayList<>();
         List<BigDecimal> listWL = new ArrayList<>();
@@ -40,10 +41,10 @@ public class XajCalc {
         List<BigDecimal> listED = new ArrayList<>();
         List<BigDecimal> listW = new ArrayList<>();
         List<BigDecimal> listES = new ArrayList<>();
-        List<BigDecimal> listRs = new ArrayList<>();
+//        List<BigDecimal> listRs = new ArrayList<>();
         List<BigDecimal> listFR = new ArrayList<>();
-        List<BigDecimal> listRss = new ArrayList<>();
-        List<BigDecimal> listRg = new ArrayList<>();
+//        List<BigDecimal> listRss = new ArrayList<>();
+//        List<BigDecimal> listRg = new ArrayList<>();
         List<BigDecimal> listS = new ArrayList<>();
         List<BigDecimal> listN = new ArrayList<>();
         List<BigDecimal> listQ = new ArrayList<>();
@@ -53,14 +54,13 @@ public class XajCalc {
         List<BigDecimal> listRSD = new ArrayList<>();
         List<BigDecimal> listRSSD = new ArrayList<>();
         List<BigDecimal> listRGD = new ArrayList<>();
-        List<BigDecimal> listQRS = new ArrayList<>();
-        List<BigDecimal> listQRSS = new ArrayList<>();
-        List<BigDecimal> listQRG = new ArrayList<>();
+//        List<BigDecimal> listQRS = new ArrayList<>();
+//        List<BigDecimal> listQRSS = new ArrayList<>();
+//        List<BigDecimal> listQRG = new ArrayList<>();
         List<BigDecimal> listQTR = new ArrayList<>();
         for (int i = 0; i < listP.size(); i++){
             listPE.add(NumberConst.ZERO);
             listR.add(NumberConst.ZERO);
-            listRd.add(NumberConst.ZERO);
             listA.add(NumberConst.ZERO);
             listWU.add(NumberConst.ZERO);
             listWL.add(NumberConst.ZERO);
@@ -70,10 +70,7 @@ public class XajCalc {
             listED.add(NumberConst.ZERO);
             listW.add(NumberConst.ZERO);
             listES.add(NumberConst.ZERO);
-            listRs.add(NumberConst.ZERO);
             listFR.add(NumberConst.ZERO);
-            listRss.add(NumberConst.ZERO);
-            listRg.add(NumberConst.ZERO);
             listS.add(NumberConst.ZERO);
             listN.add(NumberConst.ZERO);
             listQ.add(NumberConst.ZERO);
@@ -83,18 +80,22 @@ public class XajCalc {
             listRSD.add(NumberConst.ZERO);
             listRSSD.add(NumberConst.ZERO);
             listRGD.add(NumberConst.ZERO);
-            listQRS.add(NumberConst.ZERO);
-            listQRSS.add(NumberConst.ZERO);
-            listQRG.add(NumberConst.ZERO);
             listQTR.add(NumberConst.ZERO);
+            xajParam.listRs.add(NumberConst.ZERO);
+            xajParam.listRss.add(NumberConst.ZERO);
+            xajParam.listRg.add(NumberConst.ZERO);
+            xajParam.listQRS.add(NumberConst.ZERO);
+            xajParam.listQRSS.add(NumberConst.ZERO);
+            xajParam.listQRG.add(NumberConst.ZERO);
+            xajParam.listRd.add(NumberConst.ZERO);
         }
         /**
          * 读取参数
          */
-        BigDecimal F = plan.getBigDecimal("F");
+//        BigDecimal F = plan.getBigDecimal("F");
         BigDecimal K = plan.getBigDecimal("K");
         BigDecimal E = plan.getBigDecimal("E");
-        BigDecimal IM = plan.getBigDecimal("IM");
+//        BigDecimal IM = plan.getBigDecimal("IM");
         BigDecimal WUM = plan.getBigDecimal("WUM");
         BigDecimal WLM = plan.getBigDecimal("WLM");
         BigDecimal WDM = plan.getBigDecimal("WDM");
@@ -104,9 +105,9 @@ public class XajCalc {
         BigDecimal KG = plan.getBigDecimal("KG");
         BigDecimal SM = plan.getBigDecimal("SM");
         BigDecimal EX = plan.getBigDecimal("EX");
-        BigDecimal CI = plan.getBigDecimal("CI");
-        BigDecimal CG = plan.getBigDecimal("CG");
-        BigDecimal CS = plan.getBigDecimal("CS");
+//        BigDecimal CI = plan.getBigDecimal("CI");
+//        BigDecimal CG = plan.getBigDecimal("CG");
+//        BigDecimal CS = plan.getBigDecimal("CS");
 //        Integer LAG = plan.getBigDecimal("L").intValue();
         BigDecimal T = plan.getBigDecimal("T");
         BigDecimal KE = plan.getBigDecimal("KE");
@@ -120,10 +121,10 @@ public class XajCalc {
         BigDecimal Wup = WUup.add(WLup).add(WDup);
         BigDecimal Sup = plan.getBigDecimal("S0");
         BigDecimal FRup = plan.getBigDecimal("FR0");
-        BigDecimal QRSup = plan.getBigDecimal("QRS0");
-        BigDecimal QRSSup = plan.getBigDecimal("QRSS0");
-        BigDecimal QRGup = plan.getBigDecimal("QRG0");
-        BigDecimal QTRup = QRSup.add(QRSSup).add(QRGup);
+//        BigDecimal QRSup = plan.getBigDecimal("QRS0");
+//        BigDecimal QRSSup = plan.getBigDecimal("QRSS0");
+//        BigDecimal QRGup = plan.getBigDecimal("QRG0");
+//        BigDecimal QTRup = QRSup.add(QRSSup).add(QRGup);
         /**
          * 参数转换
          */
@@ -134,7 +135,7 @@ public class XajCalc {
         BigDecimal SMM = NumberConst.ZERO;
         BigDecimal SMF = NumberConst.ZERO;
         BigDecimal SMMF = SM.multiply(EX.add(NumberConst.ONE));
-        BigDecimal U = F.divide(T.multiply(new BigDecimal("3.6")), NumberConst.DIGIT, NumberConst.MODE);
+//        BigDecimal U = F.divide(T.multiply(new BigDecimal("3.6")), NumberConst.DIGIT, NumberConst.MODE);
         /**
          * C0 = (0.5 * T - KE * XE) / (KE - KE * XE + 0.5 * T)
          * C1 = (0.5 * T + KE * XE) / (KE - KE * XE + 0.5 * T)
@@ -160,7 +161,7 @@ public class XajCalc {
              * 产流量计算
              */
             if( NumberUtil.gt(listPE.get(i), NumberConst.ZERO) ){
-                listRd.set(i, listPE.get(i));
+                xajParam.listRd.set(i, listPE.get(i));
                 if( NumberUtil.ge(listPE.get(i).add(listA.get(i)), Wmm) ){
                     listR.set(i, listPE.get(i).subtract(Wm.subtract(Wup)));
                 }else{
@@ -170,7 +171,7 @@ public class XajCalc {
                     listR.set(i, R);
                 }
             }else{
-                listRd.set(i, NumberConst.ZERO);
+                xajParam.listRd.set(i, NumberConst.ZERO);
                 listR.set(i, NumberConst.ZERO);
             }
             /**
@@ -248,12 +249,12 @@ public class XajCalc {
              * 分水源计算
              */
             if( NumberUtil.le(listPE.get(i), NumberConst.ZERO) ){
-                listRs.set(i, NumberConst.ZERO);
+                xajParam.listRs.set(i, NumberConst.ZERO);
                 listFR.set(i, getFR(listW.get(i), Wm, B));
                 FRup = listFR.get(i);
-                listRss.set(i, Sup.multiply(KSSD).multiply(FRup));
-                listRg.set(i, Sup.multiply(KGD).multiply(FRup));
-                listS.set(i, Sup.subtract(listRss.get(i).add(listRg.get(i)).divide(FRup, NumberConst.DIGIT, NumberConst.MODE)));
+                xajParam.listRss.set(i, Sup.multiply(KSSD).multiply(FRup));
+                xajParam.listRg.set(i, Sup.multiply(KGD).multiply(FRup));
+                listS.set(i, Sup.subtract(xajParam.listRss.get(i).add(xajParam.listRg.get(i)).divide(FRup, NumberConst.DIGIT, NumberConst.MODE)));
             }else{
                 listFR.set(i, getFR(listPE.get(i), listR.get(i)));
                 listS.set(i, FRup.multiply(Sup).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
@@ -262,9 +263,9 @@ public class XajCalc {
                 listQ.set(i, listQ.get(i).divide(listN.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listKSSDD.set(i, getKSSDD(KGD, KSSD, listN.get(i)));
                 listKGDD.set(i, listKSSDD.get(i).multiply(KGD).divide(KSSD, NumberConst.DIGIT, NumberConst.MODE));
-                listRs.set(i, NumberConst.ZERO);
-                listRss.set(i, NumberConst.ZERO);
-                listRg.set(i, NumberConst.ZERO);
+                xajParam.listRs.set(i, NumberConst.ZERO);
+                xajParam.listRss.set(i, NumberConst.ZERO);
+                xajParam.listRg.set(i, NumberConst.ZERO);
                 SMM = SM.multiply(EX.add(NumberConst.ONE));
                 if( NumberUtil.et(EX, NumberConst.ZERO) ){
                     SMMF = SMM;
@@ -297,9 +298,9 @@ public class XajCalc {
                             listS.set(i, listS.get(i).add(listQ.get(i)).subtract(listRSD.get(j).add(listRSSD.get(j)).add(listRGD.get(j)).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE)));
                         }
                     }
-                    listRs.set(i, listRs.get(i).add(listRSD.get(j)));
-                    listRss.set(i, listRss.get(i).add(listRSSD.get(j)));
-                    listRg.set(i, listRg.get(i).add(listRGD.get(j)));
+                    xajParam.listRs.set(i, xajParam.listRs.get(i).add(listRSD.get(j)));
+                    xajParam.listRss.set(i, xajParam.listRss.get(i).add(listRSSD.get(j)));
+                    xajParam.listRg.set(i, xajParam.listRg.get(i).add(listRGD.get(j)));
                 }
             }
             Sup = listS.get(i);
@@ -307,34 +308,57 @@ public class XajCalc {
             /**
              * 坡面汇流
              */
-            listQRS.set(i, (listRs.get(i).multiply(NumberConst.ONE.subtract(IM)).add(listRd.get(i).multiply(IM))).multiply(F).divide(new BigDecimal("3.6"), NumberConst.DIGIT, NumberConst.MODE));
-            listQRSS.set(i, QRSSup.multiply(CI).add(listRss.get(i).multiply(NumberConst.ONE.subtract(CI)).multiply(U)));
-            listQRG.set(i, QRGup.multiply(CG).add(listRg.get(i).multiply(NumberConst.ONE.subtract(CG)).multiply(U)));
-            listQTR.set(i, listQRS.get(i).add(listQRSS.get(i)).add(listQRG.get(i)));
-            listQTR.set(i, QTRup.multiply(CS).add(listQTR.get(i).multiply(NumberConst.ONE.subtract(CS))));
-
-            QRSSup = listQRSS.get(i);
-            QRGup = listQRG.get(i);
-            QTRup = listQTR.get(i);
+//            listQRS.set(i, (listRs.get(i).multiply(NumberConst.ONE.subtract(IM)).add(listRd.get(i).multiply(IM))).multiply(F).divide(new BigDecimal("3.6"), NumberConst.DIGIT, NumberConst.MODE));
+//            listQRSS.set(i, QRSSup.multiply(CI).add(listRss.get(i).multiply(NumberConst.ONE.subtract(CI)).multiply(U)));
+//            listQRG.set(i, QRGup.multiply(CG).add(listRg.get(i).multiply(NumberConst.ONE.subtract(CG)).multiply(U)));
+//            listQTR.set(i, listQRS.get(i).add(listQRSS.get(i)).add(listQRG.get(i)));
+//            listQTR.set(i, QTRup.multiply(CS).add(listQTR.get(i).multiply(NumberConst.ONE.subtract(CS))));
+//
+//            QRSSup = listQRSS.get(i);
+//            QRGup = listQRG.get(i);
+//            QTRup = listQTR.get(i);
         }
         return returnType.equals(CommonConst.RETURN_TYPE_R) ? listR : listQTR;
     }
 
-    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listR){
+    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listP, List<BigDecimal> listQTR, XajParam xajParam){
         List<BigDecimal> listQTRR = new ArrayList<>();
 
+        BigDecimal T = plan.getBigDecimal("T");
+        BigDecimal F = plan.getBigDecimal("F");
+        BigDecimal CI = plan.getBigDecimal("CI");
+        BigDecimal CG = plan.getBigDecimal("CG");
+        BigDecimal CS = plan.getBigDecimal("CS");
+        BigDecimal QRSup = plan.getBigDecimal("QRS0");
+        BigDecimal QRSSup = plan.getBigDecimal("QRSS0");
+        BigDecimal QRGup = plan.getBigDecimal("QRG0");
+        BigDecimal QTRup = QRSup.add(QRSSup).add(QRGup);
+        BigDecimal IM = plan.getBigDecimal("IM");
         Integer LAG = plan.getBigDecimal("L").intValue();
         BigDecimal KE = plan.getBigDecimal("KE");
+        BigDecimal U = F.divide(T.multiply(new BigDecimal("3.6")), NumberConst.DIGIT, NumberConst.MODE);
+
+        for (int i = 0; i < listP.size(); i++){
+            xajParam.listQRS.set(i, (xajParam.listRs.get(i).multiply(NumberConst.ONE.subtract(IM)).add(xajParam.listRd.get(i).multiply(IM))).multiply(F).divide(new BigDecimal("3.6"), NumberConst.DIGIT, NumberConst.MODE));
+            xajParam.listQRSS.set(i, QRSSup.multiply(CI).add(xajParam.listRss.get(i).multiply(NumberConst.ONE.subtract(CI)).multiply(U)));
+            xajParam.listQRG.set(i, QRGup.multiply(CG).add(xajParam.listRg.get(i).multiply(NumberConst.ONE.subtract(CG)).multiply(U)));
+            listQTR.set(i, xajParam.listQRS.get(i).add(xajParam.listQRSS.get(i)).add(xajParam.listQRG.get(i)));
+            listQTR.set(i, QTRup.multiply(CS).add(listQTR.get(i).multiply(NumberConst.ONE.subtract(CS))));
+
+            QRSSup = xajParam.listQRSS.get(i);
+            QRGup = xajParam.listQRG.get(i);
+            QTRup = listQTR.get(i);
+        }
 
         for(int i = 0; i < LAG; i++){
-            listQTRR.add(listR.get(0));
+            listQTRR.add(listQTR.get(0));
         }
-        for(int i = LAG; i < listR.size() + LAG; i++){
-            listQTRR.add(listR.get(i-LAG));
+        for(int i = LAG; i < listQTR.size() + LAG; i++){
+            listQTRR.add(listQTR.get(i-LAG));
         }
         if( NumberUtil.gt(KE, new BigDecimal(LAG)) ){
-            for(int i = listR.size() + LAG; i < listR.size() + KE.intValue(); i++){
-                listQTRR.add(listR.get(listR.size()-1));
+            for(int i = listQTR.size() + LAG; i < listQTR.size() + KE.intValue(); i++){
+                listQTRR.add(listQTR.get(listQTR.size()-1));
             }
         }
         return listQTRR;

@@ -44,10 +44,6 @@
               <%--</div>--%>
             <%--</div>--%>
           <%--</div>--%>
-          <div class="layui-form-item">
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="refresh">同步站点</button>
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="adsorb">更新临近站</button>
-          </div>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>
@@ -73,17 +69,16 @@
         table.render({
             elem: '#data-table'
             ,method: 'post'
-            ,url: "${pageContext.request.contextPath}/station/list"
+            ,url: "${pageContext.request.contextPath}/station/unusual"
             ,cols: [[
                 {field:'id', width:80, title: 'ID', sort: true}
-                ,{field:'sttype', width:120, title: '站点类型'}
-                ,{field:'stcd', width:120, title: '站点代码'}
                 ,{field:'stname', width:120, title: '站点名称'}
-                ,{field:'lgtd', width:120, title: '经度'}
-                ,{field:'lttd', width:120, title: '纬度'}
-                ,{field:'nearStcd', width:120, title: '临近站代码'}
                 ,{field:'nearStname', width:120, title: '临近站名称'}
-                ,{field:'dis', title: '临近站距离(km)'}
+                ,{field:'dis', width:140, title: '临近站距离(km)'}
+                ,{field:'selfP', width:120, title: '本站雨量'}
+                ,{field:'nearP', width:120, title: '临近站雨量'}
+                ,{field:'diffP', title: '差异率'}
+                ,{field:'dateP', width:180, title: '轮询时间'}
                 // ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
             ,page: true

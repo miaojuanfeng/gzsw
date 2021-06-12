@@ -1,6 +1,7 @@
 package gz.sw.service.write.impl;
 
 import gz.sw.entity.write.Model;
+import gz.sw.entity.write.User;
 import gz.sw.mapper.write.ModelDao;
 import gz.sw.mapper.write.UserDao;
 import gz.sw.service.write.ModelService;
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Override
-	public Model select(Integer id) {
+	public User select(Integer id) {
 		return userDao.select(id);
 	}
 
@@ -47,7 +48,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List selectListByStcd(String stcd) {
-		return userDao.selectListByStcd(stcd);
+	public User selectByPhone(String phone) {
+		return userDao.selectByPhone(phone);
 	}
+
 }

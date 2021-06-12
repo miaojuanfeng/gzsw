@@ -1,6 +1,7 @@
-package gz.sw.entity.write;
+package gz.sw.common;
 
 import gz.sw.constant.NumberConst;
+import gz.sw.entity.write.Plan;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

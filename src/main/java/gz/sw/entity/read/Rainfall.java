@@ -3,6 +3,7 @@ package gz.sw.entity.read;
 import java.math.BigDecimal;
 
 public class Rainfall {
+
     private String stcd;
 
     private String date;

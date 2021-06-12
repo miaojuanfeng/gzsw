@@ -6,11 +6,11 @@ public class User {
 
 	private Integer id;
 
-	private String userPhone;
+	private String phone;
 
-	private String userPwd;
+	private String password;
 
-	private String userName;
+	private String name;
 
 	private Date createTime;
 
@@ -24,28 +24,28 @@ public class User {
 		this.id = id;
 	}
 
-	public String getUserPhone() {
-		return userPhone;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
-	public String getUserPwd() {
-		return userPwd;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setUserPwd(String userPwd) {
-		this.userPwd = userPwd;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getName() {
+		return name;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getCreateTime() {

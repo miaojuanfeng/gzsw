@@ -1,8 +1,7 @@
 package gz.sw.calc;
 
 import gz.sw.constant.NumberConst;
-import gz.sw.entity.write.Forecast;
-import gz.sw.entity.write.Plan;
+import gz.sw.common.Forecast;
 import gz.sw.util.NumberUtil;
 
 import java.math.BigDecimal;
@@ -28,6 +27,9 @@ public class ComCalc {
     private static List<BigDecimal> V_CUR = new ArrayList<>();
     private static List<BigDecimal> Z0 = new ArrayList<>();
     private static List<BigDecimal> HCOQ = new ArrayList<>();
+    private static BigDecimal RZ = NumberConst.ZERO;
+    private static BigDecimal OTQ = NumberConst.ZERO;
+    private static BigDecimal FSLTDZ = NumberConst.ZERO;
     /**
      * 结果
      */
@@ -36,19 +38,25 @@ public class ComCalc {
 //    public static List<BigDecimal> listQTRR = new ArrayList<>();
 //    public static List<BigDecimal> listOQ = new ArrayList<>();
 //    public static List<BigDecimal> listQT = new ArrayList<>();
-    public static Forecast forecast = new Forecast();
+//    public static Forecast forecast = new Forecast();
 
     /**
      * 初始化数据
      */
-    public static void init(List<BigDecimal> Z_CUR,
-                            List<BigDecimal> V_CUR,
-                            List<BigDecimal> Z0,
-                            List<BigDecimal> HCOQ){
-        Z_CUR = Z_CUR;
-        V_CUR = V_CUR;
-        Z0 = Z0;
-        HCOQ = HCOQ;
+    public static void init(List<BigDecimal> z_cur,
+                            List<BigDecimal> v_cur,
+                            List<BigDecimal> z0,
+                            List<BigDecimal> hcoq,
+                            BigDecimal rz,
+                            BigDecimal otq,
+                            BigDecimal fsltdz){
+        Z_CUR = z_cur;
+        V_CUR = v_cur;
+        Z0 = z0;
+        HCOQ = hcoq;
+        RZ = rz;
+        OTQ = otq;
+        FSLTDZ = fsltdz;
     }
 
     /**
@@ -173,17 +181,17 @@ public class ComCalc {
         /**
          * 读取起调水位，从实时数据库读取  ST_RSVR_R，预报时间的水位    字段RZ
          */
-        Z.set(0, new BigDecimal("240"));
+        Z.set(0, RZ);
         W.set(0, diffVal(Z.get(0), Z_CUR, V_CUR));
         /**
          * 读取初始出库流量，从实时数据库读取  ST_RSVR_R，预报时间往前最近的一个出库流量   字段OTQ
          */
-        listOQ.set(0, new BigDecimal("20"));
+        listOQ.set(0, OTQ);
         Temp_OQ = listOQ.get(0);
         /**
          * 读取汛限水位，从实时数据库的汛期水位表 ST_RSVRFSR_B 读取   字段FSLTDZ      BGMD EDMD两个字段为开始结束时间，根据这两个时间来读汛限水位
          */
-        Z_lim = new BigDecimal("242");
+        Z_lim = FSLTDZ;
         W_lim = diffVal(Z_lim, Z_CUR, V_CUR);
         Z00 = Z_lim.subtract(new BigDecimal("0.5"));
         W00 = diffVal(Z00, Z_CUR, V_CUR);
