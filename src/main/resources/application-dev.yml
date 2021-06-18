@@ -6,15 +6,27 @@ spring:
       suffix: .jsp
 
   datasource:
+#    read:
+#      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=ycreal
+#      password: Mjf19921030
+#      username: sa
+#    read2:
+#      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=ycreal
+#      password: Mjf19921030
+#      username: sa
+#    write:
+#      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=my_forecast
+#      password: Mjf19921030
+#      username: sa
     read:
-      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=ycreal
-      password: Mjf19921030
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
+      password: haosql
       username: sa
     read2:
-      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=ycreal
-      password: Mjf19921030
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
+      password: haosql
       username: sa
     write:
-      jdbc-url: jdbc:sqlserver://120.79.38.192:1433;databasename=my_forecast
-      password: Mjf19921030
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=my_forecast
+      password: haosql
       username: sa

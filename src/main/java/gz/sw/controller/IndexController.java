@@ -5,6 +5,7 @@ import gz.sw.common.SessionUser;
 import gz.sw.constant.CommonConst;
 import gz.sw.entity.write.User;
 import gz.sw.service.write.UserService;
+import gz.sw.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * {{文件描述}}
@@ -73,8 +75,11 @@ public class IndexController {
 
     @GetMapping("home/console")
     public String console(ModelMap map) {
-        map.put("startTime", "2019-06-01 08:00:00");
-        map.put("endTime", "2019-06-04 08:00:00");
+        Date date = new Date();
+        map.put("endTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
+        map.put("startTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+//        map.put("startTime", "2019-06-01 08:00:00");
+//        map.put("endTime", "2019-06-04 08:00:00");
         return "home/console";
     }
 

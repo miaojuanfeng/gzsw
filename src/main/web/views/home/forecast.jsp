@@ -157,33 +157,15 @@
             <td class="input-tr"><input type="text" name="IM" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.IM}"></td>
             <td>T</td>
             <td class="input-tr"><input type="text" name="T" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.T}"></td>
-            <td>F</td>
-            <td class="input-tr"><input type="text" name="F" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.F}"></td>
-          </tr>
-          <tr>
             <td>S0</td>
             <td class="input-tr"><input type="text" name="S0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.S0}"></td>
+          </tr>
+          <tr>
             <td>FR0</td>
             <td class="input-tr"><input type="text" name="FR0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.FR0}"></td>
-            <td>CS</td>
-            <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
-            <td>CI</td>
-            <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
-          </tr>
-          <tr>
-            <td>CG</td>
-            <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
-            <td>QRS0</td>
-            <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
-            <td>QRSS0</td>
-            <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
-            <td>QRG0</td>
-            <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
-          </tr>
-          <tr>
             <td>E</td>
             <td class="input-tr"><input type="text" name="E" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.E}"></td>
-            <td colspan="6"></td>
+            <td colspan="4"></td>
           </tr>
           </tbody>
         </table>
@@ -254,9 +236,24 @@
           </colgroup>
           <tbody>
           <tr>
+            <td>F</td>
+            <td class="input-tr"><input type="text" name="F" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.F}"></td>
+            <td>CS</td>
+            <td class="input-tr"><input type="text" name="CS" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CS}"></td>
+            <td>CI</td>
+            <td class="input-tr"><input type="text" name="CI" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CI}"></td>
+            <td>CG</td>
+            <td class="input-tr"><input type="text" name="CG" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.CG}"></td>
+          </tr>
+          <tr>
+            <td>QRS0</td>
+            <td class="input-tr"><input type="text" name="QRS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRS0}"></td>
+            <td>QRSS0</td>
+            <td class="input-tr"><input type="text" name="QRSS0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRSS0}"></td>
+            <td>QRG0</td>
+            <td class="input-tr"><input type="text" name="QRG0" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.QRG0}"></td>
             <td>L</td>
             <td class="input-tr"><input type="text" name="L" onblur="value=zhzs(this.value)" autocomplete="off" class="layui-input" value="${plan.L}"></td>
-            <td colspan="6"></td>
           </tr>
           </tbody>
         </table>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,8 +81,10 @@ public class StationServiceImpl implements StationService {
 	public void unusual() {
 		synchronized (CommonConst.stationLock) {
 			System.out.println("执行");
-			//		Date date = new Date();
-			String date = "2018-06-01 03:00:00";
+			Date now = new Date();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+			String date = format.format(now);
+			//			String date = "2018-06-01 03:00:00";
 			List<Station> stationList = selectAll();
 			List<Station> insertList = new ArrayList<>();
 			List<String> stcdList = new ArrayList<>();

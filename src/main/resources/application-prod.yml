@@ -8,13 +8,13 @@ spring:
   datasource:
     read:
       jdbc-url: jdbc:sqlserver://10.36.162.18:1433;databasename=ycreal_all
-      password: gzsw
-      username: gzsw_1220
+      password: gzsw_1220
+      username: gzsw
     read2:
       jdbc-url: jdbc:sqlserver://10.36.162.20:1433;databasename=rwdb
-      password: gzsw
-      username: gzsw_1220
+      password: gzsw_1220
+      username: gzsw
     write:
       jdbc-url: jdbc:sqlserver://10.36.162.20:1433;databasename=my_forecast
-      password: gzsw
-      username: gzsw_1220
+      password: gzsw_1220
+      username: gzsw
