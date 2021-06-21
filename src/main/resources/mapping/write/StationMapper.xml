@@ -31,7 +31,7 @@
             and t.code = #{sttp}
         </if>
         <if test="stcd != null and stcd != ''" >
-            and s1.stcd like '%' + #{stcd} + '%'
+            and s.stcd like '%' + #{stcd} + '%'
         </if>
         <if test="name != null and name != ''" >
             and s.stname like '%' + #{name} + '%'
@@ -48,14 +48,11 @@
         from station s
         left join sttype t on s.type = t.code
         where 1=1
-        <if test="sttp != null and sttp != ''" >
-            and t.code = #{sttp}
+        <if test="selfP != null and selfP != ''" >
+            and s.self_p >= #{selfP}
         </if>
-        <if test="stcd != null and stcd != ''" >
-            and s.stcd like '%' + #{stcd} + '%'
-        </if>
-        <if test="name != null and name != ''" >
-            and s.stname like '%' + #{name} + '%'
+        <if test="diffP != null and diffP != ''" >
+            and s.diff_p >= #{diffP}
         </if>
     </select>
     <select id="selectRainList" resultType="java.util.Map">
@@ -68,14 +65,11 @@
         from station s
         left join sttype t on s.type = t.code
         where 1=1
-        <if test="sttp != null and sttp != ''" >
-            and t.code = #{sttp}
+        <if test="selfP != null and selfP != ''" >
+            and s.self_p >= #{selfP}
         </if>
-        <if test="stcd != null and stcd != ''" >
-            and s1.stcd like '%' + #{stcd} + '%'
-        </if>
-        <if test="name != null and name != ''" >
-            and s.stname like '%' + #{name} + '%'
+        <if test="diffP != null and diffP != ''" >
+            and s.diff_p >= #{diffP}
         </if>
         ) s2
         where 1=1

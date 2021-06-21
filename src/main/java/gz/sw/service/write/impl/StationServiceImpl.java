@@ -7,6 +7,7 @@ import gz.sw.mapper.write.StationDao;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.write.StationService;
 import gz.sw.util.NumberUtil;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,13 +42,13 @@ public class StationServiceImpl implements StationService {
 	}
 
 	@Override
-	public int selectRainCount(String sttp, String stcd, String name) {
-		return stationDao.selectRainCount(sttp, stcd, name);
+	public int selectRainCount(String selfP, String diffP) {
+		return stationDao.selectRainCount(selfP, diffP);
 	}
 
 	@Override
-	public List selectRainList(Integer page, Integer limit, String sttp, String stcd, String name) {
-		return stationDao.selectRainList(page, limit, sttp, stcd, name);
+	public List selectRainList(Integer page, Integer limit, String selfP, String diffP) {
+		return stationDao.selectRainList(page, limit, selfP, diffP);
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class StationServiceImpl implements StationService {
 
 	@Override
 	@Transactional
-	@Scheduled(cron="0 30 * * * ? ")
+	@Scheduled(cron="0 5 * * * ? ")
 	public void unusual() {
 		synchronized (CommonConst.stationLock) {
 			System.out.println("执行");

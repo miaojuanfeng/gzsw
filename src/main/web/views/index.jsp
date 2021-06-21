@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GZSW - 赣州水文</title>
+  <title>洪水预报 - 赣州水文</title>
   <%@ include file="linker.jsp" %>
   <script>
   /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
@@ -54,11 +54,11 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>${sessionUser.userName}</cite>
+              <cite>${sessionUser.name}</cite>
             </a>
             <dl class="layui-nav-child">
               <%--<dd><a lay-href="set/user/info.html">基本资料</a></dd>--%>
-              <%--<dd><a lay-href="set/user/password.html">修改密码</a></dd>--%>
+              <dd><a lay-href="<c:url value="user/self"></c:url>">修改资料</a></dd>
               <%--<hr>--%>
               <dd style="text-align: center;"><a id="logout" href="javascript:;">退出</a></dd>
             </dl>
@@ -78,7 +78,7 @@
       <div class="layui-side layui-side-menu">
         <div class="layui-side-scroll">
           <div class="layui-logo" lay-href="home/console.html">
-            <span>GZSW</span>
+            <span>赣州水文</span>
           </div>
           
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
@@ -142,23 +142,25 @@
                 </dd>
               </dl>
             </li>
-            <%--<li data-name="home" class="layui-nav-item">--%>
-              <%--<a href="javascript:;" lay-tips="用户" lay-direction="2">--%>
-                <%--<i class="layui-icon layui-icon-user"></i>--%>
-                <%--<cite>用户</cite>--%>
-              <%--</a>--%>
-              <%--<dl class="layui-nav-child">--%>
-                <%--<dd data-name="console">--%>
-                  <%--<a lay-href="<c:url value="model/insert"></c:url>">基本资料</a>--%>
-                <%--</dd>--%>
-                <%--<dd data-name="console">--%>
-                  <%--<a lay-href="<c:url value="model/insert"></c:url>">修改密码</a>--%>
-                <%--</dd>--%>
-                <%--<dd data-name="console">--%>
-                  <%--<a lay-href="<c:url value="user/list"></c:url>">用户列表</a>--%>
-                <%--</dd>--%>
-              <%--</dl>--%>
-            <%--</li>--%>
+            <li data-name="home" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="用户" lay-direction="2">
+                <i class="layui-icon layui-icon-user"></i>
+                <cite>用户</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="user/self"></c:url>">修改资料</a>
+                </dd>
+                <c:if test="${sessionUser.admin==1}">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="user/list"></c:url>">用户列表</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="<c:url value="user/insert"></c:url>">新增用户</a>
+                </dd>
+                </c:if>
+              </dl>
+            </li>
           </ul>
         </div>
       </div>

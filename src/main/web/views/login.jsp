@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="<c:url value="/assets/css/login.css"></c:url>" media="all">
     <%@ include file="linker.jsp" %>
 </head>
-<body>
+<body style="background-image: url('assets/images/bg1.gif'); background-repeat: repeat;">
 
 <div class="login-main">
     <div class="login-box">

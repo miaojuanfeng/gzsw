@@ -6,6 +6,7 @@ import gz.sw.constant.CommonConst;
 import gz.sw.entity.write.User;
 import gz.sw.service.write.UserService;
 import gz.sw.util.DateUtil;
+import gz.sw.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -46,11 +47,14 @@ public class IndexController {
     public JSONObject login(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
         JSONObject retval = new JSONObject();
         User user = userService.selectByPhone(username);
+//        System.out.println(Md5Util.execute(CommonConst.SECREAT_KEY + password));
         if( user != null ) {
-            if( user.getPassword().equals(password) ){
+            if( user.getPassword().equals(Md5Util.execute(CommonConst.SECREAT_KEY + password)) ){
                 SessionUser sessionUser = new SessionUser();
-                sessionUser.setUserPhone(user.getPhone());
-                sessionUser.setUserName(user.getName());
+                sessionUser.setId(user.getId());
+                sessionUser.setPhone(user.getPhone());
+                sessionUser.setName(user.getName());
+                sessionUser.setAdmin(user.getAdmin());
                 request.getSession().setAttribute(CommonConst.SESSION_USER, sessionUser);
 
                 retval.put("code", 200);

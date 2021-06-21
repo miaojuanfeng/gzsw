@@ -6,11 +6,26 @@
         	count(u.id)
         from [user] u
         where 1=1
+        <if test="phone != null and phone != ''" >
+            and u.phone like '%' + #{phone} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and u.name like '%' + #{name} + '%'
+        </if>
     </select>
 	<select id="selectList" resultType="java.util.Map">
-        select u1.id, u1.user_phone, u1.user_name, u1.create_time
-        from [user] u1
-        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID from [user]) u2
+        select u1.id, u1.phone, u1.name, (select case u1.admin when 1 then '是' else '否' end) as admin, CONVERT(varchar(100), u1.create_time, 20) as createTime, CONVERT(varchar(100), u1.update_time, 20) as updateTime
+        from [user] u1,
+        (select TOP ${page*limit} row_number() OVER (order by id desc, ID desc) n, ID
+        from [user] u
+        where 1=1
+        <if test="phone != null and phone != ''" >
+            and u.phone like '%' + #{phone} + '%'
+        </if>
+        <if test="name != null and name != ''" >
+            and u.name like '%' + #{name} + '%'
+        </if>
+        ) u2
         where 1=1
         and u1.id = u2.id
         and u2.n > ${(page-1)*limit}
@@ -21,18 +36,25 @@
         from [user] u
         where u.phone = #{phone}
     </select>
+    <select id="select" resultType="gz.sw.entity.write.User">
+        select u.*
+        from [user] u
+        where u.id = #{id}
+    </select>
 	<insert id="insert" parameterType="gz.sw.entity.write.User">
 		insert into [user]
-		(user_phone,user_name,user_pwd,create_time,update_time)
+		(phone,name,password,admin,create_time,update_time)
 		values
-		(#{item.userPhone},#{item.userName},#{item.userPwd},#{item.createTime},#{item.updateTime})
+		(#{item.phone},#{item.name},#{item.password},#{item.admin},#{item.createTime},#{item.updateTime})
 	</insert>
     <update id="update" parameterType="gz.sw.entity.write.User">
         update [user]
         <set>
-            <if test="user_name != null" > user_name = #{userName},</if>
-            <if test="user_pwd != null" > user_pwd = #{userPwd},</if>
-            <if test="update_time != null" > update_time = #{updateTime},</if>
+            <if test="phone != null" > phone = #{phone},</if>
+            <if test="name != null" > name = #{name},</if>
+            <if test="password != null" > password = #{password},</if>
+            <if test="admin != null" > admin = #{admin},</if>
+            <if test="updateTime != null" > update_time = #{updateTime},</if>
         </set>
         where id = #{id}
     </update>

@@ -14,36 +14,36 @@
       <div class="layui-card">
         <div class="layui-card-header">站点列表</div>
         <div class="layui-card-body">
-          <%--<div class="layui-form-item">--%>
-            <%--<div class="layui-form">--%>
-              <%--<div class="layui-form-item">--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">站点类型</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<select name="sttp" lay-filter="sttp" lay-search="">--%>
-                      <%--<option value="">请选择</option>--%>
-                      <%--<c:forEach items="${sttps}" var="sttp" varStatus="id">--%>
-                        <%--<option value="${sttp.code}" <c:if test="${plan.sttype==sttp.code}">selected</c:if>>${sttp.text}</option>--%>
-                      <%--</c:forEach>--%>
-                    <%--</select>--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">站点代码</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<input type="text" name="stcd" class="layui-input" placeholder="支持模糊查询">--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">方案名称</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<input type="text" name="name" class="layui-input" placeholder="支持模糊查询">--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<button class="layui-btn layui-btn-sm" id="search">立即搜索</button>--%>
-              <%--</div>--%>
-            <%--</div>--%>
-          <%--</div>--%>
+          <div class="layui-form-item">
+            <div class="layui-form">
+              <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">站点类型</label>
+                  <div class="layui-input-inline">
+                    <select name="sttp" lay-filter="sttp" lay-search="">
+                      <option value="">请选择</option>
+                      <c:forEach items="${sttps}" var="sttp" varStatus="id">
+                        <option value="${sttp.code}" <c:if test="${plan.sttype==sttp.code}">selected</c:if>>${sttp.text}</option>
+                      </c:forEach>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">站点代码</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="stcd" class="layui-input" placeholder="支持模糊查询">
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">站点名称</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="name" class="layui-input" placeholder="支持模糊查询">
+                  </div>
+                </div>
+                <button class="layui-btn layui-btn-sm" id="search">立即搜索</button>
+              </div>
+            </div>
+          </div>
           <div class="layui-form-item">
             <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="refresh">同步站点</button>
             <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="adsorb">更新临近站</button>

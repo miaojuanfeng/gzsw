@@ -1,10 +1,7 @@
 package gz.sw.service.write.impl;
 
-import gz.sw.entity.write.Model;
 import gz.sw.entity.write.User;
-import gz.sw.mapper.write.ModelDao;
 import gz.sw.mapper.write.UserDao;
-import gz.sw.service.write.ModelService;
 import gz.sw.service.write.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +20,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int insert(Model model) {
-		return userDao.insert(model);
+	public int insert(User user) {
+		return userDao.insert(user);
 	}
 
 	@Override
-	public int update(Model model) {
-		return userDao.update(model);
+	public int update(User user) {
+		return userDao.update(user);
 	}
 
 	@Override
@@ -38,13 +35,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int selectCount() {
-		return userDao.selectCount();
+	public int selectCount(String phone, String name) {
+		return userDao.selectCount(phone, name);
 	}
 
 	@Override
-	public List selectList(Integer page, Integer limit) {
-		return userDao.selectList(page, limit);
+	public List selectList(String phone, String name, Integer page, Integer limit) {
+		return userDao.selectList(phone, name, page, limit);
 	}
 
 	@Override

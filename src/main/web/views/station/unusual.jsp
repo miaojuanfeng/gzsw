@@ -14,36 +14,42 @@
       <div class="layui-card">
         <div class="layui-card-header">站点列表</div>
         <div class="layui-card-body">
-          <%--<div class="layui-form-item">--%>
-            <%--<div class="layui-form">--%>
-              <%--<div class="layui-form-item">--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">站点类型</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<select name="sttp" lay-filter="sttp" lay-search="">--%>
-                      <%--<option value="">请选择</option>--%>
-                      <%--<c:forEach items="${sttps}" var="sttp" varStatus="id">--%>
-                        <%--<option value="${sttp.code}" <c:if test="${plan.sttype==sttp.code}">selected</c:if>>${sttp.text}</option>--%>
-                      <%--</c:forEach>--%>
-                    <%--</select>--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">站点代码</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<input type="text" name="stcd" class="layui-input" placeholder="支持模糊查询">--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<div class="layui-inline">--%>
-                  <%--<label class="layui-form-label">方案名称</label>--%>
-                  <%--<div class="layui-input-inline">--%>
-                    <%--<input type="text" name="name" class="layui-input" placeholder="支持模糊查询">--%>
-                  <%--</div>--%>
-                <%--</div>--%>
-                <%--<button class="layui-btn layui-btn-sm" id="search">立即搜索</button>--%>
-              <%--</div>--%>
-            <%--</div>--%>
-          <%--</div>--%>
+          <div class="layui-form-item">
+            <div class="layui-form">
+              <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">小时雨量</label>
+                  <div class="layui-input-inline">
+                    <select name="selfP" lay-filter="selfP" lay-search="">
+                      <option value="">请选择</option>
+                      <option value="10">大于等于10mm</option>
+                      <option value="20">大于等于20mm</option>
+                      <option value="30" selected>大于等于30mm</option>
+                      <option value="40">大于等于40mm</option>
+                      <option value="50">大于等于50mm</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">差异率</label>
+                  <div class="layui-input-inline">
+                    <select name="diffP" lay-filter="diffP" lay-search="">
+                      <option value="">请选择</option>
+                      <option value="1">大于等于1</option>
+                      <option value="2" selected>大于等于2</option>
+                      <option value="3">大于等于3</option>
+                      <option value="4">大于等于4</option>
+                      <option value="5">大于等于5</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="layui-btn layui-btn-sm" id="search">立即搜索</button>
+              </div>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="reload">立即轮询</button>
+          </div>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>
@@ -70,39 +76,28 @@
             elem: '#data-table'
             ,method: 'post'
             ,url: "${pageContext.request.contextPath}/station/unusual"
+            ,where: {
+                selfP: 30,
+                diffP: 2
+            }
             ,cols: [[
                 {field:'id', width:80, title: 'ID', sort: true}
-                ,{field:'stname', width:120, title: '站点名称'}
-                ,{field:'nearStname', width:120, title: '临近站名称'}
-                ,{field:'dis', width:140, title: '临近站距离(km)'}
-                ,{field:'selfP', width:120, title: '本站雨量'}
-                ,{field:'nearP', width:120, title: '临近站雨量'}
+                ,{field:'stcd', width:100, title: '站点代码'}
+                ,{field:'stname', width:100, title: '站点名称'}
+                ,{field:'nearStcd', width:100, title: '临近站代码'}
+                ,{field:'nearStname', width:100, title: '临近站名称'}
+                ,{field:'dis', width:120, title: '两站距离(km)'}
+                ,{field:'selfP', width:100, title: '本站雨量'}
+                ,{field:'nearP', width:100, title: '临近站雨量'}
                 ,{field:'diffP', title: '差异率'}
-                ,{field:'dateP', width:180, title: '轮询时间'}
+                ,{field:'dateP', width:160, title: '轮询时间'}
                 // ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
             ,page: true
         });
 
-        //监听工具条
-        table.on('tool(data)', function(obj){
-            if(obj.event === 'setting'){
-                openTabsPage('station/update/' + obj.data.id, '站点设置');
-            }
-        });
-
-        form.on('submit(refresh)', function(data){
-            commonConfirm('station/refresh', '将删除所有本地站点数据，并同步远程数据库站点，确定这样操作吗？', function () {
-                table.reload('data-table', {
-                    page: {
-                        curr: 1
-                    }
-                });
-            });
-        });
-
-        form.on('submit(adsorb)', function(data){
-            commonConfirm('station/adsorb', '将根据经纬度数据，计算临近站点，耗时较长，确定这样操作吗？', function () {
+        form.on('submit(reload)', function(data){
+            commonConfirm('station/reload', '立即计算最近整点时间的降雨差异率，确定这样操作吗？', function () {
                 table.reload('data-table', {
                     page: {
                         curr: 1
@@ -117,9 +112,8 @@
                     curr: 1
                 }
                 ,where: {
-                    sttp: $("select[name=sttp]").val(),
-                    stcd: $("input[name=stcd]").val(),
-                    name: $("input[name=name]").val()
+                    selfP: $("select[name=selfP]").val(),
+                    diffP: $("select[name=diffP]").val()
                 }
             });
         });

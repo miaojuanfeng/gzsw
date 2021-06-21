@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface UserService {
     User select(Integer id);
-    int insert(Model model);
-    int update(Model model);
+    int insert(User user);
+    int update(User user);
     int delete(Integer id);
 
-    int selectCount();
-    List selectList(Integer page, Integer limit);
+    int selectCount(String phone, String name);
+    List selectList(String phone, String name, Integer page, Integer limit);
     User selectByPhone(String phone);
 }

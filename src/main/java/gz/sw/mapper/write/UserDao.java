@@ -10,11 +10,11 @@ import java.util.List;
 @Mapper
 public interface UserDao {
 	User select(Integer id);
-	int insert(Model model);
-	int update(Model model);
+	int insert(User user);
+	int update(User user);
 	int delete(Integer id);
 
-	int selectCount();
-    List selectList(@Param("page") Integer page, @Param("limit") Integer limit);
+	int selectCount(@Param("phone") String phone, @Param("name") String name);
+    List selectList(@Param("phone") String phone, @Param("name") String name, @Param("page") Integer page, @Param("limit") Integer limit);
 	User selectByPhone(@Param("phone") String phone);
 }

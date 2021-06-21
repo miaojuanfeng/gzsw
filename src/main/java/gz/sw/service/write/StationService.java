@@ -7,8 +7,8 @@ import java.util.List;
 public interface StationService {
 	int selectCount(String sttp, String stcd, String name);
 	List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
-	int selectRainCount(String sttp, String stcd, String name);
-	List selectRainList(Integer page, Integer limit, String sttp, String stcd, String name);
+	int selectRainCount(String selfP, String diffP);
+	List selectRainList(Integer page, Integer limit, String selfP, String diffP);
 	List selectListByType(String type);
 	List selectAll();
 	int insertBatch(List<Station> stationList);

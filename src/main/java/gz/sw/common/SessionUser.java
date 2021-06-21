@@ -9,9 +9,13 @@ package gz.sw.common;
  */
 public class SessionUser {
 
-    private String userPhone;
+    private Integer id;
 
-    private String userName;
+    private String phone;
+
+    private String name;
+
+    private Integer admin;
 
     private Forecast forecast;
 
@@ -19,20 +23,36 @@ public class SessionUser {
         forecast = new Forecast();
     }
 
-    public String getUserPhone() {
-        return userPhone;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUserPhone(String userPhone) {
-        this.userPhone = userPhone;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Integer admin) {
+        this.admin = admin;
     }
 
     public Forecast getForecast() {

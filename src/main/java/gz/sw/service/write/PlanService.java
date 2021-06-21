@@ -14,6 +14,6 @@ public interface PlanService {
     int delete(Integer id);
 
     int selectCount(String sttp, String stcd, String name);
-    List selectList(Integer page, Integer limit, String sttp, String stcd, String name);
+    List selectList(String sttp, String stcd, String name, Integer page, Integer limit);
     List selectListByStcd(String stcd);
 }

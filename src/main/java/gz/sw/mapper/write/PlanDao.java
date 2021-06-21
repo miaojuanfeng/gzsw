@@ -17,6 +17,6 @@ public interface PlanDao {
 	int delete(Integer id);
 
 	int selectCount(@Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
-	List selectList(@Param("page") Integer page, @Param("limit") Integer limit, @Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);
+	List selectList(@Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name, @Param("page") Integer page, @Param("limit") Integer limit);
 	List selectListByStcd(@Param("stcd") String stcd);
 }

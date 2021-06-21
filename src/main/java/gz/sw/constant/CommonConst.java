@@ -15,5 +15,6 @@ public class CommonConst {
     public static final Integer RETURN_TYPE_R = 1;
     public static final Integer RETURN_TYPE_QTR = 2;
     public static final String SESSION_USER = "sessionUser";
+    public static final String SECREAT_KEY = "#4dMs^a9)Y1(@DU9";
     public static Object stationLock = new Object();
 }

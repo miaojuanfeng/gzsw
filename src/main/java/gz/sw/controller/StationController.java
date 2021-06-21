@@ -79,11 +79,11 @@ public class StationController {
 
 	@PostMapping("unusual")
 	@ResponseBody
-	public Map unusual(Integer page, Integer limit, String sttp, String stcd, String name) {
+	public Map unusual(Integer page, Integer limit, String selfP, String diffP) {
 		Map retval = new HashMap();
 		retval.put("code", 0);
-		retval.put("count", stationService.selectRainCount(sttp, stcd, name));
-		retval.put("data", stationService.selectRainList(page, limit, sttp, stcd, name));
+		retval.put("count", stationService.selectRainCount(selfP, diffP));
+		retval.put("data", stationService.selectRainList(page, limit, selfP, diffP));
 		return retval;
 	}
 
@@ -191,6 +191,15 @@ public class StationController {
 			}
 			return retval;
 		}
+	}
+
+	@PostMapping("reload")
+	@ResponseBody
+	@Transactional
+	public Map reload() {
+		Map retval = new HashMap();
+		stationService.unusual();
+		return retval;
 	}
 
 	private BigDecimal getDistance(double lon1, double lat1, double lon2, double lat2) {

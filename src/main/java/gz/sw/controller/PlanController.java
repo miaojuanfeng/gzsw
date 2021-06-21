@@ -44,11 +44,11 @@ public class PlanController {
 
 	@PostMapping("list")
 	@ResponseBody
-	public Map list(Integer page, Integer limit, String sttp, String stcd, String name) {
+	public Map list(String sttp, String stcd, String name, Integer page, Integer limit) {
 		Map retval = new HashMap();
 		retval.put("code", 0);
 		retval.put("count", planService.selectCount(sttp, stcd, name));
-		retval.put("data", planService.selectList(page, limit, sttp, stcd, name));
+		retval.put("data", planService.selectList(sttp, stcd, name, page, limit));
 		return retval;
 	}
 

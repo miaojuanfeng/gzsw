@@ -52,8 +52,8 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public List selectList(Integer page, Integer limit, String sttp, String stcd, String name) {
-		return planDao.selectList(page, limit, sttp, stcd, name);
+	public List selectList(String sttp, String stcd, String name, Integer page, Integer limit) {
+		return planDao.selectList(sttp, stcd, name, page, limit);
 	}
 
 	@Override

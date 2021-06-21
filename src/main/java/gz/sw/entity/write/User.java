@@ -12,6 +12,8 @@ public class User {
 
 	private String name;
 
+	private Integer admin;
+
 	private Date createTime;
 
 	private Date updateTime;
@@ -46,6 +48,14 @@ public class User {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Integer admin) {
+		this.admin = admin;
 	}
 
 	public Date getCreateTime() {

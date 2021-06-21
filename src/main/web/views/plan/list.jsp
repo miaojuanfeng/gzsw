@@ -121,10 +121,6 @@
             }
         });
 
-        form.on('submit(insert)', function(data){
-            openTabsPage('plan/insert', '新增方案');
-        });
-
         $("#search").click(function () {
             table.reload('data-table', {
                 page: {
