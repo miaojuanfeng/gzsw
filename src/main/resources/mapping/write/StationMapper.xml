@@ -52,7 +52,7 @@
             and s.self_p >= #{selfP}
         </if>
         <if test="diffP != null and diffP != ''" >
-            and s.diff_p >= #{diffP}
+            and cast(s.diff_p as numeric) >= #{diffP}
         </if>
     </select>
     <!--<select id="selectRainList" resultType="java.util.Map">-->
@@ -88,12 +88,12 @@
           and s1.self_p >= #{selfP}
         </if>
         <if test="diffP != null and diffP != ''" >
-          and s1.diff_p >= #{diffP}
+          and cast(s1.diff_p as numeric) >= #{diffP}
         </if>
         <if test="stcd != null and stcd != ''" >
             and s1.stcd = #{stcd}
         </if>
-        order by s1.diff_p desc
+        order by cast(s1.diff_p as numeric) desc
     </select>
 	<select id="selectListByType" resultType="java.util.Map">
         select
