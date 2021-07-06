@@ -34,13 +34,13 @@
                       </colgroup>
                       <tbody>
                       <tr>
-                        <td>预报时间</td>
+                        <td>开始时间</td>
                         <td class="input-tr">
                           <input id="startTime" type="text" name="startTime" placeholder="请选择" autocomplete="off" class="layui-input" value="${startTime}">
                         </td>
                       </tr>
                       <tr>
-                        <td>影响时间</td>
+                        <td>结束时间</td>
                         <td class="input-tr">
                           <input id="endTime" type="text" name="endTime" placeholder="请选择" autocomplete="off" class="layui-input" value="${endTime}">
                         </td>
@@ -156,57 +156,23 @@
           </div>
           <div class="layui-col-md8">
             <div class="layui-card">
-              <div class="layui-card-header">站点数据</div>
+              <div class="layui-card-header">站点选择</div>
               <div class="layui-card-body">
 
                 <div class="layui-carousel layadmin-carousel layadmin-backlog">
                   <div carousel-item>
+                    <c:forEach items="${stations}" var="child" varStatus="status">
                     <ul class="layui-row layui-col-space10">
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303500" stname="汾坑" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>汾坑</cite></p>
+                      <c:forEach items="${child}" var="station">
+                      <li class="layui-col-xs3">
+                        <a href="javascript:;" stcd="${station.stcd}" stname="${station.stname}" class="layadmin-backlog-body">
+                          <h3>水文站</h3>
+                          <p><cite>${station.stname}</cite></p>
                         </a>
                       </li>
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303350" stname="宁都" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>宁都</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303650" stname="石城" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>石城</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303500" stname="汾坑" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>汾坑</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303350" stname="宁都" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>宁都</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303650" stname="石城" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>石城</cite></p>
-                        </a>
-                      </li>
+                      </c:forEach>
                     </ul>
-                    <ul class="layui-row layui-col-space10">
-                      <li class="layui-col-xs2">
-                        <a href="javascript:;" stcd="62303350" stname="宁都" class="layadmin-backlog-body">
-                          <h3>雨量站</h3>
-                          <p><cite>宁都</cite></p>
-                        </a>
-                      </li>
-                    </ul>
+                    </c:forEach>
                   </div>
                 </div>
               </div>
@@ -271,11 +237,17 @@
       laydate.render({
           elem: '#startTime'
           ,type: 'datetime'
+          ,done: function(value, date){ //监听日期被切换
+              getChart(stcd, stname);
+          }
       });
 
       laydate.render({
           elem: '#endTime'
           ,type: 'datetime'
+          ,done: function(value, date){ //监听日期被切换
+              getChart(stcd, stname);
+          }
       });
 
       //轮播切换
@@ -439,12 +411,17 @@
       }
 
       $("a.layadmin-backlog-body").click(function () {
-          var stcd = $(this).attr("stcd");
-          var stname = $(this).attr("stname");
+          stcd = $(this).attr("stcd");
+          stname = $(this).attr("stname");
+          getChart(stcd, stname);
+      });
+      $("#startTime, #endTime").on("change", function () {
           getChart(stcd, stname);
       });
 
-      getChart('62303500', '汾坑');
+      var stcd = '62303500';
+      var stname = '汾坑';
+      getChart(stcd, stname);
 
       // var option3 = {
       //     //backgroundColor: "#ffffff",

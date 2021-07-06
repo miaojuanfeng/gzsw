@@ -20,8 +20,9 @@
     </select>
     <select id="selectInitData" resultType="java.util.Map">
         select
-        (select RZ from ST_RSVR_R where stcd = '62303130' and tm = '2018-06-01 08:00:00') as rz,
-        (select top 1 otq from ST_RSVR_R where stcd = '62303130' and '2016-06-01 08:00:00' > tm order by tm desc) as oq,
-        (select fsltdz from ST_RSVRFSR_B where stcd = '62303130' and actyr = '2014' and '0601' >= bgmd and edmd >= '0601') as lim
+        (select RZ from ST_RSVR_R where stcd = #{stcd} and tm = #{date}) as rz,
+        (select top 1 otq from ST_RSVR_R where stcd = #{stcd} and #{date} >= tm and otq is not null order by tm desc) as oq,
+        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = #{stcd} and #{monthDay} >= bgmd and edmd >= #{monthDay} order by actyr desc) as lim,
+        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = #{stcd} order by actyr desc, fsltdz desc) as lim_bk
     </select>
 </mapper>

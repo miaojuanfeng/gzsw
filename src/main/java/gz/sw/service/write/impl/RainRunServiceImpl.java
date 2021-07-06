@@ -55,7 +55,7 @@ public class RainRunServiceImpl implements RainRunService {
 	}
 
 	@Override
-	public List selectPointList(Integer lid) {
-		return rainRunDao.selectPointList(lid);
+	public List selectPointList(Integer pid) {
+		return rainRunDao.selectPointList(pid);
 	}
 }

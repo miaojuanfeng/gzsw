@@ -6,17 +6,20 @@ import gz.sw.calc.ApiCalc;
 import gz.sw.calc.ComCalc;
 import gz.sw.calc.ExpCalc;
 import gz.sw.calc.XajCalc;
+import gz.sw.common.Forecast;
 import gz.sw.common.SessionUser;
 import gz.sw.common.XajParam;
 import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
+import gz.sw.entity.read.River;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.exception.ParamException;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.ReadService;
+import gz.sw.service.read.RiverService;
 import gz.sw.service.write.DischargeService;
 import gz.sw.service.write.ModelService;
 import gz.sw.service.write.RainRunService;
@@ -58,9 +61,9 @@ public class ForecastController {
 //
 //	@Autowired
 //	private GridService gridService;
-//
-//	@Autowired
-//	private RiverService riverService;
+
+	@Autowired
+	private RiverService riverService;
 
 	@Autowired
 	private RainRunService rainRunService;
@@ -103,8 +106,13 @@ public class ForecastController {
 		data.put("P", sessionUser.getForecast().getListP(stcd));
 		data.put("R", sessionUser.getForecast().getListR(stcd));
 		data.put("QTRR", sessionUser.getForecast().getListQTRR(stcd));
-		data.put("QT", sessionUser.getForecast().getListQT(stcd));
+		data.put("River", sessionUser.getForecast().getListRiver(stcd));
 		data.put("rainfallMax", sessionUser.getForecast().getListMaxP(stcd));
+		data.put("forecastText", sessionUser.getForecast().getForecastText(stcd));
+		data.put("forecastUnit", sessionUser.getForecast().getForecastUnit(stcd));
+		data.put("forecastColor", sessionUser.getForecast().getForecastColor(stcd));
+		data.put("riverMax", sessionUser.getForecast().getRiverMax(stcd));
+		data.put("riverMin", sessionUser.getForecast().getRiverMin(stcd));
 		retval.put("code", 200);
 		retval.put("data", data);
         return retval;
@@ -141,7 +149,7 @@ public class ForecastController {
 	) {
 		JSONArray model = JSONArray.parseArray(data);
 		try {
-			modelStation(request, forecastTime, affectTime, day, unit, model);
+			modelStation(request, stcd, forecastTime, affectTime, day, unit, type, model);
 		} catch (ParamException e) {
 			JSONObject retval = new JSONObject();
 			retval.put("code", 500);
@@ -480,18 +488,19 @@ public class ForecastController {
 		return retval;
 	}
 
-	private List<BigDecimal> modelStation(HttpServletRequest request, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray model) throws ParamException {
+	private List<BigDecimal> modelStation(HttpServletRequest request, String rootStcd, String forecastTime, String affectTime, Integer day, Integer unit, Integer type, JSONArray model) throws ParamException {
 		List<BigDecimal> retval = new ArrayList<>();
 	    List<List<BigDecimal>> result = new ArrayList<>();
 	    for( int i = 0; i < model.size(); i++ ){
             List<BigDecimal> childList = new ArrayList<>();
             JSONObject m = model.getJSONObject(i);
             String stcd = m.getString("stcd");
+            String stname = m.getString("stname");
 			/**
 			 * 子站输出数据
 			 */
 			if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
-                childList = modelStation(request, forecastTime, affectTime, day, unit, m.getJSONArray("children"));
+                childList = modelStation(request, rootStcd, forecastTime, affectTime, day, unit, type, m.getJSONArray("children"));
 			}
 			/**
 			 * 子站数据和本站数据做运算
@@ -507,7 +516,22 @@ public class ForecastController {
 
 //			log.info("calc: " + m.getString("stname"));
 //			log.info("start: " + System.currentTimeMillis());
-			Map rainfallMap = getP(m.getString("stcd"), forecastTime, affectTime, day, unit);
+			Map rainfallMap = getP(stcd, forecastTime, affectTime, day, unit);
+//			List<River> rivers = riverService.selectRiverQRange(stcd, plusDay(day, forecastTime), affectTime);
+//			List<BigDecimal> riverArr = new ArrayList<>();
+//			BigDecimal riverMax = NumberConst.ZERO;
+//			BigDecimal riverMin = NumberConst.ZERO;
+//			for (int j = 0; j < rivers.size(); j++) {
+//				River r = rivers.get(j);
+//				BigDecimal q = r.getQ() != null ? r.getQ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
+//				riverArr.add(q);
+//				if( NumberUtil.gt(q, riverMax) ){
+//					riverMax = q;
+//				}
+//				if( NumberUtil.lt(q, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+//					riverMin = q;
+//				}
+//			}
 //			log.info("enddd: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");
@@ -517,6 +541,47 @@ public class ForecastController {
 			sessionUser.getForecast().setListP(stcd, listP);
 			sessionUser.getForecast().setListTime(stcd, listTime);
 			sessionUser.getForecast().setListMaxP(stcd, rainfallMax);
+
+			List<River> rivers = new ArrayList<>();
+			List<BigDecimal> riverArr = new ArrayList<>();
+			BigDecimal riverMax = NumberConst.ZERO;
+			BigDecimal riverMin = NumberConst.ZERO;
+			if( type == 1 ) {
+				rivers = riverService.selectRiverQRange(stcd, plusDay(day, forecastTime), affectTime);
+				for (int j = 0; j < rivers.size(); j++) {
+					River r = rivers.get(j);
+					BigDecimal q = r.getQ() != null ? r.getQ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
+					riverArr.add(q);
+					if( NumberUtil.gt(q, riverMax) ){
+						riverMax = q;
+					}
+					if( NumberUtil.lt(q, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+						riverMin = q;
+					}
+				}
+				sessionUser.getForecast().setForecastText(stcd, "流量");
+				sessionUser.getForecast().setForecastUnit(stcd, "流量(m³/s)");
+				sessionUser.getForecast().setForecastColor(stcd, "#FF5722");
+			}else{
+				rivers = riverService.selectRiverZRange(stcd, plusDay(day, forecastTime), affectTime);
+				for (int j = 0; j < rivers.size(); j++) {
+					River r = rivers.get(j);
+					BigDecimal z = r.getZ() != null ? r.getZ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
+					riverArr.add(z);
+					if( NumberUtil.gt(z, riverMax) ){
+						riverMax = z;
+					}
+					if( NumberUtil.lt(z, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+						riverMin = z;
+					}
+				}
+				sessionUser.getForecast().setForecastText(stcd, "水位");
+				sessionUser.getForecast().setForecastUnit(stcd, "水位(m)");
+				sessionUser.getForecast().setForecastColor(stcd, "#009688");
+			}
+			sessionUser.getForecast().setRiverMax(stcd, riverMax);
+			sessionUser.getForecast().setRiverMin(stcd, riverMin);
+			sessionUser.getForecast().setListRiver(stcd, riverArr);
 
             /**
              * 累加子站降雨量
@@ -614,53 +679,52 @@ public class ForecastController {
             }
             /**
              * 根据站的类型选择马斯京根或调洪演算
+			 * 根节点站不需要计算QT
              */
-            List<BigDecimal> listQT = new ArrayList<>();
-            if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp")) ){
-                SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
-            	SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMdd");
-            	List<Map> listZvarl = readService.selectZvarlList(stcd, forecastTime);
-            	Date fTime = DateUtil.str2date(forecastTime, "yyyy-MM-dd");
-            	Map initData = readService.selectInitData(stcd, forecastTime, yearFormat.format(fTime), monthDayFormat.format(fTime));
-                List<Map> listDischarge = dischargeService.selectListByStcd(stcd);
-                List<BigDecimal> Z_CUR = new ArrayList<>();
-            	List<BigDecimal> V_CUR = new ArrayList<>();
-				List<BigDecimal> Z0 = new ArrayList<>();
-				List<BigDecimal> HCOQ = new ArrayList<>();
-				if( initData.get("rz") == null ){
-					throw new ParamException("起调水位参数为空(ST_RSVR_R: RZ)");
-				}
-				if( initData.get("oq") == null ){
-					throw new ParamException("初始出库流量参数为空(ST_RSVR_R: OTQ)");
-				}
-				if( initData.get("lim") == null ){
-					throw new ParamException("汛限水位参数为空(ST_RSVRFSR_B: FSLTDZ)");
-				}
-            	for(Map zvarl : listZvarl){
-            		Z_CUR.add(new BigDecimal(String.valueOf(zvarl.get("rz"))));
-					V_CUR.add(new BigDecimal(String.valueOf(zvarl.get("w"))));
-				}
-				for(Map discharge : listDischarge){
-					Z0.add(new BigDecimal(String.valueOf(discharge.get("z0"))));
-					HCOQ.add(new BigDecimal(String.valueOf(discharge.get("hcoq"))));
-				}
-				BigDecimal RZ = new BigDecimal(String.valueOf(initData.get("rz")));
-				BigDecimal OTQ = new BigDecimal(String.valueOf(initData.get("oq")));
-				BigDecimal FSLTDZ = new BigDecimal(String.valueOf(initData.get("lim")));
+            if( !stcd.equals(rootStcd) ) {
+				List<BigDecimal> listQT = new ArrayList<>();
+				if (StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp"))) {
+					SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+					SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMdd");
+					List<Map> listZvarl = readService.selectZvarlList(stcd, forecastTime);
+					Date fTime = DateUtil.str2date(forecastTime, "yyyy-MM-dd");
+					Map initData = readService.selectInitData(stcd, forecastTime, yearFormat.format(fTime), monthDayFormat.format(fTime));
+					List<Map> listDischarge = dischargeService.selectListByStcd(stcd);
+					List<BigDecimal> Z_CUR = new ArrayList<>();
+					List<BigDecimal> V_CUR = new ArrayList<>();
+					List<BigDecimal> Z0 = new ArrayList<>();
+					List<BigDecimal> HCOQ = new ArrayList<>();
+					if (initData.get("rz") == null) {
+						throw new ParamException(stname + "(" + stcd + ")起调水位参数为空(表ST_RSVR_R字段RZ)");
+					}
+					if (initData.get("oq") == null) {
+						throw new ParamException(stname + "(" + stcd + ")初始出库流量参数为空(表ST_RSVR_R字段OTQ)");
+					}
+					if (initData.get("lim") == null && initData.get("lim_bk") == null) {
+						throw new ParamException(stname + "(" + stcd + ")汛限水位参数为空(表ST_RSVRFSR_B字段FSLTDZ)");
+					}
+					for (Map zvarl : listZvarl) {
+						Z_CUR.add(new BigDecimal(String.valueOf(zvarl.get("rz"))));
+						V_CUR.add(new BigDecimal(String.valueOf(zvarl.get("w"))));
+					}
+					for (Map discharge : listDischarge) {
+						Z0.add(new BigDecimal(String.valueOf(discharge.get("z0"))));
+						HCOQ.add(new BigDecimal(String.valueOf(discharge.get("hcoq"))));
+					}
+					BigDecimal RZ = new BigDecimal(String.valueOf(initData.get("rz")));
+					BigDecimal OTQ = new BigDecimal(String.valueOf(initData.get("oq")));
+					BigDecimal FSLTDZ = new BigDecimal(String.valueOf(initData.get("lim") != null ? initData.get("lim") : initData.get("lim_bk")));
 //				BigDecimal RZ = new BigDecimal(240);
 //				BigDecimal OTQ = new BigDecimal(20);
 //				BigDecimal FSLTDZ = new BigDecimal(242);
-				ComCalc.init(Z_CUR, V_CUR, Z0, HCOQ, RZ, OTQ, FSLTDZ);
-                List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
-				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
-            }else {
-				listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
-            }
-            result.add(listQT);
-            /**
-             *
-             */
-			sessionUser.getForecast().setListQT(stcd, listQT);
+					ComCalc.init(Z_CUR, V_CUR, Z0, HCOQ, RZ, OTQ, FSLTDZ);
+					List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
+					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
+				} else {
+					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
+				}
+				result.add(listQT);
+			}
 		}
 		/**
 		 * 返回本站结果

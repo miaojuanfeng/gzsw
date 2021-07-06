@@ -22,7 +22,7 @@
         <!--where CONVERT(varchar(100), tm, 23) >= CONVERT(varchar(100), dateadd(day, -5, getdate()), 23)-->
         where stcd = #{stcd}
         and RIGHT(CONVERT(varchar(19),tm,120),5)='00:00'
-        and tm >= #{affectTime} and #{forecastTime} >= tm
+        and tm > #{affectTime} and #{forecastTime} > tm
         order by tm asc
     </select>
 
@@ -32,7 +32,7 @@
         <!--where CONVERT(varchar(100), tm, 23) >= CONVERT(varchar(100), dateadd(day, -5, getdate()), 23)-->
         where stcd = #{stcd}
         and RIGHT(CONVERT(varchar(19),tm,120),5)='00:00'
-        and tm >= #{affectTime} and #{forecastTime} >= tm
+        and tm > #{affectTime} and #{forecastTime} > tm
         order by tm asc
     </select>
 

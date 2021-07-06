@@ -162,7 +162,7 @@
         });
 
         form.on('submit(import)', function(data){
-            commonConfirm('station/refresh', '将删除所有本地站点数据，并同步远程数据库站点，确定这样操作吗？');
+
         });
 
         $("#search").click(function () {

@@ -45,7 +45,7 @@
           drp as p
         from st_pptn_r s
         where s.tm = #{date}
-        and s.stcd in
+        and ltrim(rtrim(s.stcd)) in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
             #{stcd}
         </foreach>

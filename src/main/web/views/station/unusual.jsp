@@ -23,9 +23,7 @@
                     <select name="selfP" lay-filter="selfP" lay-search="">
                       <option value="">请选择</option>
                       <option value="10">大于等于10mm</option>
-                      <option value="20">大于等于20mm</option>
                       <option value="30" selected>大于等于30mm</option>
-                      <option value="40">大于等于40mm</option>
                       <option value="50">大于等于50mm</option>
                     </select>
                   </div>
@@ -38,9 +36,13 @@
                       <option value="1">大于等于1</option>
                       <option value="2" selected>大于等于2</option>
                       <option value="3">大于等于3</option>
-                      <option value="4">大于等于4</option>
-                      <option value="5">大于等于5</option>
                     </select>
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">站点代码</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="stcd" class="layui-input" placeholder="支持模糊查询">
                   </div>
                 </div>
                 <button class="layui-btn layui-btn-sm" id="search">立即搜索</button>
@@ -48,6 +50,12 @@
             </div>
           </div>
           <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">轮询时间</label>
+              <div class="layui-input-inline">
+                <input id="date" type="text" name="date" placeholder="请选择" autocomplete="off" class="layui-input" value="${date}">
+              </div>
+            </div>
             <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="reload">立即轮询</button>
           </div>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
@@ -66,11 +74,17 @@
         base: base //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table'], function(){
+    }).use(['index', 'table', 'laydate'], function(){
         var $ = layui.$
             ,admin = layui.admin
             ,table = layui.table
+            ,laydate = layui.laydate
             ,form = layui.form;
+
+        laydate.render({
+            elem: '#date'
+            ,type: 'datetime'
+        });
 
         table.render({
             elem: '#data-table'
@@ -93,27 +107,24 @@
                 ,{field:'dateP', width:160, title: '轮询时间'}
                 // ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
-            ,page: true
+            ,page: false
         });
 
         form.on('submit(reload)', function(data){
-            commonConfirm('station/reload', '立即计算最近整点时间的降雨差异率，确定这样操作吗？', function () {
-                table.reload('data-table', {
-                    page: {
-                        curr: 1
-                    }
-                });
+            var param = {
+                date: $("input[name=date]").val()
+            }
+            commonConfirm('station/reload', '立即计算最近整点时间的降雨差异率，确定这样操作吗？', param, function () {
+                table.reload('data-table');
             });
         });
 
         $("#search").click(function () {
             table.reload('data-table', {
-                page: {
-                    curr: 1
-                }
-                ,where: {
+                where: {
                     selfP: $("select[name=selfP]").val(),
-                    diffP: $("select[name=diffP]").val()
+                    diffP: $("select[name=diffP]").val(),
+                    stcd: $("input[name=stcd]").val()
                 }
             });
         });

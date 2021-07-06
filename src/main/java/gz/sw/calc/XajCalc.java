@@ -351,14 +351,14 @@ public class XajCalc {
         }
 
         for(int i = 0; i < LAG; i++){
-            listQTRR.add(listQTR.get(0));
+            listQTRR.add(listQTR.get(0).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         for(int i = LAG; i < listQTR.size() + LAG; i++){
-            listQTRR.add(listQTR.get(i-LAG));
+            listQTRR.add(listQTR.get(i-LAG).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         if( NumberUtil.gt(KE, new BigDecimal(LAG)) ){
             for(int i = listQTR.size() + LAG; i < listQTR.size() + KE.intValue(); i++){
-                listQTRR.add(listQTR.get(listQTR.size()-1));
+                listQTRR.add(listQTR.get(listQTR.size()-1).setScale(NumberConst.DIGIT, NumberConst.MODE));
             }
         }
         return listQTRR;

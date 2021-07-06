@@ -107,7 +107,7 @@
                     ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
                     ,id: 'layerDemo1' //防止重复弹出
                     ,content: $('#contentBox')
-                    ,area:["500px","420px"]
+                    ,area:["600px","420px"]
                     ,btn: ['关闭']
                     ,btnAlign: 'c' //按钮居中
                     ,shade: 0.2 //不显示遮罩
@@ -123,11 +123,12 @@
                             elem: '#see-table'
                             ,method: 'post'
                             ,where: {
-                                lid: obj.data.lid
+                                pid: obj.data.id
                             }
                             ,url: "${pageContext.request.contextPath}/rainRun/pointList"
                             ,cols: [[
                                 {field:'id', width:80, title: 'ID', sort: true}
+                                ,{field:'lname', width:160, title: 'NAME'}
                                 ,{field:'pino', width:120, title: 'PINO'}
                                 ,{field:'d', title: 'R'}
                                 ,{field:'r', title: 'P'}
@@ -162,7 +163,7 @@
         });
 
         form.on('submit(import)', function(data){
-            commonConfirm('station/refresh', '将删除所有本地站点数据，并同步远程数据库站点，确定这样操作吗？');
+
         });
 
         $("#search").click(function () {

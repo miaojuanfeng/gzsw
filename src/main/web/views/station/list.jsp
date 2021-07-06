@@ -97,7 +97,7 @@
         });
 
         form.on('submit(refresh)', function(data){
-            commonConfirm('station/refresh', '将删除所有本地站点数据，并同步远程数据库站点，确定这样操作吗？', function () {
+            commonConfirm('station/refresh', '将删除所有本地站点数据，并同步远程数据库站点，确定这样操作吗？', null, function () {
                 table.reload('data-table', {
                     page: {
                         curr: 1
@@ -107,7 +107,7 @@
         });
 
         form.on('submit(adsorb)', function(data){
-            commonConfirm('station/adsorb', '将根据经纬度数据，计算临近站点，耗时较长，确定这样操作吗？', function () {
+            commonConfirm('station/adsorb', '将根据经纬度数据，计算临近站点，耗时较长，确定这样操作吗？', null, function () {
                 table.reload('data-table', {
                     page: {
                         curr: 1

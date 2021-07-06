@@ -11,6 +11,7 @@ import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.RiverService;
 import gz.sw.service.read.ReadService;
 import gz.sw.service.write.StationService;
+import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,16 +75,17 @@ public class StationController {
 	@GetMapping("unusual")
 	public String unusual(ModelMap map) {
 		map.put("sttps", StationTypeEnum.getList());
+		map.put("date", DateUtil.date2str(new Date(), "yyyy-MM-dd HH:00:00"));
 		return "station/unusual";
 	}
 
 	@PostMapping("unusual")
 	@ResponseBody
-	public Map unusual(Integer page, Integer limit, String selfP, String diffP) {
+	public Map unusual(Integer page, Integer limit, String selfP, String diffP, String stcd) {
 		Map retval = new HashMap();
 		retval.put("code", 0);
-		retval.put("count", stationService.selectRainCount(selfP, diffP));
-		retval.put("data", stationService.selectRainList(page, limit, selfP, diffP));
+		retval.put("count", stationService.selectRainCount(selfP, diffP, stcd));
+		retval.put("data", stationService.selectRainList(page, limit, selfP, diffP, stcd));
 		return retval;
 	}
 
@@ -99,6 +101,9 @@ public class StationController {
 				stationService.clear();
 				stationService.dbcc();
 				for (Map stbprp : stbprpList) {
+					if( String.valueOf(stbprp.get("STCD")).equals("55555555") ){
+						continue;
+					}
 					Station station = new Station();
 					station.setStcd(String.valueOf(stbprp.get("STCD")));
 					station.setStname(String.valueOf(stbprp.get("STNM")));
@@ -196,9 +201,14 @@ public class StationController {
 	@PostMapping("reload")
 	@ResponseBody
 	@Transactional
-	public Map reload() {
+	public Map reload(String date) {
 		Map retval = new HashMap();
-		stationService.unusual();
+		if( date != null ){
+			Date d = DateUtil.str2date(date, "yyyy-MM-dd HH:mm:ss");
+			stationService.unusual(DateUtil.date2str(d, "yyyy-MM-dd HH:00:00"));
+		}else{
+			stationService.unusual();
+		}
 		return retval;
 	}
 

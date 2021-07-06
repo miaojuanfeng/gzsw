@@ -74,8 +74,8 @@
                 <select name="unit" lay-verify="required" lay-search="">
                   <option value="">请选择</option>
                   <option value="0">实测雨量</option>
-                  <option value="2">日本台</option>
-                  <option value="6">欧洲台</option>
+                  <%--<option value="2">日本台</option>--%>
+                  <%--<option value="6">欧洲台</option>--%>
                 </select>
               </td>
             </tr>
@@ -90,7 +90,7 @@
         <div class="layui-card layui-form">
           <div class="layui-card-header">
             <button lay-submit="" lay-filter="forecast1" class="layui-btn layui-btn-sm">预报流量</button>
-            <%--<button lay-submit="" lay-filter="forecast2" class="layui-btn layui-btn-sm">预报水位</button>--%>
+            <button lay-submit="" lay-filter="forecast2" class="layui-btn layui-btn-sm">预报水位</button>
           </div>
           <div class="layui-card-body layui-row">
             <div id="chart" style="width:100%;height:469px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
@@ -639,21 +639,47 @@
                   }
               },
               tooltip: {
-                  trigger: 'axis'
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      animation: false,
+                      label: {
+                          backgroundColor: '#505765'
+                      }
+                  }
               },
               legend: {
-                  data: ['', '']
+                  data:['实测'+data.forecastText,'预报'+data.forecastText,'降雨量'],
+                  x: 'left'
               },
+              dataZoom: [
+                  {
+                      show: false,
+                      realtime: true,
+                      //  start: 65,
+                      // end: 85
+                  },
+                  {
+                      type: 'inside',
+                      realtime: true,
+                      start: 65,
+                      end: 85
+                  }
+              ],
               xAxis: [
                   {
                       type: 'category',
-                      boundaryGap: false,
+                      boundaryGap : true,
+                      axisLine: {onZero: false},
                       data: data.timeArr
                   }
               ],
               yAxis: [
                   {
-                      type: 'value'
+                      name: data.forecastUnit,
+                      type: 'value',
+                      max: data.riverMax,
+                      min: data.riverMin
                   },
                   {
                       name: '降雨量(mm)',
@@ -667,19 +693,19 @@
                   {
                       name:'降雨量',
                       type:'bar',
-                      // itemStyle:{
-                      //     normal:{
-                      //         color:'#7EC0EE',
-                      //
-                      //     }
-                      // },
+                      itemStyle:{
+                          normal:{
+                              color:'#7EC0EE',
+
+                          }
+                      },
                       // barWidth: '40%',
                       yAxisIndex:1,
-                      // animation: true,
+                      animation: true,
                       data: data.P
                   },
                   {
-                      name:'QTRR',
+                      name:'预报' + data.forecastText,
                       type:'line',
                       animation: true,
                       smooth: true,
@@ -702,7 +728,7 @@
                       data: data.QTRR
                   },
                   {
-                      name:'QT',
+                      name: '实测' + data.forecastText,
                       type:'line',
                       animation: true,
                       smooth: true,
@@ -710,20 +736,20 @@
                       symbolSize: 1,
                       itemStyle:{
                           normal:{
-                              color:'#ff0000',
+                              color: data.forecastColor,
 
                           }
                       },
                       lineStyle: {
                           normal: {
-                              color:'#ff0000',
+                              color: data.forecastColor,
                               width: 3,
                               shadowColor: 'rgba(0,0,0,0.4)',
                               shadowBlur: 10,
                               shadowOffsetY: 10
                           }
                       },
-                      data: data.QT,
+                      data: data.River,
                       // markLine: {
                       //     itemStyle: {
                       //         normal: { lineStyle: { color:'#CD2626' },
@@ -763,18 +789,39 @@
               layer.msg('请填妥相关信息');
               return false;
           }
+          doPost(1, data1[0].stcd, data1);
+          return false;
+      });
+
+      /* 预报水位 */
+      form.on('submit(forecast2)', function(data){
+          if ($("select[name=model]").val() == "" ||
+              $("input[name=forecastTime]").val() == "" ||
+              $("input[name=affectTime]").val() == "" ||
+              $("select[name=day]").val() == "" ||
+              $("select[name=unit]").val() == "" ||
+              data1.length == 0
+          ) {
+              layer.msg('请填妥相关信息');
+              return false;
+          }
+          doPost(2, data1[0].stcd, data1);
+          return false;
+      });
+      
+      function doPost(type, stcd, data) {
           var loading = layer.load(0);
           $.post({
               url: "${pageContext.request.contextPath}/forecast/compute",
               contentType: "application/x-www-form-urlencoded",
               data: {
-                  type: 1,
-                  stcd: data1[0].stcd,
+                  type: type,
+                  stcd: stcd,
                   forecastTime: $("input[name=forecastTime]").val(),
                   affectTime: $("input[name=affectTime]").val(),
                   day: $("select[name=day]").val(),
                   unit: $("select[name=unit]").val(),
-                  data: JSON.stringify(data1)
+                  data: JSON.stringify(data)
               },
               success : function(data) {
                   if( data.code == 200 ) {
@@ -788,50 +835,7 @@
               parent.layer.alert("计算出错，请重试", {title: '错误'});
               layer.close(loading);
           });
-          return false;
-      });
-
-      /* 预报水位 */
-      form.on('submit(forecast2)', function(data){
-          // parent.layer.alert(JSON.stringify(data.field), {
-          //   title: '最终的提交信息'
-          // })
-          var submit = true;
-          if ($("input[name=name]").val() == "" ||
-              data1.length == 0) {
-              submit = false;
-          }
-          if (!submit) {
-              layer.msg('请填妥相关信息');
-              return false;
-          }
-          var id = $("input[name=id]").val();
-          var update = '';
-          if( id != '' ){
-              update = '/' + id;
-          }
-          $.post({
-              url: "${pageContext.request.contextPath}/model/insert" + update,
-              contentType: "application/x-www-form-urlencoded",
-              data: {
-                  name: $("input[name=name]").val(),
-                  stcd: $("input[name=stcd]").val(),
-                  data: JSON.stringify(data1)
-              },
-              success : function(result) {
-                  parent.layer.alert("数据保存成功", {
-                      title: '成功'
-                  }, function () {
-                      alert('关闭当前页面');
-                  })
-              }
-          }).fail(function(response) {
-              parent.layer.alert("数据保存失败", {
-                  title: '错误'
-              })
-          });
-          return false;
-      });
+      }
 
   });
 

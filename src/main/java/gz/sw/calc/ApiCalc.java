@@ -177,7 +177,7 @@ public class ApiCalc {
             for(int j = 1; j <= 50; j++){
                 BigDecimal temp1 = listQTRR.get(i + j - 1);
                 BigDecimal temp2 = listR.get(i).multiply(listQu.get(j)).multiply(AREA);
-                listQTRR.set(i + j - 1, temp1.add(temp2));
+                listQTRR.set(i + j - 1, temp1.add(temp2).setScale(NumberConst.DIGIT, NumberConst.MODE));
             }
         }
         /**

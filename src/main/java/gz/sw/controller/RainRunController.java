@@ -45,9 +45,9 @@ public class RainRunController {
 
 	@PostMapping("pointList")
 	@ResponseBody
-	public Map pointList(Integer lid) {
+	public Map pointList(Integer pid) {
 		Map retval = new HashMap();
-		List listRainRun = rainRunService.selectPointList(lid);
+		List listRainRun = rainRunService.selectPointList(pid);
 		retval.put("code", 0);
 		retval.put("count", listRainRun.size());
 		retval.put("data", listRainRun);

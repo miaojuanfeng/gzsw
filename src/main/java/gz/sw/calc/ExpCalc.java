@@ -152,7 +152,7 @@ public class ExpCalc {
         }
         for (int i = 0; i < listR.size(); i++){
             for (int j = 1; j < listQu.size(); j++){
-                listQTRR.set(i+j-1, listQTRR.get(i+j-1).add(listR.get(i).multiply(listQu.get(j))));
+                listQTRR.set(i+j-1, listQTRR.get(i+j-1).add(listR.get(i).multiply(listQu.get(j))).setScale(NumberConst.DIGIT, NumberConst.MODE));
             }
         }
         /**

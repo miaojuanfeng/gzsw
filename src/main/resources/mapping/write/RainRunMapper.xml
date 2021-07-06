@@ -19,7 +19,7 @@
         </if>
     </select>
     <select id="selectList" resultType="java.util.Map">
-        select r1.id, r1.name, r1.lname, r1.lid, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
+        select r1.id, r1.name, 'Pa0 - Pa60' as lname, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
         from rainrun r1
         left join station s on r1.stcd = s.stcd
         left join sttype t on s.type = t.code,
@@ -45,26 +45,26 @@
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
-        	class as id, name, stcd
+        	id, name, stcd
         from rainrun
         where stcd = #{stcd}
-        group by class, name, stcd
-        order by class desc
+        order by id desc
     </select>
     <select id="selectRainRunPoint" resultType="java.util.Map">
         select
-        	r.PA, rp.D, rp.R
+        	rl.PA, rp.D, rp.R
         from rainrun_point rp
-        left join rainrun r on rp.lid = r.lid
-        where r.class = #{rainRun}
-        order by r.pa, rp.pino asc
+        left join rainrun_line rl on rp.lid = rl.lid
+        where rl.pid = #{rainRun}
+        order by rl.pa, rp.pino asc
     </select>
     <select id="selectPointList" resultType="java.util.Map">
         select
-        	id, pino, d, r
-        from rainrun_point
-        where lid = #{lid}
-        order by pino asc
+        	rl.lname, rp.id, rp.pino, rp.d, rp.r
+        from rainrun_point rp
+        left join rainrun_line rl on rp.lid = rl.lid
+        where rl.pid = #{pid}
+        order by rl.pa asc, rp.pino asc
     </select>
     <select id="select" resultType="gz.sw.entity.write.RainRun">
         select m.* from model m

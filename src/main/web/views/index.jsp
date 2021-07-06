@@ -211,7 +211,7 @@
             ,admin = layui.admin;
 
         $("#logout").click(function () {
-            commonConfirm("logout", "确认登出吗？", function () {
+            commonConfirm("logout", "确认登出吗？", null, function () {
                 admin.exit(function(){
                     location.href = "login";
                 });

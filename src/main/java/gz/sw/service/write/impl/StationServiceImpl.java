@@ -1,5 +1,6 @@
 package gz.sw.service.write.impl;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Station;
@@ -42,13 +43,13 @@ public class StationServiceImpl implements StationService {
 	}
 
 	@Override
-	public int selectRainCount(String selfP, String diffP) {
-		return stationDao.selectRainCount(selfP, diffP);
+	public int selectRainCount(String selfP, String diffP, String stcd) {
+		return stationDao.selectRainCount(selfP, diffP, stcd);
 	}
 
 	@Override
-	public List selectRainList(Integer page, Integer limit, String selfP, String diffP) {
-		return stationDao.selectRainList(page, limit, selfP, diffP);
+	public List selectRainList(Integer page, Integer limit, String selfP, String diffP, String stcd) {
+		return stationDao.selectRainList(page, limit, selfP, diffP, stcd);
 	}
 
 	@Override
@@ -85,64 +86,99 @@ public class StationServiceImpl implements StationService {
 			Date now = new Date();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
 			String date = format.format(now);
-			//			String date = "2018-06-01 03:00:00";
-			List<Station> stationList = selectAll();
-			List<Station> insertList = new ArrayList<>();
-			List<String> stcdList = new ArrayList<>();
-			List<Map> rainfallList = new ArrayList<>();
-			clear();
-			dbcc();
-			for (Station station : stationList) {
-				stcdList.add(station.getStcd());
-				if (stcdList.size() > 100) {
-					rainfallList.addAll(rainfallService.selectNearStationRainfall(stcdList, date));
-					stcdList.clear();
-				}
-			}
-			if (stcdList.size() > 0) {
+//						String date = "2018-06-01 03:00:00";
+			doUnusual(date);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void unusual(String date) {
+		synchronized (CommonConst.stationLock) {
+			doUnusual(date);
+		}
+	}
+
+	private void doUnusual(String date){
+		List<Station> stationList = selectAll();
+		List<Station> insertList = new ArrayList<>();
+		List<String> stcdList = new ArrayList<>();
+		List<Map> rainfallList = new ArrayList<>();
+		clear();
+		dbcc();
+		for (Station station : stationList) {
+			stcdList.add(station.getStcd().trim());
+			if (stcdList.size() > 100) {
 				rainfallList.addAll(rainfallService.selectNearStationRainfall(stcdList, date));
 				stcdList.clear();
 			}
-			for (Station station : stationList) {
-				station.setDateP(date);
-				insertList.add(station);
-				if (station.getNearStcd() == null) {
-					continue;
-				}
-				for (int i = 0; i < rainfallList.size(); i++) {
-					String stcd1 = String.valueOf(rainfallList.get(i).get("stcd"));
-					BigDecimal p1 = new BigDecimal(String.valueOf(rainfallList.get(i).get("p")));
-					if (station.getStcd().equals(stcd1)) {
-						station.setSelfP(p1);
-						for (int j = 0; j < rainfallList.size(); j++) {
-							String stcd2 = String.valueOf(rainfallList.get(j).get("stcd"));
-							BigDecimal p2 = new BigDecimal(String.valueOf(rainfallList.get(j).get("p")));
-							if (station.getNearStcd().equals(stcd2)) {
-								BigDecimal diffP = NumberConst.ZERO;
-								if (NumberUtil.gt(p1, NumberConst.ZERO) && NumberUtil.et(p2, NumberConst.ZERO) ||
-									NumberUtil.et(p1, NumberConst.ZERO) && NumberUtil.gt(p2, NumberConst.ZERO)
-								){
-									diffP = new BigDecimal(999);
-								} else if (NumberUtil.gt(p2, NumberConst.ZERO)) {
-									diffP = (p1.subtract(p2)).abs().divide(p2, 2, NumberConst.MODE);
-								}
-								station.setNearP(p2);
-								station.setDiffP(diffP.toString());
-								break;
-							}
-						}
-						break;
-					}
-				}
-				if (insertList.size() > 100) {
-					insertBatch(insertList);
-					insertList.clear();
+		}
+		if (stcdList.size() > 0) {
+			rainfallList.addAll(rainfallService.selectNearStationRainfall(stcdList, date));
+			stcdList.clear();
+		}
+		for (Station station : stationList) {
+			Boolean isSetSelf = false;
+			Boolean isSetNear = false;
+			station.setDateP(date);
+			insertList.add(station);
+			/**
+			 * 本站雨量
+			 */
+			for (int i = 0; i < rainfallList.size(); i++) {
+				String stcd1 = String.valueOf(rainfallList.get(i).get("stcd"));
+				BigDecimal p1 = new BigDecimal(String.valueOf(rainfallList.get(i).get("p")));
+				if (station.getStcd().trim().equals(stcd1.trim())) {
+					station.setSelfP(p1);
+					isSetSelf = true;
+					break;
 				}
 			}
-			if (insertList.size() > 0) {
+			/**
+			 * 没有临站就继续
+			 */
+			if (station.getNearStcd() == null) {
+				continue;
+			}
+			/**
+			 * 临站雨量
+			 */
+			for (int i = 0; i < rainfallList.size(); i++) {
+				String stcd2 = String.valueOf(rainfallList.get(i).get("stcd"));
+				BigDecimal p2 = new BigDecimal(String.valueOf(rainfallList.get(i).get("p")));
+				if (station.getNearStcd().trim().equals(stcd2.trim())) {
+					station.setNearP(p2);
+					isSetNear = true;
+					break;
+				}
+			}
+			if( isSetSelf && station.getSelfP() == null ){
+				station.setSelfP(NumberConst.ZERO);
+			}
+			if( isSetNear && station.getNearP() == null ){
+				station.setNearP(NumberConst.ZERO);
+			}
+			if( station.getSelfP() == null && station.getNearP() == null ){
+				station.setDiffP(null);
+			}else if( station.getSelfP() == null && station.getNearP() != null ||
+					station.getSelfP() != null && station.getNearP() == null ||
+					NumberUtil.gt(station.getSelfP(), NumberConst.ZERO) && NumberUtil.et(station.getNearP(), NumberConst.ZERO) ||
+					NumberUtil.et(station.getSelfP(), NumberConst.ZERO) && NumberUtil.gt(station.getNearP(), NumberConst.ZERO)
+					){
+				station.setDiffP("999");
+			}else if(NumberUtil.gt(station.getNearP(), NumberConst.ZERO)) {
+				station.setDiffP((station.getSelfP().subtract(station.getNearP())).abs().divide(station.getNearP(), 2, NumberConst.MODE).toString());
+			}else if(NumberUtil.gt(station.getSelfP(), NumberConst.ZERO)) {
+				station.setDiffP((station.getNearP().subtract(station.getSelfP())).abs().divide(station.getSelfP(), 2, NumberConst.MODE).toString());
+			}
+			if (insertList.size() > 100) {
 				insertBatch(insertList);
 				insertList.clear();
 			}
+		}
+		if (insertList.size() > 0) {
+			insertBatch(insertList);
+			insertList.clear();
 		}
 	}
 }

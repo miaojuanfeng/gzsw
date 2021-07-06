@@ -27,13 +27,24 @@ public class Forecast {
 
     private Map<String, List<String>> listTime = new HashMap<>();
 
-    private Map<String, List<BigDecimal>> listQT = new HashMap<>();
+//    private Map<String, List<BigDecimal>> listQT = new HashMap<>();
+    private Map<String, List<BigDecimal>> listRiver = new HashMap<>();
 
     private Map<String, Integer> listMaxP = new HashMap<>();
 
     private Map<String, Plan> planCl;
 
     private Map<String, Plan> planHl;
+
+    private Map<String, String> listForecastText = new HashMap<>();
+
+    private Map<String, String> listForecastUnit = new HashMap<>();
+
+    private Map<String, String> listForecastColor = new HashMap<>();
+
+    private Map<String, BigDecimal> listRiverMax = new HashMap<>();
+
+    private Map<String, BigDecimal> listRiverMin = new HashMap<>();
 
     public List<BigDecimal> getListP(String stcd) {
         return listP.get(stcd);
@@ -75,12 +86,20 @@ public class Forecast {
         this.listTime.put(stcd, listTime);
     }
 
-    public List<BigDecimal> getListQT(String stcd) {
-        return listQT.get(stcd);
+//    public List<BigDecimal> getListQT(String stcd) {
+//        return listQT.get(stcd);
+//    }
+//
+//    public void setListQT(String stcd, List<BigDecimal> listQT) {
+//        this.listQT.put(stcd, listQT);
+//    }
+
+    public List<BigDecimal> getListRiver(String stcd) {
+        return listRiver.get(stcd);
     }
 
-    public void setListQT(String stcd, List<BigDecimal> listQT) {
-        this.listQT.put(stcd, listQT);
+    public void setListRiver(String stcd, List<BigDecimal> listRiver) {
+        this.listRiver.put(stcd, listRiver);
     }
 
     public Integer getListMaxP(String stcd) {
@@ -105,5 +124,45 @@ public class Forecast {
 
     public void setPlanHl(String stcd, Plan planHl) {
         this.planHl.put(stcd, planHl);
+    }
+
+    public String getForecastText(String stcd) {
+        return listForecastText.get(stcd);
+    }
+
+    public void setForecastText(String stcd, String forecastText) {
+        this.listForecastText.put(stcd, forecastText);
+    }
+
+    public String getForecastUnit(String stcd) {
+        return this.listForecastUnit.get(stcd);
+    }
+
+    public void setForecastUnit(String stcd, String forecastUnit) {
+        this.listForecastUnit.put(stcd, forecastUnit);
+    }
+
+    public String getForecastColor(String stcd) {
+        return listForecastColor.get(stcd);
+    }
+
+    public void setForecastColor(String stcd, String forecastColor) {
+        this.listForecastColor.put(stcd, forecastColor);
+    }
+
+    public BigDecimal getRiverMax(String stcd) {
+        return listRiverMax.get(stcd);
+    }
+
+    public void setRiverMax(String stcd, BigDecimal riverMax) {
+        this.listRiverMax.put(stcd, riverMax);
+    }
+
+    public BigDecimal getRiverMin(String stcd) {
+        return listRiverMin.get(stcd);
+    }
+
+    public void setRiverMin(String stcd, BigDecimal riverMin) {
+        this.listRiverMin.put(stcd, riverMin);
     }
 }
