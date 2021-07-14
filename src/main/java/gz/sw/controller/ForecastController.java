@@ -90,10 +90,10 @@ public class ForecastController {
 //		}
 //		map.put("stationProgress", commonService.stationProgress(CommonConst.STCD_NINGDU, 1));
 		Date date = new Date();
-		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
-		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
-//		map.put("forecastTime", "2019-06-04 08:00:00");
-//		map.put("affectTime", "2019-06-01 08:00:00");
+//		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
+//		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+		map.put("forecastTime", "2019-05-20 08:00:00");
+		map.put("affectTime", "2019-05-15 08:00:00");
 
 		return "home/forecast";
 	}
@@ -102,17 +102,20 @@ public class ForecastController {
         JSONObject retval = new JSONObject();
         JSONObject data = new JSONObject();
 		SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
+		Forecast f = sessionUser.getForecast();
 		data.put("timeArr", sessionUser.getForecast().getListTime(stcd));
 		data.put("P", sessionUser.getForecast().getListP(stcd));
 		data.put("R", sessionUser.getForecast().getListR(stcd));
 		data.put("QTRR", sessionUser.getForecast().getListQTRR(stcd));
 		data.put("River", sessionUser.getForecast().getListRiver(stcd));
-		data.put("rainfallMax", sessionUser.getForecast().getListMaxP(stcd));
+		data.put("rainfallMax", sessionUser.getForecast().getListMaxP(stcd).intValue());
 		data.put("forecastText", sessionUser.getForecast().getForecastText(stcd));
 		data.put("forecastUnit", sessionUser.getForecast().getForecastUnit(stcd));
 		data.put("forecastColor", sessionUser.getForecast().getForecastColor(stcd));
-		data.put("riverMax", sessionUser.getForecast().getRiverMax(stcd));
-		data.put("riverMin", sessionUser.getForecast().getRiverMin(stcd));
+		data.put("riverMax", sessionUser.getForecast().getRiverMax(stcd).intValue());
+		data.put("riverMin", sessionUser.getForecast().getRiverMin(stcd).intValue());
+		data.put("QT", sessionUser.getForecast().getListQT(stcd));
+		data.put("stname", sessionUser.getForecast().getStname(stcd));
 		retval.put("code", 200);
 		retval.put("data", data);
         return retval;
@@ -149,6 +152,8 @@ public class ForecastController {
 	) {
 		JSONArray model = JSONArray.parseArray(data);
 		try {
+			forecastTime = DateUtil.date2str(DateUtil.str2date(forecastTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
+			affectTime = DateUtil.date2str(DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 			modelStation(request, stcd, forecastTime, affectTime, day, unit, type, model);
 		} catch (ParamException e) {
 			JSONObject retval = new JSONObject();
@@ -513,30 +518,26 @@ public class ForecastController {
 			Integer rainfallMax = 0;
 
 			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
+			sessionUser.getForecast().setStname(stcd, stname);
 
-//			log.info("calc: " + m.getString("stname"));
-//			log.info("start: " + System.currentTimeMillis());
+			System.out.println("计算站点: " + m.getString("stname"));
+			System.out.println("getP开始: " + System.currentTimeMillis());
 			Map rainfallMap = getP(stcd, forecastTime, affectTime, day, unit);
-//			List<River> rivers = riverService.selectRiverQRange(stcd, plusDay(day, forecastTime), affectTime);
-//			List<BigDecimal> riverArr = new ArrayList<>();
-//			BigDecimal riverMax = NumberConst.ZERO;
-//			BigDecimal riverMin = NumberConst.ZERO;
-//			for (int j = 0; j < rivers.size(); j++) {
-//				River r = rivers.get(j);
-//				BigDecimal q = r.getQ() != null ? r.getQ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
-//				riverArr.add(q);
-//				if( NumberUtil.gt(q, riverMax) ){
-//					riverMax = q;
-//				}
-//				if( NumberUtil.lt(q, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
-//					riverMin = q;
-//				}
-//			}
-//			log.info("enddd: " + System.currentTimeMillis());
+			System.out.println("getP结束: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");
 			listTime = (List<String>)rainfallMap.get("timeList");
 			rainfallMax = (Integer)rainfallMap.get("rainfallMax");
+
+//			if( stcd.trim().equals("62303350") ) {
+//				for (BigDecimal pm : listP) {
+//					System.out.println(pm);
+//				}
+//				System.out.println("------------");
+//				for (String tm : listTime) {
+//					System.out.println(tm);
+//				}
+//			}
 
 			sessionUser.getForecast().setListP(stcd, listP);
 			sessionUser.getForecast().setListTime(stcd, listTime);
@@ -546,6 +547,7 @@ public class ForecastController {
 			List<BigDecimal> riverArr = new ArrayList<>();
 			BigDecimal riverMax = NumberConst.ZERO;
 			BigDecimal riverMin = NumberConst.ZERO;
+			System.out.println("getQ开始: " + System.currentTimeMillis());
 			if( type == 1 ) {
 				rivers = riverService.selectRiverQRange(stcd, plusDay(day, forecastTime), affectTime);
 				for (int j = 0; j < rivers.size(); j++) {
@@ -579,21 +581,20 @@ public class ForecastController {
 				sessionUser.getForecast().setForecastUnit(stcd, "水位(m)");
 				sessionUser.getForecast().setForecastColor(stcd, "#009688");
 			}
-			sessionUser.getForecast().setRiverMax(stcd, riverMax);
-			sessionUser.getForecast().setRiverMin(stcd, riverMin);
+			System.out.println("getQ结束: " + System.currentTimeMillis());
 			sessionUser.getForecast().setListRiver(stcd, riverArr);
 
             /**
              * 累加子站降雨量
              */
-            if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
-                for( int j = 0; j < m.getJSONArray("children").size(); j++ ){
-                    JSONObject c = m.getJSONArray("children").getJSONObject(j);
-                    String cstcd = m.getString("stcd");
-                    List<BigDecimal> childP = sessionUser.getForecast().getListP(cstcd);
-                    listP = addList(listP, childP);
-                }
-            }
+//            if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
+//                for( int j = 0; j < m.getJSONArray("children").size(); j++ ){
+//                    JSONObject c = m.getJSONArray("children").getJSONObject(j);
+//                    String cstcd = m.getString("stcd");
+//                    List<BigDecimal> childP = sessionUser.getForecast().getListP(cstcd);
+//                    listP = addList(listP, childP);
+//                }
+//            }
 
 			JSONObject plan = m.getJSONObject("plan");
             plan.put("KE", m.getBigDecimal("ke"));
@@ -652,9 +653,9 @@ public class ForecastController {
 			 */
 			if( ModelTypeEnum.XAJ_HL.getId().equals(planModelHl) ) {
 				if( ModelTypeEnum.XAJ_CL.getId().equals(planModelCl) ){
-					listQTRR = XajCalc.getQTRR(plan, listP, listQTR, xajParam);
+					listQTRR = XajCalc.getQTRR(plan, listP, xajParam);
 				}else{
-					listQTRR = XajCalc.getQTRR(plan, listP, listR, xajParam);
+					listQTRR = XajCalc.getQTRR(plan, listP, xajParam);
 				}
 			}else if( ModelTypeEnum.EXP_HL.getId().equals(planModelHl) ){
 				List listUnitLine = unitLineService.selectLinePoint(plan.getInteger("UNITLINE"));
@@ -669,6 +670,24 @@ public class ForecastController {
 
 			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
 
+			/**
+			 * 寻找流量线最大值
+			 */
+			for (int j = 0; j < listQTRR.size(); j++) {
+				BigDecimal qtrr = listQTRR.get(j);
+				if( NumberUtil.gt(qtrr, riverMax) ){
+					riverMax = qtrr;
+				}
+				if( NumberUtil.lt(qtrr, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+					riverMin = qtrr;
+				}
+			}
+			riverMax = riverMax.multiply(new BigDecimal("1.2"));
+//			riverMin = riverMin.subtract(new BigDecimal(100));
+			sessionUser.getForecast().setRiverMax(stcd, riverMax);
+			sessionUser.getForecast().setRiverMin(stcd, riverMin);
+
+
             /**
              * 合并子站QTRR
 			 * QTRR汾坑 = QT宁都 + QT石城 + QTRR汾坑
@@ -682,6 +701,7 @@ public class ForecastController {
 			 * 根节点站不需要计算QT
              */
             if( !stcd.equals(rootStcd) ) {
+//			if( 1==1 ) {
 				List<BigDecimal> listQT = new ArrayList<>();
 				if (StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(m.getString("sttp"))) {
 					SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
@@ -724,6 +744,8 @@ public class ForecastController {
 					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
 				}
 				result.add(listQT);
+
+				sessionUser.getForecast().setListQT(stcd, listQT);
 			}
 		}
 		/**
@@ -743,7 +765,7 @@ public class ForecastController {
 	private List<BigDecimal> addList(List<BigDecimal> list1, List<BigDecimal> list2){
 	    List<BigDecimal> retval = new ArrayList<>();
 	    if( list1.size() != list2.size() ) {
-//			log.info("list1.size() != list2.size() : " + list1.size() + ", " + list2.size());
+//			System.out.println("list1.size() != list2.size() : " + list1.size() + ", " + list2.size());
 	    }
 	    int size = list1.size() < list2.size() ? list1.size() : list2.size();
 		for (int i = 0; i < size; i++) {
@@ -800,70 +822,70 @@ public class ForecastController {
 //		return plan;
 //	}
 
-	private List<BigDecimal> doCalc(Plan plan, List<BigDecimal> rainfallP, BigDecimal KE, BigDecimal XE){
-//	    StepCommonUtil.init(plan);
-//	    StepOneUtil.init(plan);
-//	    StepTwoUtil.init(plan);
-//	    StepThreeUtil.init(plan);
-//	    StepFourUtil.init(plan);
-
-		List<BigDecimal> QTR_List = new ArrayList<>();
-		Integer len = rainfallP.size();
-
-		if( KE != null ) {
-			if (NumberUtil.gt(new BigDecimal(plan.getL().intValue()), KE)) {
-				len += plan.getL().intValue();
-			} else {
-				len += KE.intValue();
-			}
-		}else{
-			len += plan.getL().intValue();
-		}
-		for (int i = 0; i<len; i++){
-			QTR_List.add(new BigDecimal(-999));
-		}
-		BigDecimal initQTR = null;
-		BigDecimal lastQTR = NumberConst.ZERO;
-		for (int i=0; i<rainfallP.size();i++) {
-
-//            StepCommonUtil.setP(rainfallP.get(i));
-
-//            System.out.print("p="+rainfallP.get(i)+" ");
-
-//            StepOneUtil.getResult();
-//            System.out.println(StepTwoUtil.getEKx());
-//            System.out.println(StepTwoUtil.getEKy());
-//            System.out.println(StepTwoUtil.getEKz());
-//            System.out.println("------");
-//            System.out.println(StepTwoUtil.getWUx2());
-//            System.out.println(StepTwoUtil.getWLx2());
-//            System.out.println(StepTwoUtil.getWDx2());
-//            StepTwoUtil.getResult();
-//            StepThreeUtil.getResult();
-//            StepFourUtil.getResult();
-
-			if( initQTR == null ){
-//                initQTR = StepFourUtil.QTR;
-			}
-			if( i<plan.getL().intValue() ){
-				QTR_List.set(i, initQTR);
-			}
-//            QTR_List.set(plan.getL() + i, StepFourUtil.QTR);
-
-//            lastQTR = StepFourUtil.QTR;
-//            System.out.println("======================"+(i+1)+"======================");
-		}
-		for(int i=0;i<QTR_List.size();i++){
-			if( NumberUtil.et(QTR_List.get(i), new BigDecimal(-999)) ){
-				QTR_List.set(i, lastQTR);
-			}
-		}
-		return QTR_List;
-
-		//System.out.println(StepTwoUtil.getWUx1());
-		//System.out.println(StepTwoUtil.getWLx1());
-		//System.out.println(StepTwoUtil.getWDx1());
-	}
+//	private List<BigDecimal> doCalc(Plan plan, List<BigDecimal> rainfallP, BigDecimal KE, BigDecimal XE){
+////	    StepCommonUtil.init(plan);
+////	    StepOneUtil.init(plan);
+////	    StepTwoUtil.init(plan);
+////	    StepThreeUtil.init(plan);
+////	    StepFourUtil.init(plan);
+//
+//		List<BigDecimal> QTR_List = new ArrayList<>();
+//		Integer len = rainfallP.size();
+//
+//		if( KE != null ) {
+//			if (NumberUtil.gt(new BigDecimal(plan.getL().intValue()), KE)) {
+//				len += plan.getL().intValue();
+//			} else {
+//				len += KE.intValue();
+//			}
+//		}else{
+//			len += plan.getL().intValue();
+//		}
+//		for (int i = 0; i<len; i++){
+//			QTR_List.add(new BigDecimal(-999));
+//		}
+//		BigDecimal initQTR = null;
+//		BigDecimal lastQTR = NumberConst.ZERO;
+//		for (int i=0; i<rainfallP.size();i++) {
+//
+////            StepCommonUtil.setP(rainfallP.get(i));
+//
+////            System.out.print("p="+rainfallP.get(i)+" ");
+//
+////            StepOneUtil.getResult();
+////            System.out.println(StepTwoUtil.getEKx());
+////            System.out.println(StepTwoUtil.getEKy());
+////            System.out.println(StepTwoUtil.getEKz());
+////            System.out.println("------");
+////            System.out.println(StepTwoUtil.getWUx2());
+////            System.out.println(StepTwoUtil.getWLx2());
+////            System.out.println(StepTwoUtil.getWDx2());
+////            StepTwoUtil.getResult();
+////            StepThreeUtil.getResult();
+////            StepFourUtil.getResult();
+//
+//			if( initQTR == null ){
+////                initQTR = StepFourUtil.QTR;
+//			}
+//			if( i<plan.getL().intValue() ){
+//				QTR_List.set(i, initQTR);
+//			}
+////            QTR_List.set(plan.getL() + i, StepFourUtil.QTR);
+//
+////            lastQTR = StepFourUtil.QTR;
+////            System.out.println("======================"+(i+1)+"======================");
+//		}
+//		for(int i=0;i<QTR_List.size();i++){
+//			if( NumberUtil.et(QTR_List.get(i), new BigDecimal(-999)) ){
+//				QTR_List.set(i, lastQTR);
+//			}
+//		}
+//		return QTR_List;
+//
+//		//System.out.println(StepTwoUtil.getWUx1());
+//		//System.out.println(StepTwoUtil.getWLx1());
+//		//System.out.println(StepTwoUtil.getWDx1());
+//	}
 
 	private String plusDay(Integer num, String newDate){
 		SimpleDateFormat format = new SimpleDateFormat(CommonConst.DATETIME_FORMAT);

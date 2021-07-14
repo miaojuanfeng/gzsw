@@ -21,6 +21,8 @@ public class Forecast {
 
     private Map<String, List<BigDecimal>> listR = new HashMap<>();
 
+    private Map<String, List<BigDecimal>> listQT = new HashMap<>();
+
     private Map<String, List<BigDecimal>> listQTR = new HashMap<>();
 
     private Map<String, List<BigDecimal>> listQTRR = new HashMap<>();
@@ -31,6 +33,8 @@ public class Forecast {
     private Map<String, List<BigDecimal>> listRiver = new HashMap<>();
 
     private Map<String, Integer> listMaxP = new HashMap<>();
+
+    private Map<String, String> listStname = new HashMap<>();
 
     private Map<String, Plan> planCl;
 
@@ -60,6 +64,14 @@ public class Forecast {
 
     public void setListR(String stcd, List<BigDecimal> listR) {
         this.listR.put(stcd, listR);
+    }
+
+    public List<BigDecimal> getListQT(String stcd) {
+        return listQT.get(stcd);
+    }
+
+    public void setListQT(String stcd, List<BigDecimal> listQT) {
+        this.listQT.put(stcd, listQT);
     }
 
     public Map<String, List<BigDecimal>> getListQTR() {
@@ -108,6 +120,14 @@ public class Forecast {
 
     public void setListMaxP(String stcd, Integer maxP) {
         this.listMaxP.put(stcd, maxP);
+    }
+
+    public String getStname(String stcd) {
+        return listStname.get(stcd);
+    }
+
+    public void setStname(String stcd, String stname) {
+        this.listStname.put(stcd, stname);
     }
 
     public Plan getPlanCl(String stcd) {

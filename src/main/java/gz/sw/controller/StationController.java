@@ -228,7 +228,10 @@ public class StationController {
     public JSONObject chart1(String stcd, String startTime, String endTime) {
         JSONObject retval = new JSONObject();
 
-        List<String> stcdList = new ArrayList<>();
+		startTime = DateUtil.date2str(DateUtil.str2date(startTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
+		endTime = DateUtil.date2str(DateUtil.str2date(endTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
+
+		List<String> stcdList = new ArrayList<>();
         stcdList.add(stcd);
         List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdList, endTime, startTime);
 
@@ -257,6 +260,9 @@ public class StationController {
     @ResponseBody
     public JSONObject chart2(String stcd, String startTime, String endTime) {
 		JSONObject retval = new JSONObject();
+
+		startTime = DateUtil.date2str(DateUtil.str2date(startTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
+		endTime = DateUtil.date2str(DateUtil.str2date(endTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 
 		List<River> rivers = riverService.selectRiverTime(stcd, startTime, endTime);
 

@@ -626,19 +626,28 @@
       //     updateParam();
       // });
 
-      var chart = echarts.init(document.getElementById('chart'));
-
       function draw(data) {
-          console.log(data);
+          var chart = echarts.init(document.getElementById('chart'));
           var option = {
               title: {
-                  text: '今日流量趋势',
+                  text: '洪水过程',
+                  subtext: data.stname,
                   x: 'center',
-                  textStyle: {
-                      fontSize: 14
+                  align: 'right'
+              },
+              grid: {
+                  bottom: 80
+              },
+              toolbox: {
+                  feature: {
+                      dataZoom: {
+                          yAxisIndex: 'none'
+                      },
+                      restore: {},
+                      saveAsImage: {}
                   }
               },
-              tooltip: {
+              tooltip : {
                   trigger: 'axis',
                   axisPointer: {
                       type: 'cross',
@@ -671,7 +680,9 @@
                       type: 'category',
                       boundaryGap : true,
                       axisLine: {onZero: false},
-                      data: data.timeArr
+                      data: data.timeArr.map(function (str) {
+                          return str.replace('-', '/').replace('-', '/').replace(' ', '\n')
+                      })
                   }
               ],
               yAxis: [
@@ -691,6 +702,53 @@
               ],
               series: [
                   {
+                      name: '实测' + data.forecastText,
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: '#7EC0EE',
+
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: '#7EC0EE',
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.River
+                  },
+                  {
+                      name:'预报' + data.forecastText,
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: data.forecastColor,
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: data.forecastColor,
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.QTRR
+                  },
+                  {
                       name:'降雨量',
                       type:'bar',
                       itemStyle:{
@@ -703,74 +761,6 @@
                       yAxisIndex:1,
                       animation: true,
                       data: data.P
-                  },
-                  {
-                      name:'预报' + data.forecastText,
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color:'#7EC0EE',
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color:'#7EC0EE',
-                              width: 3,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 10,
-                              shadowOffsetY: 10
-                          }
-                      },
-                      data: data.QTRR
-                  },
-                  {
-                      name: '实测' + data.forecastText,
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: data.forecastColor,
-
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: data.forecastColor,
-                              width: 3,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 10,
-                              shadowOffsetY: 10
-                          }
-                      },
-                      data: data.River,
-                      // markLine: {
-                      //     itemStyle: {
-                      //         normal: { lineStyle: { color:'#CD2626' },
-                      //             label: { show: true , position:'middle' }
-                      //         }
-                      //     },
-                      //     data: [
-                      //
-                      //         {
-                      //             name: '警戒水位',
-                      //             yAxis: 22
-                      //         }
-                      //     ]
-                      // },
-                      // markPoint: {
-                      //     symbolSize: 65,
-                      //     data: [
-                      //         {type: 'max', name: '最大值'}
-                      //
-                      //     ]
-                      // }
                   }
               ]
           };

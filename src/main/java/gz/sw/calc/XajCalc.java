@@ -318,11 +318,13 @@ public class XajCalc {
 //            QRGup = listQRG.get(i);
 //            QTRup = listQTR.get(i);
         }
-        return returnType.equals(CommonConst.RETURN_TYPE_R) ? listR : listQTR;
+//        return returnType.equals(CommonConst.RETURN_TYPE_R) ? listR : listQTR;
+        return listR;
     }
 
-    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listP, List<BigDecimal> listQTR, XajParam xajParam){
+    public static List<BigDecimal> getQTRR(JSONObject plan, List<BigDecimal> listP, XajParam xajParam){
         List<BigDecimal> listQTRR = new ArrayList<>();
+        List<BigDecimal> listQTR = new ArrayList<>();
 
         BigDecimal T = plan.getBigDecimal("T");
         BigDecimal F = plan.getBigDecimal("F");
@@ -342,8 +344,8 @@ public class XajCalc {
             xajParam.listQRS.set(i, (xajParam.listRs.get(i).multiply(NumberConst.ONE.subtract(IM)).add(xajParam.listRd.get(i).multiply(IM))).multiply(F).divide(new BigDecimal("3.6"), NumberConst.DIGIT, NumberConst.MODE));
             xajParam.listQRSS.set(i, QRSSup.multiply(CI).add(xajParam.listRss.get(i).multiply(NumberConst.ONE.subtract(CI)).multiply(U)));
             xajParam.listQRG.set(i, QRGup.multiply(CG).add(xajParam.listRg.get(i).multiply(NumberConst.ONE.subtract(CG)).multiply(U)));
-            listQTR.set(i, xajParam.listQRS.get(i).add(xajParam.listQRSS.get(i)).add(xajParam.listQRG.get(i)));
-            listQTR.set(i, QTRup.multiply(CS).add(listQTR.get(i).multiply(NumberConst.ONE.subtract(CS))));
+            BigDecimal temp = xajParam.listQRS.get(i).add(xajParam.listQRSS.get(i)).add(xajParam.listQRG.get(i));
+            listQTR.add(QTRup.multiply(CS).add(temp.multiply(NumberConst.ONE.subtract(CS))));
 
             QRSSup = xajParam.listQRSS.get(i);
             QRGup = xajParam.listQRG.get(i);
@@ -353,11 +355,11 @@ public class XajCalc {
         for(int i = 0; i < LAG; i++){
             listQTRR.add(listQTR.get(0).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
-        for(int i = LAG; i < listQTR.size() + LAG; i++){
+        for(int i = LAG; i < listP.size() + LAG; i++){
             listQTRR.add(listQTR.get(i-LAG).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         if( NumberUtil.gt(KE, new BigDecimal(LAG)) ){
-            for(int i = listQTR.size() + LAG; i < listQTR.size() + KE.intValue(); i++){
+            for(int i = listP.size() + LAG; i < listP.size() + KE.intValue(); i++){
                 listQTRR.add(listQTR.get(listQTR.size()-1).setScale(NumberConst.DIGIT, NumberConst.MODE));
             }
         }
