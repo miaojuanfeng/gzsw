@@ -8,19 +8,6 @@
 <script>
     var base = '<c:url value="/assets/layuiadmin/"></c:url>';
 
-    $.ajaxSetup({
-        type: 'POST',
-        complete: function(xhr,status) {
-            var sessionStatus = xhr.getResponseHeader('sessionstatus');
-            if(sessionStatus == 'timeout') {
-                var top = getTopWinow();
-                layer.msg('由于您长时间没有操作, session已过期, 请重新登录.', function () {
-                    top.location.href = '/login';
-                });
-            }
-        }
-    });
-
     function openTabsPage(url, title) {
         var href = '${pageContext.request.contextPath}' + '/' + url;
         var l = parent === self ? layui : top.layui;

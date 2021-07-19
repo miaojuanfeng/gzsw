@@ -13,6 +13,7 @@ import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.read.River;
+import gz.sw.entity.read.Zq;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
@@ -20,6 +21,7 @@ import gz.sw.exception.ParamException;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.ReadService;
 import gz.sw.service.read.RiverService;
+import gz.sw.service.read.ZqService;
 import gz.sw.service.write.DischargeService;
 import gz.sw.service.write.ModelService;
 import gz.sw.service.write.RainRunService;
@@ -76,6 +78,9 @@ public class ForecastController {
 
 	@Autowired
 	private DischargeService dischargeService;
+
+	@Autowired
+	private ZqService zqService;
 
 	@GetMapping("home")
 	public String home(ModelMap map) {
@@ -668,22 +673,82 @@ public class ForecastController {
 				listQTRR = ApiCalc.getQTRR(plan, listR);
 			}
 
-			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
-
 			/**
-			 * 寻找流量线最大值
+			 * 转换成水位
 			 */
-			for (int j = 0; j < listQTRR.size(); j++) {
-				BigDecimal qtrr = listQTRR.get(j);
-				if( NumberUtil.gt(qtrr, riverMax) ){
-					riverMax = qtrr;
+			if( type == 1 ){
+				/**
+				 * 寻找流量线最大值
+				 */
+				for (int j = 0; j < listQTRR.size(); j++) {
+					BigDecimal r = listQTRR.get(j);
+					if( NumberUtil.gt(r, riverMax) ){
+						riverMax = r;
+					}
+					if( NumberUtil.lt(r, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+						riverMin = r;
+					}
 				}
-				if( NumberUtil.lt(qtrr, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
-					riverMin = qtrr;
+				riverMax = riverMax.multiply(new BigDecimal("1.2"));
+				riverMin = riverMin.multiply(new BigDecimal("0.8"));
+			}else if( type == 2 ){
+				List<Zq> zqList = zqService.selectZq(stcd);
+				for(int j=0; j<listQTRR.size(); j++){
+					BigDecimal r = listQTRR.get(j);
+					Zq zqMin = null;
+					Zq zqMax = null;
+					for(int k=0; k<zqList.size(); k++){
+						Zq zq = zqList.get(k);
+						if( NumberUtil.ge(r, zq.getX()) ){
+							zqMin = new Zq();
+							zqMin.setX(zq.getX());
+							zqMin.setY(zq.getY());
+							break;
+						}
+					}
+					for(int k=zqList.size()-1; k>=0; k--){
+						Zq zq = zqList.get(k);
+						if( NumberUtil.le(r, zq.getX()) ){
+							zqMax = new Zq();
+							zqMax.setX(zq.getX());
+							zqMax.setY(zq.getY());
+							break;
+						}
+					}
+					if( zqMin == null && zqMax != null ){
+						BigDecimal y = zqMax.getY();
+						r = y;
+					}else if( zqMin != null && zqMax == null ){
+						BigDecimal y = zqMin.getY();
+						r = y;
+					}else if( zqMin != null && zqMax != null ){
+						BigDecimal x = r;
+						BigDecimal x1 = zqMin.getX();
+						BigDecimal y1 = zqMin.getY();
+						BigDecimal x2 = zqMax.getX();
+						BigDecimal y2 = zqMax.getY();
+						BigDecimal y = null;
+						if( x2.equals(x1) ) {
+							y = y1;
+						}else{
+							y = y1.add(x.subtract(x1).multiply(y2.subtract(y1)).divide(x2.subtract(x1), NumberConst.DIGIT, NumberConst.MODE)).setScale(2, NumberConst.MODE);
+						}
+						r = y;
+					}else{
+						throw new ParamException("ZQ转换错误");
+					}
+					listQTRR.set(j, r);
+					if( NumberUtil.gt(r, riverMax) ){
+						riverMax = r;
+					}
+					if( NumberUtil.lt(r, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
+						riverMin = r;
+					}
 				}
+				riverMax = riverMax.add(new BigDecimal(5));
+				riverMin = riverMin.subtract(new BigDecimal(2));
 			}
-			riverMax = riverMax.multiply(new BigDecimal("1.2"));
-//			riverMin = riverMin.subtract(new BigDecimal(100));
+			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
 			sessionUser.getForecast().setRiverMax(stcd, riverMax);
 			sessionUser.getForecast().setRiverMin(stcd, riverMin);
 
@@ -734,9 +799,6 @@ public class ForecastController {
 					BigDecimal RZ = new BigDecimal(String.valueOf(initData.get("rz")));
 					BigDecimal OTQ = new BigDecimal(String.valueOf(initData.get("oq")));
 					BigDecimal FSLTDZ = new BigDecimal(String.valueOf(initData.get("lim") != null ? initData.get("lim") : initData.get("lim_bk")));
-//				BigDecimal RZ = new BigDecimal(240);
-//				BigDecimal OTQ = new BigDecimal(20);
-//				BigDecimal FSLTDZ = new BigDecimal(242);
 					ComCalc.init(Z_CUR, V_CUR, Z0, HCOQ, RZ, OTQ, FSLTDZ);
 					List<BigDecimal> listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR);
 					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);

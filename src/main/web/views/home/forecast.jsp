@@ -347,6 +347,20 @@
           ,laydate = layui.laydate
           ,echarts = layui.echarts;
 
+      $.ajaxSetup({
+          type: 'POST',
+          complete: function(xhr,status) {
+              var sessionStatus = xhr.getResponseHeader('sessionstatus');
+              console.log(sessionStatus);
+              if(sessionStatus == 'timeout') {
+                  var top = getTopWinow();
+                  layer.msg('由于您长时间没有操作, session已过期, 请重新登录.', function () {
+                      top.location.href = '/login';
+                  });
+              }
+          }
+      });
+
       var data1 = [];
       var paramStcd = '';
 
