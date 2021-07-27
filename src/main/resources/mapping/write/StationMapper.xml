@@ -107,6 +107,12 @@
         from station
         order by id asc
     </select>
+    <select id="selectRain" resultType="java.util.Map">
+        select s.stcd as value, (t.name + ' - ' + s.stname) as title
+        from station s
+        left join sttype t on s.type = t.code
+        order by s.id asc
+    </select>
 	<insert id="insertBatch" parameterType="java.util.List">
 		insert into station
 		(stcd,stname,type,lgtd,lttd,near_stcd,dis,self_p,near_p,diff_p,date_p)

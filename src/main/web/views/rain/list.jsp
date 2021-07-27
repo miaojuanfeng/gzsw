@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>河系列表</title>
+  <title>雨量方案列表</title>
   <%@ include file="../linker.jsp" %>
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md12">
       <div class="layui-card">
-        <div class="layui-card-header">河系列表</div>
+        <div class="layui-card-header">雨量方案列表</div>
         <div class="layui-card-body">
           <div class="layui-form-item">
             <div class="layui-form">
@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <div class="layui-inline">
-                  <label class="layui-form-label">河系名称</label>
+                  <label class="layui-form-label">雨量名称</label>
                   <div class="layui-input-inline">
                     <input type="text" name="name" class="layui-input" placeholder="支持模糊查询">
                   </div>
@@ -50,7 +50,7 @@
             </div>
           </div>
           <%--<div class="layui-form-item">--%>
-            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="insert">新增河系</button>--%>
+            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="insert">新增雨量方案</button>--%>
           <%--</div>--%>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
@@ -79,12 +79,12 @@
         table.render({
             elem: '#data-table'
             ,method: 'post'
-            ,url: "${pageContext.request.contextPath}/model/list"
+            ,url: "${pageContext.request.contextPath}/rain/list"
             ,cols: [[
                 {field:'id', width:80, title: 'ID', sort: true}
                 ,{field:'sttype', width:120, title: '站点类型'}
                 ,{field:'stname', width:120, title: '预报站点'}
-                ,{field:'name', title: '河系名称'}
+                ,{field:'name', title: '雨量名称'}
                 ,{field:'createTime', width:170, title: '创建时间'}
                 ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
@@ -94,9 +94,9 @@
 
         table.on('tool(data)', function(obj){
             if(obj.event === 'update'){
-                openTabsPage('model/update/' + obj.data.id, '编辑河系');
+                openTabsPage('rain/update/' + obj.data.id, '编辑雨量方案');
             }else if(obj.event === 'delete'){
-                deleteConfirm('model/delete', '确认删除吗？', obj);
+                deleteConfirm('rain/delete', '确认删除吗？', obj);
             }
         });
 
@@ -122,10 +122,6 @@
                     }
                 );
             }
-        });
-
-        form.on('submit(insert)', function(data){
-            openTabsPage('model/insert', '新增河系');
         });
 
         $("#search").click(function () {

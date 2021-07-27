@@ -251,6 +251,7 @@
     ,layer = layui.layer
     ,laydate = layui.laydate
     ,form = layui.form;
+    ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
     form.on('select(sttp)', function(data){
         $("select[name=station]").html('<option value="">请选择</option>');
@@ -264,13 +265,15 @@
                     sttp: sttp
                 },
                 function (data) {
-                    var stations = $.parseJSON(data);
-                    var html = '';
-                    $.each(stations, function (key, value) {
-                        html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
-                    });
-                    $("select[name=station]").append(html);
-                    form.render('select');
+                    if( data.code == 200 ) {
+                        var stations = $.parseJSON(data);
+                        var html = '';
+                        $.each(stations, function (key, value) {
+                            html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
+                        });
+                        $("select[name=station]").append(html);
+                        form.render('select');
+                    }
                     layer.close(loading);
                 }
             );
@@ -327,6 +330,7 @@
         d.stcd = $("select[name=station]").val();
         d.model = $("select[name=model]").val();
 
+        var loading = layer.load(0);
         $.post({
             url: "${pageContext.request.contextPath}/plan/insert" + update,
             contentType: "application/x-www-form-urlencoded",
@@ -338,16 +342,17 @@
             // },
             data: d,
             success : function(result) {
-                parent.layer.alert("数据保存成功", {
-                    title: '成功'
-                }, function () {
-                    alert('关闭当前页面');
-                })
+                if( result.code == 200 ) {
+                    parent.layer.alert("数据保存成功", function (index) {
+                        parent.layer.close(index);
+                        parent.layui.admin.events.closeThisTabs();
+                    })
+                }
+                layer.close(loading);
             }
         }).fail(function(response) {
-            parent.layer.alert("数据保存失败", {
-                title: '错误'
-            })
+            parent.layer.alert("数据保存失败");
+            layer.close(loading);
         });
         return false;
     });

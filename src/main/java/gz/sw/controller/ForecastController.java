@@ -7,6 +7,7 @@ import gz.sw.calc.ComCalc;
 import gz.sw.calc.ExpCalc;
 import gz.sw.calc.XajCalc;
 import gz.sw.common.Forecast;
+import gz.sw.common.RetVal;
 import gz.sw.common.SessionUser;
 import gz.sw.common.XajParam;
 import gz.sw.constant.CommonConst;
@@ -22,10 +23,7 @@ import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.ReadService;
 import gz.sw.service.read.RiverService;
 import gz.sw.service.read.ZqService;
-import gz.sw.service.write.DischargeService;
-import gz.sw.service.write.ModelService;
-import gz.sw.service.write.RainRunService;
-import gz.sw.service.write.UnitLineService;
+import gz.sw.service.write.*;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
 import gz.sw.util.PUtil;
@@ -82,6 +80,9 @@ public class ForecastController {
 	@Autowired
 	private ZqService zqService;
 
+	@Autowired
+	private RainService rainService;
+
 	@GetMapping("home")
 	public String home(ModelMap map) {
 		map.put("date", DateUtil.getDate());
@@ -97,14 +98,13 @@ public class ForecastController {
 		Date date = new Date();
 //		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
 //		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
-		map.put("forecastTime", "2019-05-20 08:00:00");
-		map.put("affectTime", "2019-05-15 08:00:00");
+		map.put("forecastTime", "2021-05-20 08:00:00");
+		map.put("affectTime", "2021-05-15 08:00:00");
 
 		return "home/forecast";
 	}
 
 	private JSONObject getRetval(HttpServletRequest request, String stcd){
-        JSONObject retval = new JSONObject();
         JSONObject data = new JSONObject();
 		SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
 		Forecast f = sessionUser.getForecast();
@@ -121,9 +121,8 @@ public class ForecastController {
 		data.put("riverMin", sessionUser.getForecast().getRiverMin(stcd).intValue());
 		data.put("QT", sessionUser.getForecast().getListQT(stcd));
 		data.put("stname", sessionUser.getForecast().getStname(stcd));
-		retval.put("code", 200);
-		retval.put("data", data);
-        return retval;
+
+        return RetVal.OK(data);
     }
 
     /**
@@ -157,243 +156,28 @@ public class ForecastController {
 	) {
 		JSONArray model = JSONArray.parseArray(data);
 		try {
+			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
+			sessionUser.clearForecast();
 			forecastTime = DateUtil.date2str(DateUtil.str2date(forecastTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 			affectTime = DateUtil.date2str(DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 			modelStation(request, stcd, forecastTime, affectTime, day, unit, type, model);
 		} catch (ParamException e) {
-			JSONObject retval = new JSONObject();
-			retval.put("code", 500);
-			retval.put("msg", e.getMessage());
-			return retval;
+			return RetVal.Error(e.getMessage());
 		}
 		return getRetval(request, stcd);
-
-
-//			/**
-//			 * 获取子站id
-//			 */
-//			List<String> stcdIds = new ArrayList<>();
-//			List<Map> stationList = stationService.selectChildStationByStcd(stcd);
-//			for (int i = 0; i < stationList.size(); i++) {
-//				stcdIds.add(String.valueOf(stationList.get(i).get("stcd")));
-//			}
-//			/**
-//			 * 实测雨量
-//			 */
-//			Map<String, BigDecimal> forecastMap = new TreeMap<>();
-//			String startDay = forecastTime;
-//			String endDay = DateUtil.date2str(DateUtil.addDay(DateUtil.str2date(forecastTime, CommonConst.DATETIME_FORMAT), day), CommonConst.DATETIME_FORMAT);
-//			if( CommonConst.FUTURE_RAINFALL_MEASURE.equals(unit) ) {
-//				List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, endDay, startDay);
-//				for (Rainfall rainfall : rainfalls) {
-//					forecastMap.put(rainfall.getDate(), rainfall.getRainfall());
-//				}
-//
-//				Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
-//				Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
-//				Date iDay = eDay;
-//				while (!iDay.before(sDay)) {
-//					String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
-//					if( !forecastMap.containsKey(key) ){
-//						forecastMap.put(key, NumberConst.ZERO);
-//					}
-//					iDay = DateUtil.addHour(iDay, -1);
-//				}
-//			/**
-//			 * 欧洲台或日本台
-//			 */
-//			}else{
-//				List<Grid> gridList = gridService.selectByStcd(stcd);
-//				List<String> gridId = new ArrayList<>();
-//				for (Grid grid : gridList){
-//					gridId.add(grid.getGridId());
-//				}
-//
-//				String fymdh = DateUtil.date2str(DateUtil.addDay(new Date(), -1)) + " 20:00:00";
-//				List<Forecast> forecastList = forecastService.selectForecast(gridId, fymdh, unit, startDay, endDay);
-//
-//				if( forecastList.size() > 0 ) {
-//					for (Forecast forecast : forecastList) {
-//						forecastMap.put(DateUtil.date2str(forecast.getYmdh(), CommonConst.DATETIME_FORMAT), forecast.getRn());
-//					}
-//
-//					Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
-//					Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
-//					Date iDay = eDay;
-//					BigDecimal n = forecastList.get(forecastList.size()-1).getRn();
-//	//                    Date d = forecastList.get(forecastList.size()-1).getYmdh();
-//					Integer c = 0;
-//					while (!iDay.before(sDay)) {
-//						String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
-//						if( forecastMap.containsKey(key) ){
-//							n = forecastMap.get(key);
-//							c = 0;
-//						}else{
-//							c++;
-//							if( c >= 3 ){
-//								n = NumberConst.ZERO;
-//							}
-//						}
-//						if( iDay.after(forecastList.get(forecastList.size()-1).getYmdh()) ){
-//							n = NumberConst.ZERO;
-//						}
-//						forecastMap.put(key, n);
-//						iDay = DateUtil.addHour(iDay, -1);
-//					}
-//	//                    Integer a = 1;
-//				}
-//			}
-//			//            List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdId, plusDay(day, forecastTime), affectTime);
-//			List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, forecastTime, affectTime);
-//
-//			// 拼接数据
-//			for(String key : forecastMap.keySet()){
-//				Rainfall r = new Rainfall();
-//				r.setDate(key);
-//				r.setRainfall(forecastMap.get(key));
-//				rainfalls.add(r);
-//			}
-//
-//			List<BigDecimal> listRainfall = new ArrayList<>();
-//			List<String> listTime = new ArrayList<>();
-//			BigDecimal rainfallMax = NumberConst.ZERO;
-//	//            System.out.println("start");
-//			for (Rainfall rainfall : rainfalls) {
-//				BigDecimal r = rainfall.getRainfall().setScale(2, NumberConst.MODE);
-//				String t = rainfall.getDate().substring(0, 16);
-//				listRainfall.add(r);
-//				listTime.add(t);
-//				if( NumberUtil.gt(r, rainfallMax) ){
-//					rainfallMax = r;
-//				}
-//	//                System.out.println(r);
-//			}
-//	//            System.out.println("end");
-//			retval.put("rainfallMax", rainfallMax.multiply(new BigDecimal("3.5")).intValue());
-//			retval.put("timeArr", listTime);
-//			retval.put("rainfallArr", listRainfall);
-//
-////			CommonUtil.listP = listRainfall;
-//
-//	//            for(BigDecimal r : rainfallArr){
-//	//                System.out.println(r);
-//	//            }
-//
-//
-//
-//			// 没数据不要显示为0
-//			List<River> rivers = new ArrayList<>();
-//			List<BigDecimal> riverArr = new ArrayList<>();
-////			BigDecimal riverMax = new BigDecimal(station.getJjLine());
-//BigDecimal riverMax = new BigDecimal(122);
-//			BigDecimal riverMin = NumberConst.ZERO;
-//			if( CommonConst.FORECAST_LIULIANG.equals(type) ) {
-//				rivers = riverService.selectRiverQRange(stcd, plusDay(day, forecastTime), affectTime);
-//				for (int i = 0; i < rivers.size(); i++) {
-//					River r = rivers.get(i);
-//					BigDecimal q = r.getQ() != null ? r.getQ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
-//					riverArr.add(q);
-//					if( NumberUtil.gt(q, riverMax) ){
-//						riverMax = q;
-//					}
-//					if( NumberUtil.lt(q, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
-//						riverMin = q;
-//					}
-//				}
-//				retval.put("forecastText", "流量");
-//				retval.put("forecastUnit", "流量(m³/s)");
-//				retval.put("color", "#FF5722");
-//			}else{
-//				rivers = riverService.selectRiverZRange(stcd, plusDay(day, forecastTime), affectTime);
-//				for (int i = 0; i < rivers.size(); i++) {
-//					River r = rivers.get(i);
-//					BigDecimal z = r.getZ() != null ? r.getZ().setScale(2, NumberConst.MODE) : NumberConst.ZERO;
-//					riverArr.add(z);
-//					if( NumberUtil.gt(z, riverMax) ){
-//						riverMax = z;
-//					}
-//					if( NumberUtil.lt(z, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
-//						riverMin = z;
-//					}
-//				}
-//				retval.put("forecastText", "水位");
-//				retval.put("forecastUnit", "水位(m)");
-//				retval.put("color", "#009688");
-//			}
-//			retval.put("riverArr", riverArr);
-//
-////			List<BigDecimal> forecastArr = new ArrayList<>();
-////			if( !CommonConst.STCD_FENKENG.equals(p.getStcd().trim()) ) {
-////				forecastArr = doCalc(plan, listRainfall, null, null);
-////			}else{
-////				if( step == 1 ){
-////					forecastArr = doCalc(plan, listRainfall, plan.getKE(), plan.getXE());
-////	//                    FORECAST_STEP_ONE = StepFiveUtil.getQT(forecastArr, plan.getKE(), plan.getXE());
-////				}else if( step == 2 ){
-////					forecastArr = doCalc(plan, listRainfall, plan.getKE(), plan.getXE());
-////	//                    FORECAST_STEP_TWO = StepFiveUtil.getQT(forecastArr, plan.getKE(), plan.getXE());
-////				}else if( step == 3 ){
-////					forecastArr = doCalc(plan, listRainfall, null, null);
-////					//
-////					for (int i=0; i<forecastArr.size(); i++){
-////						BigDecimal v = FORECAST_STEP_ONE.get(i).add(FORECAST_STEP_TWO.get(i).add(forecastArr.get(i)));
-////						forecastArr.set(i, v);
-////					}
-////				}
-////			}
-////			for (int i = 0; i < forecastArr.size(); i++) {
-////				BigDecimal r = forecastArr.get(i).setScale(2, NumberConst.MODE);
-////				// 差值法
-////				if( CommonConst.FORECAST_SHUIWEI.equals(type) ){
-////					Zq zqMin = zqService.selectZqMin(plan.getStcd(), r);
-////					Zq zqMax = zqService.selectZqMax(plan.getStcd(), r);
-////					if( zqMin == null && zqMax != null ){
-////						BigDecimal y = zqMax.getY();
-////						r = y;
-////					}else if( zqMin != null && zqMax == null ){
-////						BigDecimal y = zqMin.getY();
-////						r = y;
-////					}else if( zqMin != null && zqMax != null ){
-////						BigDecimal x = r;
-////						BigDecimal x1 = zqMin.getX();
-////						BigDecimal y1 = zqMin.getY();
-////						BigDecimal x2 = zqMax.getX();
-////						BigDecimal y2 = zqMax.getY();
-////						BigDecimal y = null;
-////						if( x2.equals(x1) ) {
-////							y = y1;
-////						}else{
-////							y = y1.add(x.subtract(x1).multiply(y2.subtract(y1)).divide(x2.subtract(x1), NumberConst.DIGIT, NumberConst.MODE)).setScale(2, NumberConst.MODE);
-////						}
-////						r = y;
-////					}else{
-////						System.out.println("程序错误");
-////					}
-////				}
-////				forecastArr.set(i, r);
-////				if( NumberUtil.gt(r, riverMax) ){
-////					riverMax = r;
-////				}
-////				if( NumberUtil.lt(r, riverMin) || NumberUtil.et(riverMin, NumberConst.ZERO) ){
-////					riverMin = r;
-////				}
-////			}
-////			retval.put("forecastArr", forecastArr);
-//			retval.put("riverMax", riverMax.add(riverMax.subtract(riverMin).multiply(new BigDecimal("0.5"))).add(NumberConst.ONE).intValue());
-//			retval.put("riverMin", riverMin.intValue()-1);
 	}
 
-	private Map getP(String stcd, String forecastTime, String affectTime, Integer day, Integer unit) {
+	private Map getP(Integer rain, String forecastTime, String affectTime, Integer day, Integer unit) {
 		Map retval = new HashMap<>();
 //		/**
 //		 * 获取子站id
 //		 */
 		List<String> stcdIds = new ArrayList<>();
-//		List<Map> stationList = stationService.selectChildStationByStcd(stcd);
-//		for (int i = 0; i < stationList.size(); i++) {
-//			stcdIds.add(String.valueOf(stationList.get(i).get("stcd")));
-//		}
-        stcdIds.add(stcd);
+		List<Map> rainPointList = rainService.selectRainPoint(rain);
+		for (int i = 0; i < rainPointList.size(); i++) {
+			stcdIds.add(String.valueOf(rainPointList.get(i).get("stcd")));
+		}
+//        stcdIds.add(stcd);
 		/**
 		 * 实测雨量
 		 */
@@ -403,16 +187,19 @@ public class ForecastController {
 		if( CommonConst.FUTURE_RAINFALL_MEASURE.equals(unit) ) {
 			List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, endDay, startDay);
 			for (Rainfall rainfall : rainfalls) {
-				forecastMap.put(rainfall.getDate(), rainfall.getRainfall());
+				forecastMap.put(rainfall.getDate().substring(0, rainfall.getDate().length()-2), rainfall.getRainfall());
 			}
 
 			Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
 			Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
 			Date iDay = eDay;
+			BigDecimal lastP = NumberConst.ZERO;
 			while (!iDay.before(sDay)) {
 				String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
-				if( !forecastMap.containsKey(key) ){
-					forecastMap.put(key, NumberConst.ZERO);
+				if( !forecastMap.containsKey(key) || forecastMap.get(key) == null ){
+					forecastMap.put(key, lastP);
+				}else{
+					lastP = forecastMap.get(key);
 				}
 				iDay = DateUtil.addHour(iDay, -1);
 			}
@@ -525,16 +312,18 @@ public class ForecastController {
 			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
 			sessionUser.getForecast().setStname(stcd, stname);
 
+			JSONObject plan = m.getJSONObject("plan");
+
 			System.out.println("计算站点: " + m.getString("stname"));
 			System.out.println("getP开始: " + System.currentTimeMillis());
-			Map rainfallMap = getP(stcd, forecastTime, affectTime, day, unit);
+			Map rainfallMap = getP(plan.getInteger("RAIN"), forecastTime, affectTime, day, unit);
 			System.out.println("getP结束: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");
 			listTime = (List<String>)rainfallMap.get("timeList");
 			rainfallMax = (Integer)rainfallMap.get("rainfallMax");
 
-//			if( stcd.trim().equals("62303350") ) {
+//			if( stcd.trim().equals("62303130") ) {
 //				for (BigDecimal pm : listP) {
 //					System.out.println(pm);
 //				}
@@ -601,7 +390,6 @@ public class ForecastController {
 //                }
 //            }
 
-			JSONObject plan = m.getJSONObject("plan");
             plan.put("KE", m.getBigDecimal("ke"));
 			plan.put("XE", m.getBigDecimal("xe"));
 			plan.put("INTV", m.getBigDecimal("intv"));
@@ -748,7 +536,6 @@ public class ForecastController {
 				riverMax = riverMax.add(new BigDecimal(5));
 				riverMin = riverMin.subtract(new BigDecimal(2));
 			}
-			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
 			sessionUser.getForecast().setRiverMax(stcd, riverMax);
 			sessionUser.getForecast().setRiverMin(stcd, riverMin);
 
@@ -761,6 +548,7 @@ public class ForecastController {
             if( childList.size() > 0 ) {
                 listQTRR = addList(childList, listQTRR);
             }
+			sessionUser.getForecast().setListQTRR(stcd, listQTRR);
             /**
              * 根据站的类型选择马斯京根或调洪演算
 			 * 根节点站不需要计算QT

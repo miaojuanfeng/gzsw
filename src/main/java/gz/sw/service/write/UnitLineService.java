@@ -1,13 +1,14 @@
 package gz.sw.service.write;
 
 import gz.sw.entity.write.Model;
+import gz.sw.entity.write.UnitLine;
 
 import java.util.List;
 
 public interface UnitLineService {
-    Model select(Integer id);
-    int insert(Model model);
-    int update(Model model);
+    UnitLine select(Integer id);
+    int insert(UnitLine unitLine);
+    int update(UnitLine unitLine);
     int delete(Integer id);
 
     int selectCount(String sttp, String stcd, String name);

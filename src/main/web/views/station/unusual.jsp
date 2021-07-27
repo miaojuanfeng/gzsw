@@ -80,6 +80,7 @@
             ,table = layui.table
             ,laydate = layui.laydate
             ,form = layui.form;
+        ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
         laydate.render({
             elem: '#date'

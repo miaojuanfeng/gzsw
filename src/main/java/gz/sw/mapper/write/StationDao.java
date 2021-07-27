@@ -14,6 +14,7 @@ public interface StationDao {
 	List selectRainList(@Param("page") Integer page, @Param("limit") Integer limit, @Param("selfP") String selfP, @Param("diffP") String diffP, @Param("stcd") String stcd);
 	List selectListByType(String type);
 	List selectAll();
+	List selectRain();
 	int insertBatch(List<Station> stationList);
 	void clear();
 	void dbcc();

@@ -1,6 +1,6 @@
 package gz.sw.service.write.impl;
 
-import gz.sw.entity.write.Model;
+import gz.sw.entity.write.UnitLine;
 import gz.sw.mapper.write.UnitLineDao;
 import gz.sw.service.write.UnitLineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +15,18 @@ public class UnitLineServiceImpl implements UnitLineService {
 	private UnitLineDao unitLineDao;
 
 	@Override
-	public Model select(Integer id) {
+	public UnitLine select(Integer id) {
 		return unitLineDao.select(id);
 	}
 
 	@Override
-	public int insert(Model model) {
-		return unitLineDao.insert(model);
+	public int insert(UnitLine unitLine) {
+		return unitLineDao.insert(unitLine);
 	}
 
 	@Override
-	public int update(Model model) {
-		return unitLineDao.update(model);
+	public int update(UnitLine unitLine) {
+		return unitLineDao.update(unitLine);
 	}
 
 	@Override

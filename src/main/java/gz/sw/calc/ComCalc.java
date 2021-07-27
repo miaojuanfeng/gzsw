@@ -213,7 +213,10 @@ public class ComCalc {
              * Temp_W = W(i) + (QTRR(i) + QTRR(i + 1)) * 0.0018 * INTV - OQ(i) * 0.0036 * INTV
              */
             Temp_W = W.get(i).add(temp1(listQTRR, i, INTV)).subtract(temp2(listOQ, i, INTV));
-            if( NumberUtil.gt(Temp_W, W_lim) ){
+//            if( i==136 ){
+//                int a = 1;
+//            }
+            if( NumberUtil.ge(Temp_W, W_lim) ){
                 // OQ(i) = (W(i) + (QTRR(i + 1) + QTRR(i)) * 0.0018 * INTV - W00) / (0.0036 * INTV)
                 listOQ.set(i, W.get(i).add(temp1(listQTRR, i, INTV)).subtract(W00).divide(temp3(INTV), NumberConst.DIGIT, NumberConst.MODE));
                 if( NumberUtil.gt(listOQ.get(i), maxIQ) ){

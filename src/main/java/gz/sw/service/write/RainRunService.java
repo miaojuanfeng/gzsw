@@ -1,13 +1,14 @@
 package gz.sw.service.write;
 
 import gz.sw.entity.write.Model;
+import gz.sw.entity.write.RainRun;
 
 import java.util.List;
 
 public interface RainRunService {
-    Model select(Integer id);
-    int insert(Model model);
-    int update(Model model);
+    RainRun select(Integer id);
+    int insert(RainRun rainRun);
+    int update(RainRun rainRun);
     int delete(Integer id);
 
     int selectCount(String sttp, String stcd, String name);

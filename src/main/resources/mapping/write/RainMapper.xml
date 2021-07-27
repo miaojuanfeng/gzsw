@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.write.RainRunDao">
+<mapper namespace="gz.sw.mapper.write.RainDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
         	count(r.id)
-        from rainrun r
+        from rain r
         left join station s on r.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
@@ -19,12 +19,12 @@
         </if>
     </select>
     <select id="selectList" resultType="java.util.Map">
-        select r1.id, r1.name, 'Pa0 - Pa60' as lname, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
-        from rainrun r1
+        select r1.id, r1.name, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from rain r1
         left join station s on r1.stcd = s.stcd
         left join sttype t on s.type = t.code,
         (select TOP ${page*limit} row_number() OVER (order by r.id desc, r.ID desc) n, r.ID
-        from rainrun r
+        from rain r
         left join station s on r.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
@@ -43,27 +43,49 @@
         and r2.n > ${(page-1)*limit}
         order by r2.n asc
     </select>
+    <select id="selectMap" resultType="java.util.Map">
+        select r.*, rtrim(s.type) as sttype, rtrim(s.stcd) as stcd
+        from rain r
+        left join station s on r.stcd = s.stcd
+        where r.id = #{id}
+    </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
         	id, name, stcd
-        from rainrun
+        from rain
         where stcd = #{stcd}
         order by id desc
     </select>
-    <select id="selectRainRunPoint" resultType="java.util.Map">
+    <select id="selectRainPoint" resultType="java.util.Map">
         select
-        	rl.PA, rp.D, rp.R
-        from rainrun_point rp
-        left join rainrun_line rl on rp.lid = rl.lid
-        where rl.pid = #{rainRun}
-        order by rl.pa, rp.pino asc
+        	rs.stcd
+        from rain_station rs
+        where rs.rain = #{rain}
+        order by rs.id asc
     </select>
-    <select id="selectPointList" resultType="java.util.Map">
-        select
-        	rl.lname, rp.id, rp.pino, rp.d, rp.r
-        from rainrun_point rp
-        left join rainrun_line rl on rp.lid = rl.lid
-        where rl.pid = #{pid}
-        order by rl.pa asc, rp.pino asc
-    </select>
+    <insert id="insert" parameterType="gz.sw.entity.write.Rain" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into rain
+        (stcd, name, create_user, create_time)
+        values
+        (#{stcd},#{name},#{createUser},#{createTime})
+    </insert>
+    <insert id="insertPointList" parameterType="java.util.Map">
+        insert into rain_station
+        (rain, stcd)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.rain},#{item.stcd})
+        </foreach>
+    </insert>
+    <update id="update" parameterType="gz.sw.entity.write.Plan">
+        update rain
+        <set>
+            <if test="stcd != null" >stcd = #{stcd},</if>
+            <if test="name != null" >name = #{name},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteListById">
+        delete from rain_station where rain = #{id}
+    </delete>
 </mapper>

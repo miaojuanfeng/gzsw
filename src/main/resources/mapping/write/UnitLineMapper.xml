@@ -64,22 +64,4 @@
         where lid = #{lid}
         order by ptno asc
     </select>
-    <select id="select" resultType="gz.sw.entity.write.UnitLine">
-        select m.* from model m
-        where m.id = #{id}
-    </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.UnitLine" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
-    </insert>
-    <update id="update" parameterType="gz.sw.entity.write.UnitLine">
-        update model
-        <set>
-            <if test="name != null" > name = #{name},</if>
-            <if test="stcd != null" > stcd = #{stcd},</if>
-        </set>
-        where id = #{id}
-    </update>
-    <delete id="delete" parameterType="java.lang.Integer">
-        delete from model where id = #{id}
-    </delete>
 </mapper>

@@ -72,6 +72,7 @@
     var $ = layui.$
     ,admin = layui.admin
     ,form = layui.form;
+    ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
     
     /* 监听提交 */
     form.on('submit(save)', function(data){

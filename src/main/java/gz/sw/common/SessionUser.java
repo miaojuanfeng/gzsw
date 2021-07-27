@@ -23,6 +23,8 @@ public class SessionUser {
         forecast = new Forecast();
     }
 
+    public void clearForecast() { forecast = new Forecast(); }
+
     public Integer getId() {
         return id;
     }

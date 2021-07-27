@@ -59,7 +59,7 @@
                 <div class="layui-form-item layui-layout-admin">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit="" lay-filter="save">立即提交</button>
-                        <button class="layui-btn layui-btn-primary" lay-submit="" lay-filter="close">关闭</button>
+                        <%--<button class="layui-btn layui-btn-primary" lay-submit="" lay-filter="close">关闭</button>--%>
                     </div>
                 </div>
             </div>
@@ -76,6 +76,7 @@
     var $ = layui.$
     ,admin = layui.admin
     ,form = layui.form;
+    ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
     
     /* 监听提交 */
     form.on('submit(save)', function(data){

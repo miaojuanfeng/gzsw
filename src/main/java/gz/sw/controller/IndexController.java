@@ -1,6 +1,7 @@
 package gz.sw.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.common.SessionUser;
 import gz.sw.constant.CommonConst;
 import gz.sw.entity.write.Station;
@@ -51,7 +52,6 @@ public class IndexController {
     @PostMapping("login")
     @ResponseBody
     public JSONObject login(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
-        JSONObject retval = new JSONObject();
         User user = userService.selectByPhone(username);
 //        System.out.println(Md5Util.execute(CommonConst.SECREAT_KEY + password));
         if( user != null ) {
@@ -63,24 +63,17 @@ public class IndexController {
                 sessionUser.setAdmin(user.getAdmin());
                 request.getSession().setAttribute(CommonConst.SESSION_USER, sessionUser);
 
-                retval.put("code", 200);
-                retval.put("msg", "");
-                return retval;
+                return RetVal.OK();
             }
         }
-        retval.put("code", 500);
-        retval.put("msg", "账号或密码错误");
-        return retval;
+        return RetVal.Error("账号或密码错误");
     }
 
     @PostMapping("logout")
     @ResponseBody
     public JSONObject logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        JSONObject retval = new JSONObject();
         request.getSession().removeAttribute(CommonConst.SESSION_USER);
-        retval.put("code", 200);
-        retval.put("msg", "");
-        return retval;
+        return RetVal.OK();
     }
 
     @GetMapping("home/console")

@@ -74,6 +74,7 @@
             ,admin = layui.admin
             ,table = layui.table
             ,form = layui.form;
+        ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
         table.render({
             elem: '#data-table'
@@ -109,12 +110,14 @@
                     '${pageContext.request.contextPath}/station/getStation',
                     {sttp: sttp},
                     function (data) {
-                        var html = '';
-                        $.each(data, function (key, value) {
-                            html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
-                        });
-                        $("select[name=station]").append(html);
-                        form.render('select');
+                        if( data.code == 200 ) {
+                            var html = '';
+                            $.each(data, function (key, value) {
+                                html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
+                            });
+                            $("select[name=station]").append(html);
+                            form.render('select');
+                        }
                         layer.close(loading);
                     }
                 );

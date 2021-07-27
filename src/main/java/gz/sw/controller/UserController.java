@@ -2,6 +2,7 @@ package gz.sw.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.common.SessionUser;
 import gz.sw.constant.CommonConst;
 import gz.sw.entity.write.Plan;
@@ -39,11 +40,7 @@ public class UserController {
 	@PostMapping("list")
 	@ResponseBody
 	public Map list(String phone, String name, Integer page, Integer limit) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", userService.selectCount(phone, name));
-		retval.put("data", userService.selectList(phone, name, page, limit));
-		return retval;
+		return RetVal.OK(userService.selectCount(phone, name), userService.selectList(phone, name, page, limit));
 	}
 
 	@GetMapping("insert")
@@ -63,15 +60,11 @@ public class UserController {
 			@RequestParam Integer admin) {
 		JSONObject retval = new JSONObject();
 		if( !password.equals(confirmPwd) ){
-			retval.put("code", 500);
-			retval.put("msg", "两次密码输入不一致");
-			return retval;
+			return RetVal.Error("两次密码输入不一致");
 		}
 		User existUser = userService.selectByPhone(phone);
 		if( existUser != null ){
-			retval.put("code", 500);
-			retval.put("msg", "用户已存在");
-			return retval;
+			return RetVal.Error("用户已存在");
 		}
 		Date date = new Date();
 		User user = new User();
@@ -83,9 +76,7 @@ public class UserController {
 		user.setUpdateTime(date);
 		userService.insert(user);
 
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 
 	@GetMapping("update/{id}")
@@ -110,9 +101,7 @@ public class UserController {
 		User user = new User();
 		if( password != null && password != "" ){
 			if( !password.equals(confirmPwd) ){
-				retval.put("code", 500);
-				retval.put("msg", "两次密码输入不一致");
-				return retval;
+				return RetVal.Error("两次密码输入不一致");
 			}
 			user.setPassword(Md5Util.execute(CommonConst.SECREAT_KEY + password));
 		}
@@ -123,9 +112,7 @@ public class UserController {
 		user.setUpdateTime(new Date());
 		userService.update(user);
 
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 
 	@GetMapping("self")
@@ -153,14 +140,10 @@ public class UserController {
 		User user = userService.select(sessionUser.getId());
 		if( password != null && password != "" ){
 			if( !user.getPassword().equals(Md5Util.execute(CommonConst.SECREAT_KEY + oldPwd)) ){
-				retval.put("code", 500);
-				retval.put("msg", "旧密码不正确");
-				return retval;
+				return RetVal.Error("旧密码不正确");
 			}
 			if( !password.equals(confirmPwd) ){
-				retval.put("code", 500);
-				retval.put("msg", "两次密码输入不一致");
-				return retval;
+				return RetVal.Error("两次密码输入不一致");
 			}
 			user.setPassword(Md5Util.execute(CommonConst.SECREAT_KEY + password));
 		}
@@ -169,19 +152,14 @@ public class UserController {
 		user.setUpdateTime(new Date());
 		userService.update(user);
 
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 
 	@PostMapping("delete")
 	@ResponseBody
 	@Transactional
 	public JSONObject delete(Integer id) {
-		JSONObject retval = new JSONObject();
 		userService.delete(id);
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 }

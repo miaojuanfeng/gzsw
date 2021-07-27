@@ -1,6 +1,7 @@
 package gz.sw.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
@@ -39,17 +40,6 @@ public class StationController {
     @Autowired
     private RiverService riverService;
 
-//	@GetMapping("{stcd}")
-//	public String station(ModelMap map, @PathVariable("stcd") String stcd) {
-////		map.put("basePath", BASE_PATH);
-////		map.put("stcd", stcd);
-//        map.put("chart1", chart1(stcd));
-//        map.put("chart2", chart2(stcd));
-//        map.put("chart3", chart3(stcd));
-//		map.put("chart4", chart4(stcd));
-//		return "views/home/station";
-//	}
-
 	@GetMapping("list")
 	public String list(ModelMap map) {
 		map.put("sttps", StationTypeEnum.getList());
@@ -58,18 +48,14 @@ public class StationController {
 
 	@PostMapping("list")
 	@ResponseBody
-	public Map list(Integer page, Integer limit, String sttp, String stcd, String name) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", stationService.selectCount(sttp, stcd, name));
-		retval.put("data", stationService.selectList(page, limit, sttp, stcd, name));
-		return retval;
+	public JSONObject list(Integer page, Integer limit, String sttp, String stcd, String name) {
+		return RetVal.OK(stationService.selectCount(sttp, stcd, name), stationService.selectList(page, limit, sttp, stcd, name));
 	}
 
 	@PostMapping("getStation")
 	@ResponseBody
-	public List getStation(String sttp) {
-		return stationService.selectListByType(sttp);
+	public JSONObject getStation(String sttp) {
+		return RetVal.OK(stationService.selectListByType(sttp));
 	}
 
 	@GetMapping("unusual")
@@ -81,20 +67,15 @@ public class StationController {
 
 	@PostMapping("unusual")
 	@ResponseBody
-	public Map unusual(Integer page, Integer limit, String selfP, String diffP, String stcd) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", stationService.selectRainCount(selfP, diffP, stcd));
-		retval.put("data", stationService.selectRainList(page, limit, selfP, diffP, stcd));
-		return retval;
+	public JSONObject unusual(Integer page, Integer limit, String selfP, String diffP, String stcd) {
+		return RetVal.OK(stationService.selectRainCount(selfP, diffP, stcd), stationService.selectRainList(page, limit, selfP, diffP, stcd));
 	}
 
 	@PostMapping("refresh")
 	@ResponseBody
 	@Transactional
-	public Map refresh() {
+	public JSONObject refresh() {
 		synchronized (CommonConst.stationLock) {
-			Map retval = new HashMap();
 			List<Map> stbprpList = readService.selectStbprpList();
 			if (stbprpList.size() > 0) {
 				List<Station> stationList = new ArrayList<>();
@@ -125,16 +106,15 @@ public class StationController {
 					stationList.clear();
 				}
 			}
-			return retval;
+			return RetVal.OK();
 		}
 	}
 
 	@PostMapping("adsorb")
 	@ResponseBody
 	@Transactional
-	public Map adsorb() {
+	public JSONObject adsorb() {
 		synchronized (CommonConst.stationLock) {
-			Map retval = new HashMap();
 			List<Station> stations = stationService.selectAll();
 			if (stations.size() > 0) {
 				stationService.clear();
@@ -165,20 +145,6 @@ public class StationController {
 							s2.setDis(dis);
 							s2.setNearStcd(s1.getStcd());
 						}
-						//					station.setStcd(String.valueOf(stbprp.get("STCD")));
-						//					station.setStname(String.valueOf(stbprp.get("STNM")));
-						//					station.setType(String.valueOf(stbprp.get("STTP")));
-						//					if (stbprp.get("LGTD") != null) {
-						//						station.setLgtd(new BigDecimal(String.valueOf(stbprp.get("LGTD"))));
-						//					}
-						//					if (stbprp.get("LTTD") != null) {
-						//						station.setLttd(new BigDecimal(String.valueOf(stbprp.get("LTTD"))));
-						//					}
-						//					stationList.add(station);
-						//					if (stationList.size() > 100) {
-						//						stationService.insertBatch(stationList);
-						//						stationList.clear();
-						//					}
 					}
 				}
 				List<Station> stationList = new ArrayList<>();
@@ -194,22 +160,21 @@ public class StationController {
 					stationList.clear();
 				}
 			}
-			return retval;
+			return RetVal.OK();
 		}
 	}
 
 	@PostMapping("reload")
 	@ResponseBody
 	@Transactional
-	public Map reload(String date) {
-		Map retval = new HashMap();
+	public JSONObject reload(String date) {
 		if( date != null ){
 			Date d = DateUtil.str2date(date, "yyyy-MM-dd HH:mm:ss");
 			stationService.unusual(DateUtil.date2str(d, "yyyy-MM-dd HH:00:00"));
 		}else{
 			stationService.unusual();
 		}
-		return retval;
+		return RetVal.OK();
 	}
 
 	private BigDecimal getDistance(double lon1, double lat1, double lon2, double lat2) {
@@ -226,8 +191,6 @@ public class StationController {
 	@PostMapping("chart1")
 	@ResponseBody
     public JSONObject chart1(String stcd, String startTime, String endTime) {
-        JSONObject retval = new JSONObject();
-
 		startTime = DateUtil.date2str(DateUtil.str2date(startTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 		endTime = DateUtil.date2str(DateUtil.str2date(endTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 
@@ -249,18 +212,17 @@ public class StationController {
                 max = rainfalls.get(i).getRainfall().intValue() + 10;
             }
         }
-        retval.put("timeList", timeList);
-        retval.put("rainfallList", rainfallList);
-        retval.put("max", max);
+		JSONObject data = new JSONObject();
+		data.put("timeList", timeList);
+		data.put("rainfallList", rainfallList);
+		data.put("max", max);
 
-        return retval;
+        return RetVal.OK(data);
     }
 
     @PostMapping("chart2")
     @ResponseBody
     public JSONObject chart2(String stcd, String startTime, String endTime) {
-		JSONObject retval = new JSONObject();
-
 		startTime = DateUtil.date2str(DateUtil.str2date(startTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 		endTime = DateUtil.date2str(DateUtil.str2date(endTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 
@@ -284,61 +246,12 @@ public class StationController {
 			}
 		}
 
-		retval.put("timeList", timeList);
-		retval.put("riverList", riverList);
-		retval.put("max", max.add(NumberConst.ONE).intValue());
-		retval.put("min", min.intValue() - 1);
+		JSONObject data = new JSONObject();
+		data.put("timeList", timeList);
+		data.put("riverList", riverList);
+		data.put("max", max.add(NumberConst.ONE).intValue());
+		data.put("min", min.intValue() - 1);
 
-		return retval;
+		return RetVal.OK(data);
 	}
-
-//	private JSONObject chart3(String stcd) {
-//		JSONObject retval = new JSONObject();
-//
-//		Station station = stationService.selectByPrimaryKey(stcd);
-//		retval.put("station", station);
-//
-//		List<Rainfall> rainfallTotal = cacheRainfallTotalService.selectByStcd(stcd);
-//		BigDecimal rainfallSum = new BigDecimal(0);
-//		for (int i=0;i<rainfallTotal.size();i++){
-//			rainfallSum.add(rainfallTotal.get(i).getRainfall());
-//		}
-//		River river = riverService.selectRiverLast(stcd);
-//		BigDecimal z = river.getZ();
-//		Integer ava = 0;
-//		if( rainfallTotal.size() > 0 ) {
-//			BigDecimal rainfallAva = rainfallSum.divide(new BigDecimal(rainfallTotal.size()), NumberConst.DIGIT, NumberConst.MODE);
-//			Integer floodDiff = new BigDecimal(station.getJjLine()).subtract(z).subtract(rainfallAva.divide(new BigDecimal(30), NumberConst.DIGIT, NumberConst.MODE)).intValue();
-//			if( floodDiff < 1 ){
-//				ava = 80;
-//			} else if (floodDiff < 2) {
-//				ava = 60;
-//			} else {
-//				ava = 10;
-//			}
-//		}
-//		retval.put("ava", ava);
-//
-//		return retval;
-//	}
-//
-//	private JSONObject chart4(String stcd){
-//		JSONObject retval = new JSONObject();
-//
-//		Station station = stationService.selectByPrimaryKey(stcd);
-//		retval.put("station", station);
-//
-//		List<Rainfall> rainfallDaily = cacheRainfallDailyService.selectByStcd(stcd);
-//
-//		List<String> dateArr = new ArrayList<>();
-//		List<BigDecimal> rainfallArr = new ArrayList<>();
-//		for (int i=0;i<rainfallDaily.size();i++){
-//			dateArr.add(rainfallDaily.get(i).getDate().substring(0,5));
-//			rainfallArr.add(rainfallDaily.get(i).getRainfall());
-//		}
-//		retval.put("dateArr", dateArr);
-//		retval.put("rainfallArr", rainfallArr);
-//
-//		return retval;
-//	}
 }

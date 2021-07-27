@@ -1,6 +1,7 @@
 package gz.sw.mapper.write;
 
 import gz.sw.entity.write.Model;
+import gz.sw.entity.write.UnitLine;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,9 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface UnitLineDao {
-	Model select(Integer id);
-	int insert(Model model);
-	int update(Model model);
+	UnitLine select(Integer id);
+	int insert(UnitLine unitLine);
+	int update(UnitLine unitLine);
 	int delete(Integer id);
 
 	int selectCount(@Param("sttp") String sttp, @Param("stcd") String stcd, @Param("name") String name);

@@ -233,12 +233,13 @@
           ,laydate = layui.laydate
           ,device = layui.device()
           ,echarts = layui.echarts;
+      ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
       laydate.render({
           elem: '#startTime'
           ,type: 'datetime'
           ,done: function(value, date){ //监听日期被切换
-              getChart(stcd, stname);
+              getChart();
           }
       });
 
@@ -246,7 +247,7 @@
           elem: '#endTime'
           ,type: 'datetime'
           ,done: function(value, date){ //监听日期被切换
-              getChart(stcd, stname);
+              getChart();
           }
       });
 
@@ -268,7 +269,7 @@
           var option1 = {
               title: {
                   text: '雨量过程',
-                  subtext: data.stname,
+                  subtext: stname,
                   x: 'center',
                   textStyle: {
                       fontSize: 14
@@ -298,12 +299,12 @@
                   {
                       name: '累计雨量',
                       type: 'bar',
-                      label: {
-                          normal: {
-                              show: true,
-                              position: 'top'
-                          }
-                      },
+                      // label: {
+                      //     normal: {
+                      //         show: true,
+                      //         position: 'top'
+                      //     }
+                      // },
                       data: data.rainfallList,
                       markLine: {
                           data: [
@@ -317,7 +318,7 @@
       }
       var chart1 = echarts.init(document.getElementById('chart1'));
 
-      function getChart1(stcd, stname){
+      function getChart1(){
           // var loading = layer.load(0);
           loading(chart1);
           $.post(
@@ -328,9 +329,11 @@
                   endTime:   $("#endTime").val()
               },
               function (data) {
-                  data.stname = stname;
-                  drawChart1(data);
-                  // layer.close(loading);
+                  if( data.code == 200 ) {
+                      // data.data.stname = stname;
+                      drawChart1(data.data);
+                      // layer.close(loading);
+                  }
                   stopLoading(chart1);
               }
           );
@@ -340,7 +343,7 @@
           var option2 = {
               title: {
                   text: '水位过程',
-                  subtext: data.stname,
+                  subtext: stname,
                   x: 'center',
                   textStyle: {
                       fontSize: 14
@@ -377,7 +380,7 @@
       }
       var chart2 = echarts.init(document.getElementById('chart2'));
 
-      function getChart2(stcd, stname){
+      function getChart2(){
           loading(chart2);
           $.post(
               '${pageContext.request.contextPath}/station/chart2',
@@ -387,17 +390,19 @@
                   endTime:   $("#endTime").val()
               },
               function (data) {
-                  data.stname = stname;
-                  drawChart2(data);
-                  // layer.close(loading);
+                  if( data.code == 200 ) {
+                      // data.data.stname = stname;
+                      drawChart2(data.data);
+                      // layer.close(loading);
+                  }
                   stopLoading(chart2);
               }
           );
       }
 
-      function getChart(stcd, stname){
-          getChart1(stcd, stname);
-          getChart2(stcd, stname);
+      function getChart(){
+          getChart1();
+          getChart2();
       }
 
       function loading(chart){
@@ -413,142 +418,15 @@
       $("a.layadmin-backlog-body").click(function () {
           stcd = $(this).attr("stcd");
           stname = $(this).attr("stname");
-          getChart(stcd, stname);
+          getChart();
       });
       $("#startTime, #endTime").on("change", function () {
-          getChart(stcd, stname);
+          getChart();
       });
 
       var stcd = '62303500';
       var stname = '汾坑';
-      getChart(stcd, stname);
-
-      // var option3 = {
-      //     //backgroundColor: "#ffffff",
-      //     series: [{
-      //         name: '预警等级',
-      //         type: 'gauge',
-      //         title: {				// 仪表盘标题。
-      //             show: true,				// 是否显示标题,默认 true。
-      //             offsetCenter: [0,"30%"],//相对于仪表盘中心的偏移位置，数组第一项是水平方向的偏移，第二项是垂直方向的偏移。可以是绝对的数值，也可以是相对于仪表盘半径的百分比。
-      //             // color: "#4DBEEE",			// 文字的颜色,默认 #333。
-      //             fontSize: 20,			// 文字的字体大小,默认 15。
-      //         },
-      //         pointer: {    // 仪表盘指针。
-      //             show: true,    // 是否显示指针,默认 true。
-      //             length: "70%",   // 指针长度，可以是绝对数值，也可以是相对于半径的百分比,默认 80%。
-      //             width: 5,    // 指针宽度,默认 8。
-      //         },
-      //         detail: {
-      //             formatter: '{value}',
-      //             offsetCenter: [0,"50%"],
-      //         },
-      //         axisTick: {				// 刻度(线)样式。
-      //             show: true,				// 是否显示刻度(线),默认 true。
-      //             splitNumber: 5,			// 分隔线之间分割的刻度数,默认 5。
-      //             length:12,				// 刻度线长。支持相对半径的百分比,默认 8。
-      //             lineStyle: {			// 刻度线样式。
-      //                 // color: "#eee",				//线的颜色,默认 #eee。
-      //                 opacity: 1,					//图形透明度。支持从 0 到 1 的数字，为 0 时不绘制该图形。
-      //                 width: 1,					//线度,默认 1。
-      //                 type: "solid",				//线的类型,默认 solid。 此外还有 dashed,dotted
-      //                 shadowBlur: 10,				//(发光效果)图形阴影的模糊大小。该属性配合 shadowColor,shadowOffsetX, shadowOffsetY 一起设置图形的阴影效果。
-      //                 // shadowColor: "#fff",		//阴影颜色。支持的格式同color。
-      //             },
-      //         },
-      //         axisLabel: {			// 刻度标签。
-      //             show: false,				// 是否显示标签,默认 true。
-      //             distance: 5,			// 标签与刻度线的距离,默认 5。
-      //             // color: "#fff",			// 文字的颜色,默认 #fff。
-      //             fontSize: 12,			// 文字的字体大小,默认 5。
-      //             formatter: "{value}",	// 刻度标签的内容格式器，支持字符串模板和回调函数两种形式。 示例:// 使用字符串模板，模板变量为刻度默认标签 {value},如:formatter: '{value} kg'; // 使用函数模板，函数参数分别为刻度数值,如formatter: function (value) {return value + 'km/h';}
-      //         },
-      //         axisLine: {
-      //             show: true,
-      //             lineStyle: {
-      //                 width: 23,
-      //                 shadowBlur: 0,
-      //                 // color: [
-      //                 //     [0.3, '#26d0ce'],
-      //                 //     [0.7, '#4DBEEE'],
-      //                 //     [1, '#F775A9']
-      //                 // ]
-      //             }
-      //         },
-      //         data: [{
-      //             value: 123,
-      //             name: '预警等级',
-      //         }]
-      //     }]
-      // };
-      // var chart3 = echarts.init(document.getElementById('chart3'));
-      // chart3.setOption(option3);
-      //
-      // var option4 = {
-      //     title: {
-      //         text: '流域平均降雨',
-      //         subtext: '0000',
-      //         x: 'center',
-      //         align: 'right',
-      //         textStyle: {
-      //             fontSize: 14
-      //         }
-      //     },
-      //     tooltip : {
-      //         trigger: 'axis',
-      //         axisPointer: {
-      //             type: 'cross',
-      //             animation: false,
-      //             // label: {
-      //             //     backgroundColor: '#505765'
-      //             // }
-      //         }
-      //     },
-      //     xAxis : [{
-      //         type : 'category',
-      //         data: [
-      //             0000,0000,0000,0000
-      //         ]
-      //     }],
-      //     yAxis : [{
-      //         name: '降雨量(mm)',
-      //         type: 'value',
-      //     }],
-      //     series: [{
-      //         data: [
-      //             0000,0000,0000,0000
-      //         ],
-      //         type: 'line',
-      //         name:'日雨量',
-      //         symbol: 'circle',//折线点设置为实心点
-      //         symbolSize: 1,   //折线点的大小
-      //         // label: {
-      //         //        normal: {
-      //         //            show: true,
-      //         //             //  color:'#26d0ce',
-      //         //            position: 'top'
-      //         //        }
-      //         //    },
-      //         smooth: true,
-      //         // itemStyle:{
-      //         //     normal:{
-      //         //         color:'#4DBEEE',
-      //         //     }
-      //         // },
-      //         // lineStyle: {
-      //         //     normal: {
-      //         //         color:'#4DBEEE',
-      //         //         width: 3,
-      //         //         shadowColor: 'rgba(0,0,0,0.4)',
-      //         //         shadowBlur: 10,
-      //         //         shadowOffsetY: 10
-      //         //     }
-      //         // }
-      //     }]
-      // };
-      //
-      // var chart4 = echarts.init(document.getElementById('chart4'));
-      // chart4.setOption(option4);
+      getChart();
   });
   </script>
 </body>

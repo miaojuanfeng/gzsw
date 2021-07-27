@@ -10,6 +10,7 @@ public class Plan {
 	private Integer id;
 	private String stcd;
 	private String name;
+	private Integer rain;
 	private Integer modelCl;
 	private Integer modelHl;
 	private Integer rainRun;
@@ -88,6 +89,14 @@ public class Plan {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getRain() {
+		return rain;
+	}
+
+	public void setRain(Integer rain) {
+		this.rain = rain;
 	}
 
 	public Integer getModelCl() {

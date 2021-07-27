@@ -2,6 +2,7 @@ package gz.sw.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.entity.write.Model;
 import gz.sw.entity.write.ModelStation;
 import gz.sw.entity.write.Plan;
@@ -45,11 +46,7 @@ public class ModelController {
 	@PostMapping("list")
 	@ResponseBody
 	public Map list(Integer page, Integer limit, String sttp, String stcd, String name) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", modelService.selectCount(sttp, stcd, name));
-		retval.put("data", modelService.selectList(page, limit, sttp, stcd, name));
-		return retval;
+		return RetVal.OK(modelService.selectCount(sttp, stcd, name), modelService.selectList(page, limit, sttp, stcd, name));
 	}
 
 	@GetMapping("insert")
@@ -63,20 +60,18 @@ public class ModelController {
 	@ResponseBody
 	@Transactional
 	public JSONObject insert(String name, String stcd, String data) {
-		JSONObject retval = new JSONObject();
-
 		Model model = new Model();
 		model.setName(name);
 		model.setStcd(stcd);
 		model.setCreateTime(new Date());
 		modelService.insert(model);
 
-//		JSONArray temp = JSONArray.parseArray(data);
 		List<ModelStation> modelStationList = setModelStationData(model.getId(), "0", JSONArray.parseArray(data));
 		if( modelStationList.size() > 0 ) {
 			modelStationService.insertBatch(modelStationList);
 		}
-		return retval;
+
+		return RetVal.OK();
 	}
 
 	@GetMapping("update/{id}")
@@ -96,33 +91,28 @@ public class ModelController {
 	@ResponseBody
 	@Transactional
 	public JSONObject update(@RequestParam("name") String name, @RequestParam("stcd") String stcd, @RequestParam("data") String data, @PathVariable("id") Integer id) {
-		JSONObject retval = new JSONObject();
-
 		Model model = new Model();
 		model.setId(id);
 		model.setName(name);
 		model.setStcd(stcd);
 		modelService.update(model);
 
-//		JSONArray temp = JSONArray.parseArray(data);
 		modelStationService.deleteByModel(id);
 		List<ModelStation> modelStationList = setModelStationData(model.getId(), "0", JSONArray.parseArray(data));
 		if( modelStationList.size() > 0 ) {
 			modelStationService.insertBatch(modelStationList);
 		}
-		return retval;
+
+		return RetVal.OK();
 	}
 
 	@PostMapping("delete")
 	@ResponseBody
 	@Transactional
 	public JSONObject delete(Integer id) {
-		JSONObject retval = new JSONObject();
 		modelService.delete(id);
 		modelStationService.deleteByModel(id);
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 
 	private JSONArray getModelStationData(String fatherId, List<Map> modelStationList){
@@ -182,22 +172,22 @@ public class ModelController {
 
 	@PostMapping("getType")
 	@ResponseBody
-	public List getType(Integer type) {
-		return ModelTypeEnum.getList(type);
+	public JSONObject getType(Integer type) {
+		return RetVal.OK(ModelTypeEnum.getList(type));
 	}
 
 	@PostMapping("getModel")
 	@ResponseBody
-	public List getModel(String stcd) {
-		return modelService.selectListByStcd(stcd);
+	public JSONObject getModel(String stcd) {
+		return RetVal.OK(modelService.selectListByStcd(stcd));
 	}
 
 	@PostMapping("getArea")
 	@ResponseBody
-	public JSONArray getArea(@RequestParam("modelId") Integer modelId) {
+	public JSONObject getArea(@RequestParam("modelId") Integer modelId) {
 		JSONArray modelStationList = getModelStationData("0", modelStationService.selectByModel(modelId));
 		setModelStationPlan(modelStationList);
-		return modelStationList;
+		return RetVal.OK(modelStationList);
 	}
 
 	private void setModelStationPlan(JSONArray modelStationList){
@@ -209,60 +199,4 @@ public class ModelController {
 			modelStation.put("plan", planService.selectMap(modelStation.getInteger("planId")));
 		}
 	}
-
-//	private Map setPlan(Plan plan) {
-//		Map m = new HashMap();
-// 		if( ModelTypeEnum.XAJ_CL.getId().equals(plan.getModelCl()) ){
-//			m.put("ID", plan.getId());
-//			m.put("STCD", plan.getStcd());
-//			m.put("NAME", plan.getName());
-//			m.put("MODEL", plan.getModelCl());
-//			m.put("WU0", plan.getWU0());
-//			m.put("WL0", plan.getWL0());
-//			m.put("WD0", plan.getWD0());
-//			m.put("WUM", plan.getWUM());
-//			m.put("WLM", plan.getWLM());
-//			m.put("WDM", plan.getWDM());
-//			m.put("B", plan.getB());
-//			m.put("K", plan.getK());
-//			m.put("C", plan.getC());
-//			m.put("SM", plan.getSM());
-//			m.put("EX", plan.getEX());
-//			m.put("KSS", plan.getKSS());
-//			m.put("KG", plan.getKG());
-//			m.put("IM", plan.getIM());
-//			m.put("CI", plan.getCI());
-//			m.put("CG", plan.getCG());
-//			m.put("CS", plan.getCS());
-//			m.put("L", plan.getL());
-//			m.put("T", plan.getT());
-//			m.put("F", plan.getF());
-//			m.put("S0", plan.getS0());
-//			m.put("FR0", plan.getFR0());
-//			m.put("QRS0", plan.getQRS0());
-//			m.put("QRSS0", plan.getQRSS0());
-//			m.put("QRG0", plan.getQRG0());
-//		}else if( ModelTypeEnum.EXP_CL.getId().equals(plan.getModelCl()) ){
-//			m.put("ID", plan.getId());
-//			m.put("STCD", plan.getStcd());
-//			m.put("NAME", plan.getName());
-//			m.put("MODEL", plan.getModelCl());
-//			m.put("PA", plan.getPA());
-//		}else if( ModelTypeEnum.API_CL.getId().equals(plan.getModelCl()) ){
-//			m.put("ID", plan.getId());
-//			m.put("STCD", plan.getStcd());
-//			m.put("NAME", plan.getName());
-//			m.put("MODEL", plan.getModelCl());
-//			m.put("PA", plan.getPA());
-//			m.put("KR", plan.getKR());
-//			m.put("IM", plan.getIM());
-//			m.put("IMM", plan.getIMM());
-//			m.put("NA", plan.getNA());
-//			m.put("NU", plan.getNU());
-//			m.put("KG", plan.getKG());
-//			m.put("KU", plan.getKU());
-//			m.put("AREA", plan.getAREA());
-//		}
-//		return m;
-//	}
 }

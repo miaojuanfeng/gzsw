@@ -1,5 +1,7 @@
 package gz.sw.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.write.RainRunService;
 import gz.sw.service.write.UnitLineService;
@@ -30,28 +32,20 @@ public class UnitLineController {
 
 	@PostMapping("list")
 	@ResponseBody
-	public Map list(Integer page, Integer limit, String sttp, String stcd, String name) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", unitLineService.selectCount(sttp, stcd, name));
-		retval.put("data", unitLineService.selectList(page, limit, sttp, stcd, name));
-		return retval;
+	public JSONObject list(Integer page, Integer limit, String sttp, String stcd, String name) {
+		return RetVal.OK(unitLineService.selectCount(sttp, stcd, name), unitLineService.selectList(page, limit, sttp, stcd, name));
 	}
 
 	@PostMapping("getUnitLine")
 	@ResponseBody
-	public List getUnitLine(String stcd) {
-		return unitLineService.selectListByStcd(stcd);
+	public JSONObject getUnitLine(String stcd) {
+		return RetVal.OK(unitLineService.selectListByStcd(stcd));
 	}
 
 	@PostMapping("pointList")
 	@ResponseBody
-	public Map pointList(Integer lid) {
-		Map retval = new HashMap();
+	public JSONObject pointList(Integer lid) {
 		List listRainRun = unitLineService.selectPointList(lid);
-		retval.put("code", 0);
-		retval.put("count", listRainRun.size());
-		retval.put("data", listRainRun);
-		return retval;
+		return RetVal.OK(listRainRun.size(), listRainRun);
 	}
 }

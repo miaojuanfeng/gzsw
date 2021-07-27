@@ -1,6 +1,7 @@
 package gz.sw.service.write.impl;
 
 import gz.sw.entity.write.Model;
+import gz.sw.entity.write.RainRun;
 import gz.sw.mapper.write.RainRunDao;
 import gz.sw.service.write.RainRunService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +16,18 @@ public class RainRunServiceImpl implements RainRunService {
 	private RainRunDao rainRunDao;
 
 	@Override
-	public Model select(Integer id) {
+	public RainRun select(Integer id) {
 		return rainRunDao.select(id);
 	}
 
 	@Override
-	public int insert(Model model) {
-		return rainRunDao.insert(model);
+	public int insert(RainRun rainRun) {
+		return rainRunDao.insert(rainRun);
 	}
 
 	@Override
-	public int update(Model model) {
-		return rainRunDao.update(model);
+	public int update(RainRun rainRun) {
+		return rainRunDao.update(rainRun);
 	}
 
 	@Override

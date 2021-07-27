@@ -1,6 +1,8 @@
 package gz.sw.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.entity.write.Model;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
@@ -34,6 +36,9 @@ public class PlanController {
 	private RainRunService rainRunService;
 
 	@Autowired
+	private RainService rainService;
+
+	@Autowired
 	private UnitLineService unitLineService;
 
 	@GetMapping("list")
@@ -45,11 +50,7 @@ public class PlanController {
 	@PostMapping("list")
 	@ResponseBody
 	public Map list(String sttp, String stcd, String name, Integer page, Integer limit) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", planService.selectCount(sttp, stcd, name));
-		retval.put("data", planService.selectList(sttp, stcd, name, page, limit));
-		return retval;
+		return RetVal.OK(planService.selectCount(sttp, stcd, name), planService.selectList(sttp, stcd, name, page, limit));
 	}
 
 	@GetMapping("insert")
@@ -63,12 +64,11 @@ public class PlanController {
 	@PostMapping("insert")
 	@ResponseBody
 	public JSONObject insert(String name, String stcd, Plan plan) {
-		JSONObject retval = new JSONObject();
 		plan.setName(name);
 		plan.setStcd(stcd);
 		plan.setCreateTime(new Date());
 		planService.insert(plan);
-		return retval;
+		return RetVal.OK();
 	}
 
 	@GetMapping("update/{id}")
@@ -78,6 +78,7 @@ public class PlanController {
 		map.put("modelHls", ModelTypeEnum.getList(ModelTypeEnum.MODEL_TYPE_HL));
 		Map plan = planService.selectMap(id);
 		map.put("stations", stationService.selectListByType(String.valueOf(plan.get("sttype"))));
+		map.put("rains", rainService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("rainRuns", rainRunService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("unitLines", unitLineService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("plan", plan);
@@ -87,38 +88,32 @@ public class PlanController {
 	@PostMapping("update/{id}")
 	@ResponseBody
 	public JSONObject update(@PathVariable("id") Integer id, Plan plan) {
-		JSONObject retval = new JSONObject();
 		plan.setId(id);
 		planService.update(plan);
-		return retval;
+		return RetVal.OK();
 	}
 
 	@PostMapping("delete")
 	@ResponseBody
 	@Transactional
 	public JSONObject delete(Integer id) {
-		JSONObject retval = new JSONObject();
 		int count = modelStationService.selectCountByPlan(id);
 		if( count > 0 ){
-			retval.put("code", 500);
-			retval.put("msg", "有" + count + "个河系正在使用该方案，请取消使用后再删除");
-			return retval;
+			return RetVal.Error("有" + count + "个河系正在使用该方案，请取消使用后再删除");
 		}
 		planService.delete(id);
-		retval.put("code", 200);
-		retval.put("msg", "");
-		return retval;
+		return RetVal.OK();
 	}
 
     @PostMapping("getPlan")
     @ResponseBody
-    public List getPlan(String stcd) {
-        return planService.selectListByStcd(stcd);
+    public JSONObject getPlan(String stcd) {
+        return RetVal.OK(planService.selectListByStcd(stcd));
     }
 
 	@PostMapping("getUnitLine")
 	@ResponseBody
-	public List getUnitLine(String stcd) {
-		return unitLineService.selectListByStcd(stcd);
+	public JSONObject getUnitLine(String stcd) {
+		return RetVal.OK(unitLineService.selectListByStcd(stcd));
 	}
 }

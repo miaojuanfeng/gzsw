@@ -11,6 +11,7 @@ public interface StationService {
 	List selectRainList(Integer page, Integer limit, String selfP, String diffP, String stcd);
 	List selectListByType(String type);
 	List selectAll();
+	List selectRain();
 	int insertBatch(List<Station> stationList);
 	void clear();
 	void dbcc();

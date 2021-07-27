@@ -91,6 +91,7 @@
           <div class="layui-card-header">
             <button lay-submit="" lay-filter="forecast1" class="layui-btn layui-btn-sm">预报流量</button>
             <button lay-submit="" lay-filter="forecast2" class="layui-btn layui-btn-sm">预报水位</button>
+            <button lay-submit="" lay-filter="forecast3" class="layui-btn layui-btn-sm">水库调度</button>
           </div>
           <div class="layui-card-body layui-row">
             <div id="chart" style="width:100%;height:469px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
@@ -334,6 +335,26 @@
     </div>
   </form>
 
+  <form class="layui-form" lay-filter="contentBox" id="contentBox" style="padding:15px;display: none;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">水库站点</label>
+      <div class="layui-input-block">
+        <select name="s" lay-filter="s" lay-verify="required" lay-search="">
+          <option value="">请选择</option>
+          <c:forEach items="${stations}" var="station" varStatus="id">
+            <option value="${station.stcd}" <c:if test="${plan.stcd==station.stcd}">selected</c:if>>${station.stname}</option>
+          </c:forEach>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">出库流量</label>
+      <div class="layui-input-block">
+        <table id="see-table" class="layui-hide" lay-filter="see-data"></table>
+      </div>
+    </div>
+  </form>
+
   <script>
   layui.config({
     base: base //静态资源所在路径
@@ -345,24 +366,13 @@
           ,tree = layui.tree
           ,form = layui.form
           ,laydate = layui.laydate
+          ,table = layui.table
           ,echarts = layui.echarts;
+      ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
-      $.ajaxSetup({
-          type: 'POST',
-          complete: function(xhr,status) {
-              var sessionStatus = xhr.getResponseHeader('sessionstatus');
-              console.log(sessionStatus);
-              if(sessionStatus == 'timeout') {
-                  var top = getTopWinow();
-                  layer.msg('由于您长时间没有操作, session已过期, 请重新登录.', function () {
-                      top.location.href = '/login';
-                  });
-              }
-          }
-      });
-
-      var data1 = [];
+      var dataTree = [];
       var paramStcd = '';
+      var donePost = false;
 
       laydate.render({
           elem: '#forecastTime'
@@ -377,11 +387,12 @@
       tree.render({
           elem: '#area'
           ,id: 'area'
-          ,data: data1
+          ,data: dataTree
           ,onlyIconControl: true
           ,customOperate: true
           ,edit: ['update']
           ,click: function(obj){
+              if(!donePost) return;
               loadStation(obj.data.stcd);
           }
           ,operate: function (obj) {
@@ -405,7 +416,7 @@
               ,btnAlign: 'c' //按钮居中
               ,shade: 0.2 //不显示遮罩
               ,btn1: function(index, layero){
-                  var e = each(data1, deptId);
+                  var e = each(dataTree, deptId);
                   $.each(e.plan, function(key, value){
                       var val = $("#updateform input[name=" + key + "]").val();
                       if( val !== undefined ) {
@@ -428,7 +439,7 @@
               }
               ,success: function(layero, index){  //弹出成功的回调
                   clearForm();
-                  var e = each(data1, deptId);
+                  var e = each(dataTree, deptId);
                   $.each(e.plan, function(key, value){
                       $("#updateform input[name=" + key + "]").val(value);
                   });
@@ -465,58 +476,11 @@
           form.render();
       }
 
-      <%--form.on('select(sttp)', function(data){--%>
-          <%--$("select[name=station]").html('<option value="">请选择</option>');--%>
-          <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
-          <%--form.render('select');--%>
-          <%--var sttp = $("select[name=sttp]").val();--%>
-          <%--if( sttp != "" ){--%>
-              <%--var loading = layer.load(0);--%>
-              <%--$.post(--%>
-                  <%--'${pageContext.request.contextPath}/station/getStation',--%>
-                  <%--{--%>
-                      <%--sttp: sttp--%>
-                  <%--},--%>
-                  <%--function (data) {--%>
-                      <%--var html = '';--%>
-                      <%--$.each(data, function (key, value) {--%>
-                          <%--html += '<option value="' + value.stcd + '">' + value.stname + '</option>';--%>
-                      <%--});--%>
-                      <%--$("select[name=station]").append(html);--%>
-                      <%--form.render('select');--%>
-                      <%--layer.close(loading);--%>
-                  <%--}--%>
-              <%--);--%>
-          <%--}--%>
-      <%--});--%>
-
-      <%--/* 根据站点获取河系 */--%>
-      <%--form.on('select(station)', function(data){--%>
-          <%--var loading = layer.load(0);--%>
-          <%--$("select[name=model]").html('<option value="">请选择</option>');--%>
-          <%--form.render('select');--%>
-          <%--$.post(--%>
-              <%--'${pageContext.request.contextPath}/model/getModel',--%>
-              <%--{--%>
-                  <%--stcd: data.value--%>
-              <%--},--%>
-              <%--function (data) {--%>
-                  <%--var html = '';--%>
-                  <%--$.each(data, function (key, value) {--%>
-                      <%--html += '<option value="' + value.id + '">' + value.name + '</option>';--%>
-                  <%--});--%>
-                  <%--$("select[name=model]").append(html);--%>
-                  <%--form.render('select');--%>
-                  <%--layer.close(loading);--%>
-              <%--}--%>
-          <%--);--%>
-      <%--});--%>
-
       /* 根据河系获取流域河系 */
       form.on('select(model)', function(data){
-          data1 = {};
+          dataTree = {};
           tree.reload('area', {
-              data: data1
+              data: dataTree
           });
           if( data.value != '' ){
             var loading = layer.load(0);
@@ -526,15 +490,13 @@
                     modelId: data.value
                 },
                 function (data) {
-                    data1 = data;
-                    // if(data1.length > 0){
-                    //     setParam(data1[0]);
-                    // }else{
-                    //     clearParam();
-                    // }
-                    tree.reload('area', {
-                        data: data1
-                    });
+                    if( data.code == 200 ) {
+                        dataTree = data.data;
+                        tree.reload('area', {
+                            data: dataTree
+                        });
+                        donePost = false;
+                    }
                     layer.close(loading);
                 }
             );
@@ -558,87 +520,11 @@
                   layer.close(loading);
               }
           }).fail(function(response) {
-              parent.layer.alert("计算出错，请重试", {title: '错误'});
+              parent.layer.alert("请重试", {title: '错误'});
               layer.close(loading);
           });
           return false;
       }
-
-      // function setParam(data) {
-      //     paramStcd = data.stcd;
-      //     $(".stname").html(data.stname);
-      //
-      //     $("input[name=SM]").val(data.plan.SM);
-      //     $("input[name=CI]").val(data.plan.CI);
-      //     $("input[name=CS]").val(data.plan.CS);
-      //     $("input[name=L]").val(data.plan.L);
-      //     $("input[name=KE]").val(data.KE);
-      //     $("input[name=XE]").val(data.XE);
-      //
-      //     $("input[name=WU0]").val(data.plan.WU0);
-      //     $("input[name=WL0]").val(data.plan.WL0);
-      //     $("input[name=WD0]").val(data.plan.WD0);
-      //     $("input[name=S0]").val(data.plan.S0);
-      //     $("input[name=FR0]").val(data.plan.FR0);
-      //     $("input[name=QRS0]").val(data.plan.QRS0);
-      //     $("input[name=QRSS0]").val(data.plan.QRSS0);
-      //     $("input[name=QRG0]").val(data.plan.QRG0);
-      // }
-      //
-      // function clearParam() {
-      //     paramStcd = "";
-      //     $(".stname").html("");
-      //
-      //     $("input[name=SM]").val("");
-      //     $("input[name=CI]").val("");
-      //     $("input[name=CS]").val("");
-      //     $("input[name=L]").val("");
-      //     $("input[name=KE]").val("");
-      //     $("input[name=XE]").val("");
-      //
-      //     $("input[name=WU0]").val("");
-      //     $("input[name=WL0]").val("");
-      //     $("input[name=WD0]").val("");
-      //     $("input[name=S0]").val("");
-      //     $("input[name=FR0]").val("");
-      //     $("input[name=QRS0]").val("");
-      //     $("input[name=QRSS0]").val("");
-      //     $("input[name=QRG0]").val("");
-      // }
-      //
-      // function updateParam() {
-      //     function each(data) {
-      //         data.forEach(function (e, index) {
-      //             if (e.stcd == paramStcd) {
-      //                 e.plan.sm = $("input[name=SM]").val();
-      //                 e.plan.ci = $("input[name=CI]").val();
-      //                 e.plan.cs = $("input[name=CS]").val();
-      //                 e.plan.l = $("input[name=L]").val();
-      //                 e.ke = $("input[name=KE]").val();
-      //                 e.xe = $("input[name=XE]").val();
-      //
-      //                 e.plan.wu0 = $("input[name=WU0]").val();
-      //                 e.plan.wl0 = $("input[name=WL0]").val();
-      //                 e.plan.wd0 = $("input[name=WD0]").val();
-      //                 e.plan.s0 = $("input[name=S0]").val();
-      //                 e.plan.fr0 = $("input[name=FR0]").val();
-      //                 e.plan.qrs0 = $("input[name=QRS0]").val();
-      //                 e.plan.qrss0 = $("input[name=QRSS0]").val();
-      //                 e.plan.qrg0 = $("input[name=QRG0]").val();
-      //
-      //                 return;
-      //             }
-      //             if ( e.children != undefined && e.children.length > 0) {
-      //                 each(e.children);
-      //             }
-      //         })
-      //     }
-      //     each(data1);
-      // }
-      //
-      // $(".table-param input").keyup(function () {
-      //     updateParam();
-      // });
 
       function draw(data) {
           var chart = echarts.init(document.getElementById('chart'));
@@ -788,12 +674,12 @@
               $("input[name=affectTime]").val() == "" ||
               $("select[name=day]").val() == "" ||
               $("select[name=unit]").val() == "" ||
-              data1.length == 0
+              dataTree.length == 0
           ) {
               layer.msg('请填妥相关信息');
               return false;
           }
-          doPost(1, data1[0].stcd, data1);
+          doPost(1, dataTree[0].stcd, dataTree);
           return false;
       });
 
@@ -804,13 +690,49 @@
               $("input[name=affectTime]").val() == "" ||
               $("select[name=day]").val() == "" ||
               $("select[name=unit]").val() == "" ||
-              data1.length == 0
+              dataTree.length == 0
           ) {
               layer.msg('请填妥相关信息');
               return false;
           }
-          doPost(2, data1[0].stcd, data1);
+          doPost(2, dataTree[0].stcd, dataTree);
           return false;
+      });
+
+      /* 预报水位 */
+      form.on('submit(forecast3)', function(data){
+          layer.open({
+              type: 1
+              ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+              ,id: 'layerDemo1' //防止重复弹出
+              ,content: $('#contentBox')
+              ,title: '水库调度'
+              ,area:["500px","420px"]
+              ,btn: ['确定','关闭']
+              ,btnAlign: 'c' //按钮居中
+              ,shade: 0.2 //不显示遮罩
+              ,btn1: function(index, layero){
+                  layer.msg('ok');
+              }
+              ,cancel: function(){
+                  layer.closeAll();
+              }
+              ,success: function(layero, index){  //弹出成功的回调
+                  table.render({
+                      elem: '#see-table'
+                      ,method: 'post'
+                      ,where: {
+                          lid: 1
+                      }
+                      ,url: "${pageContext.request.contextPath}/unitLine/pointList"
+                      ,cols: [[
+                          {field:'date', title: '日期', sort: true}
+                          ,{field:'oq', title: '流量'}
+                      ]]
+                      ,page: false
+                  });
+              }
+          });
       });
       
       function doPost(type, stcd, data) {
@@ -830,14 +752,16 @@
               success : function(data) {
                   if( data.code == 200 ) {
                       draw(data.data);
-                  }else{
+                  }else if( data.code == 500 ){
                       parent.layer.alert(data.msg, {title: '错误'});
                   }
                   layer.close(loading);
+                  donePost = true;
               }
           }).fail(function(response) {
               parent.layer.alert("计算出错，请重试", {title: '错误'});
               layer.close(loading);
+              donePost = true;
           });
       }
 

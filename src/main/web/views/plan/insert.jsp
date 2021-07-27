@@ -74,6 +74,18 @@
           </div>
 
           <div class="layui-form-item">
+            <label class="layui-form-label">雨量方案</label>
+            <div class="layui-input-block">
+                <select name="rain" lay-filter="rain" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${rains}" var="rain" varStatus="id">
+                        <option value="${rain.id}" <c:if test="${plan.RAIN==rain.id}">selected</c:if>>${rain.name}</option>
+                    </c:forEach>
+                </select>
+            </div>
+          </div>
+
+          <div class="layui-form-item">
             <label class="layui-form-label">产流方案类型</label>
             <div class="layui-input-block">
                 <select name="modelCl" lay-filter="modelCl" lay-verify="required" lay-search="">
@@ -367,6 +379,7 @@
     ,layer = layui.layer
     ,laydate = layui.laydate
     ,form = layui.form;
+    ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
     form.on('select(sttp)', function(data){
         $("select[name=station]").html('<option value="">请选择</option>');
@@ -378,12 +391,14 @@
                 '${pageContext.request.contextPath}/station/getStation',
                 {sttp: sttp},
                 function (data) {
-                    var html = '';
-                    $.each(data, function (key, value) {
-                        html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
-                    });
-                    $("select[name=station]").append(html);
-                    form.render('select');
+                    if( data.code == 200 ) {
+                        var html = '';
+                        $.each(data.data, function (key, value) {
+                            html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
+                        });
+                        $("select[name=station]").append(html);
+                        form.render('select');
+                    }
                     layer.close(loading);
                 }
             );
@@ -395,6 +410,25 @@
         $("select[name=rainrun]").html('<option value="">请选择</option>');
         $("select[name=modelHl]").val('');
         $("select[name=unitline]").html('<option value="">请选择</option>');
+        var stcd = $("select[name=station]").val();
+        if( stcd != "" ){
+            var loading = layer.load(0);
+            $.post(
+                '${pageContext.request.contextPath}/rain/getRain',
+                {stcd: stcd},
+                function (data) {
+                    if( data.code == 200 ) {
+                        var html = '';
+                        $.each(data.data, function (key, value) {
+                            html += '<option value="' + value.id + '">' + value.name + '</option>';
+                        });
+                        $("select[name=rain]").append(html);
+                        form.render('select');
+                    }
+                    layer.close(loading);
+                }
+            );
+        }
         form.render('select');
     });
 
@@ -417,12 +451,14 @@
                     '${pageContext.request.contextPath}/rainRun/getRainRun',
                     {stcd: stcd},
                     function (data) {
-                        var html = '';
-                        $.each(data, function (key, value) {
-                            html += '<option value="' + value.id + '">' + value.name + '</option>';
-                        });
-                        $("select[name=rainRun]").append(html);
-                        form.render('select');
+                        if( data.code == 200 ) {
+                            var html = '';
+                            $.each(data, function (key, value) {
+                                html += '<option value="' + value.id + '">' + value.name + '</option>';
+                            });
+                            $("select[name=rainRun]").append(html);
+                            form.render('select');
+                        }
                         layer.close(loading);
                     }
                 );
@@ -454,12 +490,14 @@
                     '${pageContext.request.contextPath}/unitLine/getUnitLine',
                     {stcd: stcd},
                     function (data) {
-                        var html = '';
-                        $.each(data, function (key, value) {
-                            html += '<option value="' + value.id + '">' + value.name + '</option>';
-                        });
-                        $("select[name=unitLine]").append(html);
-                        form.render('select');
+                        if( data.code == 200 ) {
+                            var html = '';
+                            $.each(data, function (key, value) {
+                                html += '<option value="' + value.id + '">' + value.name + '</option>';
+                            });
+                            $("select[name=unitLine]").append(html);
+                            form.render('select');
+                        }
                         layer.close(loading);
                     }
                 );
@@ -487,6 +525,10 @@
         }
         if( $("select[name=station]").val() == "" ){
             layer.msg('请填妥预报站点');
+            return false;
+        }
+        if( $("select[name=rain]").val() == "" ){
+            layer.msg('请填妥雨量方案');
             return false;
         }
         if( $("select[name=modelCl]").val() == "" ){
@@ -531,6 +573,7 @@
         }
         data.name = $("input[name=name]").val();
         data.stcd = $("select[name=station]").val();
+        data.rain = $("select[name=rain]").val();
         data.modelCl = $("select[name=modelCl]").val();
         data.rainRun = $("select[name=rainRun]").val();
         data.modelHl = $("select[name=modelHl]").val();
@@ -542,10 +585,12 @@
             contentType: "application/x-www-form-urlencoded",
             data: data,
             success : function(result) {
-                parent.layer.alert("数据保存成功", function (index) {
-                    parent.layer.close(index);
-                    parent.layui.admin.events.closeThisTabs();
-                })
+                if( result.code == 200 ) {
+                    parent.layer.alert("数据保存成功", function (index) {
+                        parent.layer.close(index);
+                        parent.layui.admin.events.closeThisTabs();
+                    })
+                }
                 layer.close(loading);
             }
         }).fail(function(response) {

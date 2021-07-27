@@ -24,7 +24,11 @@ public class UserInterceptor implements HandlerInterceptor {
         SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
         if( sessionUser == null ) {
 //            System.out.println("拦截");
-            response.sendRedirect(request.getContextPath() + "/login");
+            if( request.getHeader("x-requested-with") != null && request.getHeader("x-requested-with").equals("XMLHttpRequest") ) {
+                response.setHeader("sessionstatus", "timeout");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
             return false;
         }
 //        System.out.println("放行");

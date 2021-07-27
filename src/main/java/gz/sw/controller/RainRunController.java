@@ -1,5 +1,7 @@
 package gz.sw.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import gz.sw.common.RetVal;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.write.RainRunService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,28 +31,20 @@ public class RainRunController {
 
 	@PostMapping("list")
 	@ResponseBody
-	public Map list(Integer page, Integer limit, String sttp, String stcd, String name) {
-		Map retval = new HashMap();
-		retval.put("code", 0);
-		retval.put("count", rainRunService.selectCount(sttp, stcd, name));
-		retval.put("data", rainRunService.selectList(page, limit, sttp, stcd, name));
-		return retval;
+	public JSONObject list(Integer page, Integer limit, String sttp, String stcd, String name) {
+		return RetVal.OK(rainRunService.selectCount(sttp, stcd, name), rainRunService.selectList(page, limit, sttp, stcd, name));
 	}
 
 	@PostMapping("getRainRun")
 	@ResponseBody
-	public List getRainRun(String stcd) {
-		return rainRunService.selectListByStcd(stcd);
+	public JSONObject getRainRun(String stcd) {
+		return RetVal.OK(rainRunService.selectListByStcd(stcd));
 	}
 
 	@PostMapping("pointList")
 	@ResponseBody
 	public Map pointList(Integer pid) {
-		Map retval = new HashMap();
 		List listRainRun = rainRunService.selectPointList(pid);
-		retval.put("code", 0);
-		retval.put("count", listRainRun.size());
-		retval.put("data", listRainRun);
-		return retval;
+		return RetVal.OK(listRainRun.size(), listRainRun);
 	}
 }

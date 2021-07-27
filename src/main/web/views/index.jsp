@@ -115,6 +115,20 @@
               </dl>
             </li>
             <li data-name="home" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="雨量方案" lay-direction="2">
+                <i class="layui-icon layui-icon-water"></i>
+                <cite>雨量方案</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="rain/list"></c:url>">雨量方案列表</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="<c:url value="rain/insert"></c:url>">新建雨量方案</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item">
               <a href="javascript:;" lay-tips="方案" lay-direction="2">
                 <i class="layui-icon layui-icon-survey"></i>
                 <cite>单站方案</cite>
@@ -209,6 +223,7 @@
     }).use('index', function () {
         var $ = layui.$
             ,admin = layui.admin;
+        ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
         $("#logout").click(function () {
             commonConfirm("logout", "确认登出吗？", null, function () {

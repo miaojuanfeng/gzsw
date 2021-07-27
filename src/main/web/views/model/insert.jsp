@@ -158,6 +158,7 @@
     ,admin = layui.admin
     ,tree = layui.tree
     ,form = layui.form;
+    ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
     var data1 = ${data};
     if (data1.length > 0) {
@@ -234,13 +235,15 @@
                 stcd: stcd
             },
             function (data) {
-                var html = '';
-                $.each(data, function (key, value) {
-                    html += '<option value="' + value.id + '">' + value.name + '</option>';
-                });
-                $("#addform select[name=plan]").append(html);
-                $("#addform select[name=plan]").val(planId);
-                form.render('select');
+                if( data.code == 200 ) {
+                    var html = '';
+                    $.each(data.data, function (key, value) {
+                        html += '<option value="' + value.id + '">' + value.name + '</option>';
+                    });
+                    $("#addform select[name=plan]").append(html);
+                    $("#addform select[name=plan]").val(planId);
+                    form.render('select');
+                }
                 layer.close(loading);
             }
         );
@@ -407,15 +410,17 @@
                     sttp: sttp
                 },
                 function (data) {
-                    var html = '';
-                    $.each(data, function (key, value) {
-                        html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
-                    });
-                    $("#addform select[name=station]").append(html);
-                    if( val != null ){
-                        $("#addform select[name=station]").val(val);
+                    if( data.code == 200 ) {
+                        var html = '';
+                        $.each(data.data, function (key, value) {
+                            html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
+                        });
+                        $("#addform select[name=station]").append(html);
+                        if (val != null) {
+                            $("#addform select[name=station]").val(val);
+                        }
+                        form.render('select');
                     }
-                    form.render('select');
                     layer.close(loading);
                 }
             );
@@ -471,14 +476,17 @@
                     stcd: stcd
                 },
                 function (data) {
-                    var html = '';
-                    $.each(data, function (key, value) {
-                        html += '<option value="' + value.id + '">' + value.name + '</option>';
-                    });
-                    $("#addform select[name=plan]").append(html);
-                    form.render('select');
+                    if( data.code == 200 ) {
+                        var html = '';
+                        $.each(data.data, function (key, value) {
+                            html += '<option value="' + value.id + '">' + value.name + '</option>';
+                        });
+                        $("#addform select[name=plan]").append(html);
+                        form.render('select');
+                    }
                     layer.close(loading);
                 }
+
             );
         }
     });
@@ -562,10 +570,12 @@
               data: JSON.stringify(data1)
           },
           success : function(result) {
-              parent.layer.alert("数据保存成功", function (index) {
-                  parent.layer.close(index);
-                  parent.layui.admin.events.closeThisTabs();
-              })
+              if( result.code == 200 ) {
+                  parent.layer.alert("数据保存成功", function (index) {
+                      parent.layer.close(index);
+                      parent.layui.admin.events.closeThisTabs();
+                  })
+              }
               layer.close(loading);
           }
       }).fail(function(response) {

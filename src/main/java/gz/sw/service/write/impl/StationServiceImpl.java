@@ -63,6 +63,11 @@ public class StationServiceImpl implements StationService {
 	}
 
 	@Override
+	public List selectRain() {
+		return stationDao.selectRain();
+	}
+
+	@Override
 	public int insertBatch(List<Station> stationList) {
 		return stationDao.insertBatch(stationList);
 	}
