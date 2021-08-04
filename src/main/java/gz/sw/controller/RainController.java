@@ -45,6 +45,7 @@ public class RainController {
 
 	@PostMapping("insert")
 	@ResponseBody
+	@Transactional
 	public JSONObject insert(String name, String stcd, String rainStation) {
 		Rain rain = new Rain();
 		rain.setName(name);
@@ -57,7 +58,7 @@ public class RainController {
 		for (int i=0; i<area.size(); i++){
 			JSONObject temp = area.getJSONObject(i);
 			Map station = new HashMap();
-			station.put("area", rain.getId());
+			station.put("rain", rain.getId());
 			station.put("stcd", temp.getString("value"));
 			areaStationList.add(station);
 		}
@@ -88,6 +89,7 @@ public class RainController {
 
 	@PostMapping("update/{id}")
 	@ResponseBody
+	@Transactional
 	public JSONObject update(@PathVariable("id") Integer id, String name, String stcd, String rainStation) {
 		Rain rain = new Rain();
 		rain.setId(id);
@@ -101,7 +103,7 @@ public class RainController {
 		for (int i=0; i<area.size(); i++){
 			JSONObject temp = area.getJSONObject(i);
 			Map station = new HashMap();
-			station.put("area", rain.getId());
+			station.put("rain", rain.getId());
 			station.put("stcd", temp.getString("value"));
 			areaStationList.add(station);
 		}

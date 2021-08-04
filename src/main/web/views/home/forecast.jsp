@@ -339,18 +339,15 @@
     <div class="layui-form-item">
       <label class="layui-form-label">水库站点</label>
       <div class="layui-input-block">
-        <select name="s" lay-filter="s" lay-verify="required" lay-search="">
+        <select name="oqStation" lay-filter="oqStation" lay-verify="required" lay-search="">
           <option value="">请选择</option>
-          <c:forEach items="${stations}" var="station" varStatus="id">
-            <option value="${station.stcd}" <c:if test="${plan.stcd==station.stcd}">selected</c:if>>${station.stname}</option>
-          </c:forEach>
         </select>
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">出库流量</label>
       <div class="layui-input-block">
-        <table id="see-table" class="layui-hide" lay-filter="see-data"></table>
+        <table id="oq-table" class="layui-hide" lay-filter="see-data"></table>
       </div>
     </div>
   </form>
@@ -371,7 +368,8 @@
       ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
       var dataTree = [];
-      var paramStcd = '';
+      var type = 1;
+      var oqObj = {};
       var donePost = false;
 
       laydate.render({
@@ -519,16 +517,14 @@
                   }
                   layer.close(loading);
               }
-          }).fail(function(response) {
-              parent.layer.alert("请重试", {title: '错误'});
-              layer.close(loading);
           });
           return false;
       }
 
       function draw(data) {
+          echarts.init(document.getElementById('chart')).dispose();
           var chart = echarts.init(document.getElementById('chart'));
-          var option = {
+          var option1 = {
               title: {
                   text: '洪水过程',
                   subtext: data.stname,
@@ -664,8 +660,251 @@
                   }
               ]
           };
-          chart.setOption(option);
+          var option2 = {
+              title: {
+                  text: '洪水过程',
+                  subtext: data.stname,
+                  x: 'center',
+                  align: 'right'
+              },
+              grid: {
+                  bottom: 80
+              },
+              toolbox: {
+                  feature: {
+                      dataZoom: {
+                          yAxisIndex: 'none'
+                      },
+                      restore: {},
+                      saveAsImage: {}
+                  }
+              },
+              tooltip : {
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      animation: false,
+                      label: {
+                          backgroundColor: '#505765'
+                      }
+                  }
+              },
+              // legend: {
+              //     data:['实测'+data.forecastText,'蓄水量','水位','入库流量','出库流量','降雨量'],
+              //     x: 'left'
+              // },
+              dataZoom: [
+                  {
+                      show: false,
+                      realtime: true,
+                      //  start: 65,
+                      // end: 85
+                  },
+                  {
+                      type: 'inside',
+                      realtime: true,
+                      start: 65,
+                      end: 85
+                  }
+              ],
+              xAxis: [
+                  {
+                      type: 'category',
+                      boundaryGap : true,
+                      axisLine: {onZero: false},
+                      data: data.timeArr.map(function (str) {
+                          return str.replace('-', '/').replace('-', '/').replace(' ', '\n')
+                      })
+                  }
+              ],
+              yAxis: [
+                  {
+                      name: '数值',
+                      type: 'value',
+                      max: data.riverMax,
+                      min: data.riverMin
+                  },
+                  {
+                      name: '降雨量(mm)',
+                      nameLocation: 'start',
+                      max: data.rainfallMax,
+                      type: 'value',
+                      inverse: true
+                  }
+              ],
+              series: [
+                  // {
+                  //     name: '实测' + data.forecastText,
+                  //     type:'line',
+                  //     animation: true,
+                  //     smooth: true,
+                  //     symbol: 'circle',
+                  //     symbolSize: 1,
+                  //     itemStyle:{
+                  //         normal:{
+                  //             color: '#7EC0EE',
+                  //
+                  //         }
+                  //     },
+                  //     lineStyle: {
+                  //         normal: {
+                  //             color: '#7EC0EE',
+                  //             width: 2,
+                  //             shadowColor: 'rgba(0,0,0,0.4)',
+                  //             shadowBlur: 6,
+                  //             shadowOffsetY: 6
+                  //         }
+                  //     },
+                  //     data: data.River
+                  // },
+                  {
+                      name:'入库流量',
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: data.forecastColor,
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: data.forecastColor,
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.QTRR
+                  },
+                  {
+                      name:'蓄水量',
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: '#ff0000',
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: '#ff0000',
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.W
+                  },
+                  {
+                      name:'水位',
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: '#ffff00',
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: '#ffff00',
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.Z
+                  },
+                  {
+                      name:'出库流量',
+                      type:'line',
+                      animation: true,
+                      smooth: true,
+                      symbol: 'circle',
+                      symbolSize: 1,
+                      itemStyle:{
+                          normal:{
+                              color: '#00ff00',
+                          }
+                      },
+                      lineStyle: {
+                          normal: {
+                              color: '#00ff00',
+                              width: 2,
+                              shadowColor: 'rgba(0,0,0,0.4)',
+                              shadowBlur: 6,
+                              shadowOffsetY: 6
+                          }
+                      },
+                      data: data.OQ
+                  },
+                  {
+                      name:'降雨量',
+                      type:'bar',
+                      itemStyle:{
+                          normal:{
+                              color:'#7EC0EE',
+
+                          }
+                      },
+                      // barWidth: '40%',
+                      yAxisIndex:1,
+                      animation: true,
+                      data: data.P
+                  }
+              ]
+          };
+          if( data.sttp == 'RR' ){
+              chart.setOption(option2);
+          }else{
+              chart.setOption(option1);
+          }
       }
+
+      table.render({
+          elem: '#oq-table'
+          ,id: 'see-table'
+          ,cols: [[
+              {field:'id', title: 'ID'}
+              ,{field:'timeArr', title: '时间'}
+              ,{field:'oq', title: '流量', edit: 'text'}
+          ]]
+          ,data: []
+          ,page: true
+          ,limit: 30
+      });
+
+      //监听单元格编辑
+      table.on('edit(see-data)', function(obj){
+          var value = obj.value //得到修改后的值
+              ,data = obj.data //得到所在行所有键值
+              ,field = obj.field; //得到字段
+          var stcd = $("select[name=oqStation]").val();
+          var oqList = oqObj[stcd].data;
+          var v = Number(zhzs(value));
+          oqList[data.id-1].oq = v;
+          obj.update({oq:v});
+          obj.tr.find('td[data-field=oq] input').val(v);
+      });
+
+      form.on('select(oqStation)', function(data){
+          if( data.value != '' ){
+              table.reload('see-table', {data: oqObj[data.value].data});
+          }else{
+              table.reload('see-table', {data: []});
+          }
+      });
 
       /* 预报流量 */
       form.on('submit(forecast1)', function(data){
@@ -679,7 +918,8 @@
               layer.msg('请填妥相关信息');
               return false;
           }
-          doPost(1, dataTree[0].stcd, dataTree);
+          type = 1;
+          doPost(type, dataTree[0].stcd, dataTree);
           return false;
       });
 
@@ -695,11 +935,12 @@
               layer.msg('请填妥相关信息');
               return false;
           }
-          doPost(2, dataTree[0].stcd, dataTree);
+          type = 2;
+          doPost(type, dataTree[0].stcd, dataTree);
           return false;
       });
 
-      /* 预报水位 */
+      /* 预报OQ */
       form.on('submit(forecast3)', function(data){
           layer.open({
               type: 1
@@ -707,35 +948,53 @@
               ,id: 'layerDemo1' //防止重复弹出
               ,content: $('#contentBox')
               ,title: '水库调度'
-              ,area:["500px","420px"]
+              ,area:["700px","480px"]
               ,btn: ['确定','关闭']
               ,btnAlign: 'c' //按钮居中
               ,shade: 0.2 //不显示遮罩
               ,btn1: function(index, layero){
-                  layer.msg('ok');
+                  if ($("select[name=model]").val() == "" ||
+                      $("input[name=forecastTime]").val() == "" ||
+                      $("input[name=affectTime]").val() == "" ||
+                      $("select[name=day]").val() == "" ||
+                      $("select[name=unit]").val() == "" ||
+                      dataTree.length == 0
+                  ) {
+                      layer.msg('请填妥相关信息');
+                      return false;
+                  }
+                  doPost(type, dataTree[0].stcd, dataTree, JSON.stringify(oqObj));
+                  layer.closeAll();
               }
               ,cancel: function(){
                   layer.closeAll();
               }
               ,success: function(layero, index){  //弹出成功的回调
-                  table.render({
-                      elem: '#see-table'
-                      ,method: 'post'
-                      ,where: {
-                          lid: 1
+                  $("#contentBox select[name=oqStation]").html('<option value="">请选择</option>');
+                  table.reload('see-table', {data: []});
+                  form.render('select');
+
+                  var loading = layer.load(0);
+                  $.get(
+                      '${pageContext.request.contextPath}/forecast/oq',
+                      function (data) {
+                          if( data.code == 200 ) {
+                              var html = '';
+                              oqObj = data.data;
+                              $.each(data.data, function (key, value) {
+                                  html += '<option value="' + key + '">' + value.stname + '</option>';
+                              });
+                              $("#contentBox select[name=oqStation]").append(html);
+                              form.render('select');
+                          }
+                          layer.close(loading);
                       }
-                      ,url: "${pageContext.request.contextPath}/unitLine/pointList"
-                      ,cols: [[
-                          {field:'date', title: '日期', sort: true}
-                          ,{field:'oq', title: '流量'}
-                      ]]
-                      ,page: false
-                  });
+                  );
               }
           });
       });
       
-      function doPost(type, stcd, data) {
+      function doPost(type, stcd, data, oqStr) {
           var loading = layer.load(0);
           $.post({
               url: "${pageContext.request.contextPath}/forecast/compute",
@@ -747,21 +1006,21 @@
                   affectTime: $("input[name=affectTime]").val(),
                   day: $("select[name=day]").val(),
                   unit: $("select[name=unit]").val(),
-                  data: JSON.stringify(data)
+                  data: JSON.stringify(data),
+                  oqStr: oqStr
               },
               success : function(data) {
                   if( data.code == 200 ) {
                       draw(data.data);
+                      donePost = true;
                   }else if( data.code == 500 ){
                       parent.layer.alert(data.msg, {title: '错误'});
                   }
                   layer.close(loading);
-                  donePost = true;
               }
           }).fail(function(response) {
               parent.layer.alert("计算出错，请重试", {title: '错误'});
               layer.close(loading);
-              donePost = true;
           });
       }
 

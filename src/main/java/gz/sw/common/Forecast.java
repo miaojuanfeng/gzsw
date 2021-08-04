@@ -27,18 +27,21 @@ public class Forecast {
 
     private Map<String, List<BigDecimal>> listQTRR = new HashMap<>();
 
+    private Map<String, List<BigDecimal>> listOQ = new HashMap<>();
+
+    private Map<String, List<BigDecimal>> listW = new HashMap<>();
+
+    private Map<String, List<BigDecimal>> listZ = new HashMap<>();
+
     private Map<String, List<String>> listTime = new HashMap<>();
 
-//    private Map<String, List<BigDecimal>> listQT = new HashMap<>();
     private Map<String, List<BigDecimal>> listRiver = new HashMap<>();
 
     private Map<String, Integer> listMaxP = new HashMap<>();
 
     private Map<String, String> listStname = new HashMap<>();
 
-    private Map<String, Plan> planCl;
-
-    private Map<String, Plan> planHl;
+    private Map<String, String> listSttp = new HashMap<>();
 
     private Map<String, String> listForecastText = new HashMap<>();
 
@@ -90,6 +93,34 @@ public class Forecast {
         this.listQTRR.put(stcd, listQTRR);
     }
 
+    public List<BigDecimal> getListOQ(String stcd) {
+        return listOQ.get(stcd);
+    }
+
+    public Map<String, List<BigDecimal>> getListOQAll() {
+        return listOQ;
+    }
+
+    public void setListOQ(String stcd, List<BigDecimal> listOQ) {
+        this.listOQ.put(stcd, listOQ);
+    }
+
+    public List<BigDecimal> getListW(String stcd) {
+        return listW.get(stcd);
+    }
+
+    public void setListW(String stcd, List<BigDecimal> listW) {
+        this.listW.put(stcd, listW);
+    }
+
+    public List<BigDecimal> getListZ(String stcd) {
+        return listZ.get(stcd);
+    }
+
+    public void setListZ(String stcd, List<BigDecimal> listZ) {
+        this.listZ.put(stcd, listZ);
+    }
+
     public List<String> getListTime(String stcd) {
         return listTime.get(stcd);
     }
@@ -97,14 +128,6 @@ public class Forecast {
     public void setListTime(String stcd, List<String> listTime) {
         this.listTime.put(stcd, listTime);
     }
-
-//    public List<BigDecimal> getListQT(String stcd) {
-//        return listQT.get(stcd);
-//    }
-//
-//    public void setListQT(String stcd, List<BigDecimal> listQT) {
-//        this.listQT.put(stcd, listQT);
-//    }
 
     public List<BigDecimal> getListRiver(String stcd) {
         return listRiver.get(stcd);
@@ -130,20 +153,12 @@ public class Forecast {
         this.listStname.put(stcd, stname);
     }
 
-    public Plan getPlanCl(String stcd) {
-        return planCl.get(stcd);
+    public String getSttp(String stcd) {
+        return listSttp.get(stcd);
     }
 
-    public void setPlanCl(String stcd, Plan planCl) {
-        this.planCl.put(stcd, planCl);
-    }
-
-    public Plan getPlanHl(String stcd) {
-        return planHl.get(stcd);
-    }
-
-    public void setPlanHl(String stcd, Plan planHl) {
-        this.planHl.put(stcd, planHl);
+    public void setSttp(String stcd, String listSttp) {
+        this.listSttp.put(stcd, listSttp);
     }
 
     public String getForecastText(String stcd) {

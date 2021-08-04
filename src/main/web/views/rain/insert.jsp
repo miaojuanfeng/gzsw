@@ -169,7 +169,7 @@
     loadStation();
 
     form.on('submit(save)', function(data){
-        var areaStation = transfer.getData('transBox');
+        var rainStation = transfer.getData('transBox');
         if( $("input[name=name]").val() == "" ){
             layer.msg('请填妥雨量方案名称');
             return false;
@@ -178,7 +178,7 @@
             layer.msg('请填妥预报站点');
             return false;
         }
-        if( areaStation.length == 0 ){
+        if( rainStation.length == 0 ){
             layer.msg('请填妥雨量方案站点');
             return false;
         }
@@ -186,7 +186,7 @@
         var data = {};
         data.name = $("input[name=name]").val();
         data.stcd = $("select[name=station]").val();
-        data.areaStation = JSON.stringify(areaStation);
+        data.rainStation = JSON.stringify(rainStation);
 
         var loading = layer.load(0);
         $.post({

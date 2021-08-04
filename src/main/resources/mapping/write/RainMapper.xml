@@ -85,6 +85,9 @@
         </set>
         where id = #{id}
     </update>
+    <delete id="delete">
+        delete from rain where id = #{id}
+    </delete>
     <delete id="deleteListById">
         delete from rain_station where rain = #{id}
     </delete>

@@ -112,7 +112,7 @@
                     function (data) {
                         if( data.code == 200 ) {
                             var html = '';
-                            $.each(data, function (key, value) {
+                            $.each(data.data, function (key, value) {
                                 html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
                             });
                             $("select[name=station]").append(html);

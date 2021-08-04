@@ -135,13 +135,13 @@ public class ComCalc {
      * QTRR -> OQ -> QT
      * @return listQT
      */
-    public static List<BigDecimal> getOQ(BigDecimal INTV, List<BigDecimal> listR, List<BigDecimal> listQTRR){
+    public static List<BigDecimal> getOQ(BigDecimal INTV, List<BigDecimal> listR, List<BigDecimal> listQTRR, List<BigDecimal> W, List<BigDecimal> Z){
         List<BigDecimal> listOQ = new ArrayList<>();
 
         // 预见期水位过程
-        List<BigDecimal> Z = new ArrayList<>();
+//        List<BigDecimal> Z = new ArrayList<>();
         // 预见期库容过程
-        List<BigDecimal> W = new ArrayList<>();
+//        List<BigDecimal> W = new ArrayList<>();
         // 汛限水位
         BigDecimal Z_lim;
         // 汛限水位对应的蓄水量
@@ -255,6 +255,27 @@ public class ComCalc {
         }
 
         return listOQ;
+    }
+
+    /**
+     * 调洪调度，根据OQ反算W、Z
+     * OQ -> W
+     * OQ -> Z
+     * @return listQT
+     */
+    public static void rvrOQ(BigDecimal INTV, List<BigDecimal> listOQ, List<BigDecimal> listQTRR, List<BigDecimal> listW, List<BigDecimal> listZ) {
+        BigDecimal NUM_0_0018 = new BigDecimal("0.0018");
+        for( int i=0; i<listW.size()-1; i++ ){
+            BigDecimal temp1 = listW.get(i);
+            BigDecimal temp2 = (listQTRR.get(i+1).add(listQTRR.get(i))).multiply(NUM_0_0018).multiply(INTV);
+            BigDecimal temp3 = (listOQ.get(i+1).add(listOQ.get(i))).multiply(NUM_0_0018).multiply(INTV);
+            BigDecimal temp = temp1.add(temp2).subtract(temp3);
+            listW.set(i+1, temp);
+        }
+        for( int i=0; i<listZ.size()-1; i++ ){
+            BigDecimal temp = diffVal(listW.get(i+1), V_CUR, Z_CUR);
+            listZ.set(i+1, temp);
+        }
     }
 
     private static BigDecimal diffVal(BigDecimal x, List<BigDecimal> X0, List<BigDecimal> Y0){
