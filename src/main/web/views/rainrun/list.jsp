@@ -54,9 +54,9 @@
               </div>
             </div>
           </div>
-          <div class="layui-form-item">
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入降径关系线</button>
-          </div>
+          <%--<div class="layui-form-item">--%>
+            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入降径关系线</button>--%>
+          <%--</div>--%>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>

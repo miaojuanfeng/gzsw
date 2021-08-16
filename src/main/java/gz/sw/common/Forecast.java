@@ -4,6 +4,7 @@ import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Plan;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,12 @@ public class Forecast {
 
     private Map<String, List<BigDecimal>> listQTRR = new HashMap<>();
 
+    private Map<String, List<BigDecimal>> listSelfQTRR = new HashMap<>();
+
     private Map<String, List<BigDecimal>> listOQ = new HashMap<>();
 
-    private Map<String, List<BigDecimal>> listW = new HashMap<>();
+//    private Map<String, List<BigDecimal>> listW = new HashMap<>();
+    private Map<String, List<BigDecimal>> listINQ = new HashMap<>();
 
     private Map<String, List<BigDecimal>> listZ = new HashMap<>();
 
@@ -52,6 +56,8 @@ public class Forecast {
     private Map<String, BigDecimal> listRiverMax = new HashMap<>();
 
     private Map<String, BigDecimal> listRiverMin = new HashMap<>();
+
+    private Map<String, List<String>> listChildStcd = new HashMap<>();
 
     public List<BigDecimal> getListP(String stcd) {
         return listP.get(stcd);
@@ -93,24 +99,37 @@ public class Forecast {
         this.listQTRR.put(stcd, listQTRR);
     }
 
-    public List<BigDecimal> getListOQ(String stcd) {
-        return listOQ.get(stcd);
+    public List<BigDecimal> getListSelfQTRR(String stcd) {
+        return listSelfQTRR.get(stcd);
     }
 
-    public Map<String, List<BigDecimal>> getListOQAll() {
-        return listOQ;
+    public void setListSelfQTRR(String stcd, List<BigDecimal> listSelfQTRR) {
+        this.listSelfQTRR.put(stcd, listSelfQTRR);
+    }
+
+    public List<BigDecimal> getListOQ(String stcd) {
+        return listOQ.get(stcd);
     }
 
     public void setListOQ(String stcd, List<BigDecimal> listOQ) {
         this.listOQ.put(stcd, listOQ);
     }
 
-    public List<BigDecimal> getListW(String stcd) {
-        return listW.get(stcd);
+//    public List<BigDecimal> getListW(String stcd) {
+//        return listW.get(stcd);
+//    }
+//
+//    public void setListW(String stcd, List<BigDecimal> listW) {
+//        this.listW.put(stcd, listW);
+//    }
+
+
+    public List<BigDecimal> getListINQ(String stcd) {
+        return listINQ.get(stcd);
     }
 
-    public void setListW(String stcd, List<BigDecimal> listW) {
-        this.listW.put(stcd, listW);
+    public void setListINQ(String stcd, List<BigDecimal> listINQ) {
+        this.listINQ.put(stcd, listINQ);
     }
 
     public List<BigDecimal> getListZ(String stcd) {
@@ -199,5 +218,16 @@ public class Forecast {
 
     public void setRiverMin(String stcd, BigDecimal riverMin) {
         this.listRiverMin.put(stcd, riverMin);
+    }
+
+    public List<String> getListChildStcd(String stcd) {
+        return listChildStcd.get(stcd);
+    }
+
+    public void setListChildStcd(String stcd, String childStcd) {
+        if( !this.listChildStcd.containsKey(stcd) ){
+            this.listChildStcd.put(stcd, new ArrayList<>());
+        }
+        this.listChildStcd.get(stcd).add(childStcd);
     }
 }

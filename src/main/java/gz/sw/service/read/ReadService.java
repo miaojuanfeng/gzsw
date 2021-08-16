@@ -12,4 +12,6 @@ public interface ReadService {
 	List selectZvarlList(String stcd, String date);
 
 	Map selectInitData(String stcd, String date, String year, String monthDay);
+
+	List<Map> selectInqList(String stcd, String forecastTime, String affectTime);
 }

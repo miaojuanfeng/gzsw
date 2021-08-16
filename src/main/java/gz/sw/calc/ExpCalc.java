@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import gz.sw.constant.NumberConst;
 import gz.sw.entity.write.Plan;
 import gz.sw.util.NumberUtil;
-import gz.sw.util.TempUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -159,12 +158,16 @@ public class ExpCalc {
          * 把多余的数组元素移除
          */
         Iterator<BigDecimal> it = listQTRR.iterator();
-        int i = 0;
+        int index = 0;
         while(it.hasNext()){
             it.next();
-            if( i++ >= listR.size() + 24 ) {
+            if( index++ >= listR.size() + 24 ) {
                 it.remove();
             }
+        }
+        /** 小数位处理 */
+        for (int i=0; i<listQTRR.size(); i++){
+            listQTRR.set(i, listQTRR.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         return listQTRR;
     }

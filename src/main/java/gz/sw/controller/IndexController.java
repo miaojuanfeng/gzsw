@@ -80,7 +80,7 @@ public class IndexController {
     public String console(ModelMap map) {
         Date date = new Date();
         map.put("endTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
-        map.put("startTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+        map.put("startTime", DateUtil.date2str(DateUtil.addDay(date, -6), "yyyy-MM-dd HH:00:00"));
 //        map.put("startTime", "2019-06-01 08:00:00");
 //        map.put("endTime", "2019-06-04 08:00:00");
         List<Map> baseStation = stationService.selectListByType(StationTypeEnum.getCode(StationTypeEnum.ZQ.getId()));

@@ -353,15 +353,19 @@ public class XajCalc {
         }
 
         for(int i = 0; i < LAG; i++){
-            listQTRR.add(listQTR.get(0).setScale(NumberConst.DIGIT, NumberConst.MODE));
+            listQTRR.add(listQTR.get(0));
         }
         for(int i = LAG; i < listP.size() + LAG; i++){
-            listQTRR.add(listQTR.get(i-LAG).setScale(NumberConst.DIGIT, NumberConst.MODE));
+            listQTRR.add(listQTR.get(i-LAG));
         }
         if( NumberUtil.gt(KE, new BigDecimal(LAG)) ){
             for(int i = listP.size() + LAG; i < listP.size() + KE.intValue(); i++){
-                listQTRR.add(listQTR.get(listQTR.size()-1).setScale(NumberConst.DIGIT, NumberConst.MODE));
+                listQTRR.add(listQTR.get(listQTR.size()-1));
             }
+        }
+        /** 小数位处理 */
+        for (int i=0; i<listQTRR.size(); i++){
+            listQTRR.set(i, listQTRR.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         return listQTRR;
     }

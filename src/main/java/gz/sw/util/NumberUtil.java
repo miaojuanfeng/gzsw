@@ -1,6 +1,10 @@
 package gz.sw.util;
 
+import gz.sw.constant.NumberConst;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NumberUtil {
 
@@ -64,4 +68,19 @@ public class NumberUtil {
 		return A.compareTo(B) != 1;
 	}
 
+	public static List find2Extremum(BigDecimal min, BigDecimal max, List<BigDecimal> list, boolean firstCheck){
+		List<BigDecimal> retval = new ArrayList<>();
+		for(BigDecimal l : list ){
+			if( NumberUtil.gt(l, max) ){
+				max = l;
+			}
+			/** 第一次比较最小值需要判0 */
+			if( NumberUtil.lt(l, min) || (firstCheck && NumberUtil.et(min, NumberConst.ZERO)) ){
+				min = l;
+			}
+		}
+		retval.add(min);
+		retval.add(max);
+		return retval;
+	}
 }

@@ -5,6 +5,7 @@
 <head>
   <title>预报</title>
   <%@ include file="../linker.jsp" %>
+  <script src="<c:url value="/assets/js/chart.js"></c:url>"></script>
 </head>
 <style type="text/css">
   .input-tr{
@@ -18,7 +19,9 @@
   #model_cl_3,
   #model_hl_4,
   #model_cl_5,
-  #model_hl_6{
+  #model_hl_6,
+  #forecast3,
+  #forecast4{
     display: none;
   }
 </style>
@@ -89,9 +92,15 @@
       <div class="layui-col-md9">
         <div class="layui-card layui-form">
           <div class="layui-card-header">
-            <button lay-submit="" lay-filter="forecast1" class="layui-btn layui-btn-sm">预报流量</button>
-            <button lay-submit="" lay-filter="forecast2" class="layui-btn layui-btn-sm">预报水位</button>
-            <button lay-submit="" lay-filter="forecast3" class="layui-btn layui-btn-sm">水库调度</button>
+            <div style="float:left">
+              <button id="forecast1" lay-submit="" lay-filter="forecast1" class="layui-btn layui-btn-sm">预报流量</button>
+              <button id="forecast2" lay-submit="" lay-filter="forecast2" class="layui-btn layui-btn-sm">预报水位</button>
+            </div>
+            <div style="float:right">
+              <button id="forecast3" lay-submit="" lay-filter="forecast3" class="layui-btn layui-btn-sm">水库调度</button>
+              <button id="forecast4" lay-submit="" lay-filter="forecast4" class="layui-btn layui-btn-sm">输入贡献</button>
+            </div>
+            <div style="float:none;clear:both"></div>
           </div>
           <div class="layui-card-body layui-row">
             <div id="chart" style="width:100%;height:469px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
@@ -339,9 +348,8 @@
     <div class="layui-form-item">
       <label class="layui-form-label">水库站点</label>
       <div class="layui-input-block">
-        <select name="oqStation" lay-filter="oqStation" lay-verify="required" lay-search="">
-          <option value="">请选择</option>
-        </select>
+        <input type="hidden" name="oqStcd" />
+        <input type="text" name="oqStname" autocomplete="off" class="layui-input" readonly/>
       </div>
     </div>
     <div class="layui-form-item">
@@ -350,6 +358,10 @@
         <table id="oq-table" class="layui-hide" lay-filter="see-data"></table>
       </div>
     </div>
+  </form>
+
+  <form class="layui-form" lay-filter="contentBox2" id="contentBox2" style="padding:15px;display: none;">
+    <div id="chart2" style="width:100%;height:369px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
   </form>
 
   <script>
@@ -370,6 +382,7 @@
       var dataTree = [];
       var type = 1;
       var oqObj = {};
+      var currentStcd = '';
       var donePost = false;
 
       laydate.render({
@@ -511,7 +524,19 @@
               },
               success : function(data) {
                   if( data.code == 200 ) {
-                      draw(data.data);
+                      currentStcd = data.data.stcd;
+                      if( data.data.hasChild ){
+                          $("#forecast4").show();
+                      }else{
+                          $("#forecast4").hide();
+                      }
+                      if( data.data.sttp == 'RR' ) {
+                          $("#forecast3").show();
+                          draw2(data.data);
+                      }else{
+                          $("#forecast3").hide();
+                          draw1(data.data);
+                      }
                   }else{
                       parent.layer.alert(data.msg, {title: '错误'});
                   }
@@ -519,357 +544,6 @@
               }
           });
           return false;
-      }
-
-      function draw(data) {
-          echarts.init(document.getElementById('chart')).dispose();
-          var chart = echarts.init(document.getElementById('chart'));
-          var option1 = {
-              title: {
-                  text: '洪水过程',
-                  subtext: data.stname,
-                  x: 'center',
-                  align: 'right'
-              },
-              grid: {
-                  bottom: 80
-              },
-              toolbox: {
-                  feature: {
-                      dataZoom: {
-                          yAxisIndex: 'none'
-                      },
-                      restore: {},
-                      saveAsImage: {}
-                  }
-              },
-              tooltip : {
-                  trigger: 'axis',
-                  axisPointer: {
-                      type: 'cross',
-                      animation: false,
-                      label: {
-                          backgroundColor: '#505765'
-                      }
-                  }
-              },
-              legend: {
-                  data:['实测'+data.forecastText,'预报'+data.forecastText,'降雨量'],
-                  x: 'left'
-              },
-              dataZoom: [
-                  {
-                      show: false,
-                      realtime: true,
-                      //  start: 65,
-                      // end: 85
-                  },
-                  {
-                      type: 'inside',
-                      realtime: true,
-                      start: 65,
-                      end: 85
-                  }
-              ],
-              xAxis: [
-                  {
-                      type: 'category',
-                      boundaryGap : true,
-                      axisLine: {onZero: false},
-                      data: data.timeArr.map(function (str) {
-                          return str.replace('-', '/').replace('-', '/').replace(' ', '\n')
-                      })
-                  }
-              ],
-              yAxis: [
-                  {
-                      name: data.forecastUnit,
-                      type: 'value',
-                      max: data.riverMax,
-                      min: data.riverMin
-                  },
-                  {
-                      name: '降雨量(mm)',
-                      nameLocation: 'start',
-                      max: data.rainfallMax,
-                      type: 'value',
-                      inverse: true
-                  }
-              ],
-              series: [
-                  {
-                      name: '实测' + data.forecastText,
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: '#7EC0EE',
-
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: '#7EC0EE',
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.River
-                  },
-                  {
-                      name:'预报' + data.forecastText,
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: data.forecastColor,
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: data.forecastColor,
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.QTRR
-                  },
-                  {
-                      name:'降雨量',
-                      type:'bar',
-                      itemStyle:{
-                          normal:{
-                              color:'#7EC0EE',
-
-                          }
-                      },
-                      // barWidth: '40%',
-                      yAxisIndex:1,
-                      animation: true,
-                      data: data.P
-                  }
-              ]
-          };
-          var option2 = {
-              title: {
-                  text: '洪水过程',
-                  subtext: data.stname,
-                  x: 'center',
-                  align: 'right'
-              },
-              grid: {
-                  bottom: 80
-              },
-              toolbox: {
-                  feature: {
-                      dataZoom: {
-                          yAxisIndex: 'none'
-                      },
-                      restore: {},
-                      saveAsImage: {}
-                  }
-              },
-              tooltip : {
-                  trigger: 'axis',
-                  axisPointer: {
-                      type: 'cross',
-                      animation: false,
-                      label: {
-                          backgroundColor: '#505765'
-                      }
-                  }
-              },
-              // legend: {
-              //     data:['实测'+data.forecastText,'蓄水量','水位','入库流量','出库流量','降雨量'],
-              //     x: 'left'
-              // },
-              dataZoom: [
-                  {
-                      show: false,
-                      realtime: true,
-                      //  start: 65,
-                      // end: 85
-                  },
-                  {
-                      type: 'inside',
-                      realtime: true,
-                      start: 65,
-                      end: 85
-                  }
-              ],
-              xAxis: [
-                  {
-                      type: 'category',
-                      boundaryGap : true,
-                      axisLine: {onZero: false},
-                      data: data.timeArr.map(function (str) {
-                          return str.replace('-', '/').replace('-', '/').replace(' ', '\n')
-                      })
-                  }
-              ],
-              yAxis: [
-                  {
-                      name: '数值',
-                      type: 'value',
-                      max: data.riverMax,
-                      min: data.riverMin
-                  },
-                  {
-                      name: '降雨量(mm)',
-                      nameLocation: 'start',
-                      max: data.rainfallMax,
-                      type: 'value',
-                      inverse: true
-                  }
-              ],
-              series: [
-                  // {
-                  //     name: '实测' + data.forecastText,
-                  //     type:'line',
-                  //     animation: true,
-                  //     smooth: true,
-                  //     symbol: 'circle',
-                  //     symbolSize: 1,
-                  //     itemStyle:{
-                  //         normal:{
-                  //             color: '#7EC0EE',
-                  //
-                  //         }
-                  //     },
-                  //     lineStyle: {
-                  //         normal: {
-                  //             color: '#7EC0EE',
-                  //             width: 2,
-                  //             shadowColor: 'rgba(0,0,0,0.4)',
-                  //             shadowBlur: 6,
-                  //             shadowOffsetY: 6
-                  //         }
-                  //     },
-                  //     data: data.River
-                  // },
-                  {
-                      name:'入库流量',
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: data.forecastColor,
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: data.forecastColor,
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.QTRR
-                  },
-                  {
-                      name:'蓄水量',
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: '#ff0000',
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: '#ff0000',
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.W
-                  },
-                  {
-                      name:'水位',
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: '#ffff00',
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: '#ffff00',
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.Z
-                  },
-                  {
-                      name:'出库流量',
-                      type:'line',
-                      animation: true,
-                      smooth: true,
-                      symbol: 'circle',
-                      symbolSize: 1,
-                      itemStyle:{
-                          normal:{
-                              color: '#00ff00',
-                          }
-                      },
-                      lineStyle: {
-                          normal: {
-                              color: '#00ff00',
-                              width: 2,
-                              shadowColor: 'rgba(0,0,0,0.4)',
-                              shadowBlur: 6,
-                              shadowOffsetY: 6
-                          }
-                      },
-                      data: data.OQ
-                  },
-                  {
-                      name:'降雨量',
-                      type:'bar',
-                      itemStyle:{
-                          normal:{
-                              color:'#7EC0EE',
-
-                          }
-                      },
-                      // barWidth: '40%',
-                      yAxisIndex:1,
-                      animation: true,
-                      data: data.P
-                  }
-              ]
-          };
-          if( data.sttp == 'RR' ){
-              chart.setOption(option2);
-          }else{
-              chart.setOption(option1);
-          }
       }
 
       table.render({
@@ -881,30 +555,39 @@
               ,{field:'oq', title: '流量', edit: 'text'}
           ]]
           ,data: []
-          ,page: true
-          ,limit: 30
+          ,page: false
+          ,limit: 1000000
       });
 
       //监听单元格编辑
-      table.on('edit(see-data)', function(obj){
+      table.on('edit(see-data)', function(obj) {
           var value = obj.value //得到修改后的值
-              ,data = obj.data //得到所在行所有键值
-              ,field = obj.field; //得到字段
-          var stcd = $("select[name=oqStation]").val();
-          var oqList = oqObj[stcd].data;
+              , data = obj.data //得到所在行所有键值
+              , field = obj.field; //得到字段
+          var oqList = oqObj.data;
           var v = Number(zhzs(value));
-          oqList[data.id-1].oq = v;
-          obj.update({oq:v});
-          obj.tr.find('td[data-field=oq] input').val(v);
+          for (var i = data.id - 1; i < oqList.length; i++) {
+              oqList[i].oq = v;
+          }
+          // var trs = obj.tr.nextAll();
+          // // console.log(trs);
+          // for( var i=0; i<trs.length; i++ ){
+          //     // console.log(trs[i]);
+          //     trs[i].find('td[data-field=oq] input').val(v);
+          // }
+          // console.log(oqList);
+          table.reload('see-table', {data: oqList});
+          // obj.update({oq:v});
+          // obj.tr.find('td[data-field=oq] input').val(v);
       });
 
-      form.on('select(oqStation)', function(data){
-          if( data.value != '' ){
-              table.reload('see-table', {data: oqObj[data.value].data});
-          }else{
-              table.reload('see-table', {data: []});
-          }
-      });
+      // form.on('select(oqStation)', function(data){
+      //     if( data.value != '' ){
+      //         table.reload('see-table', {data: oqObj[data.value].data});
+      //     }else{
+      //         table.reload('see-table', {data: []});
+      //     }
+      // });
 
       /* 预报流量 */
       form.on('submit(forecast1)', function(data){
@@ -942,7 +625,7 @@
 
       /* 预报OQ */
       form.on('submit(forecast3)', function(data){
-          layer.open({
+          var box = layer.open({
               type: 1
               ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
               ,id: 'layerDemo1' //防止重复弹出
@@ -964,28 +647,66 @@
                       return false;
                   }
                   doPost(type, dataTree[0].stcd, dataTree, JSON.stringify(oqObj));
-                  layer.closeAll();
+                  layer.close(box);
               }
               ,cancel: function(){
-                  layer.closeAll();
+                  layer.close(box);
               }
               ,success: function(layero, index){  //弹出成功的回调
-                  $("#contentBox select[name=oqStation]").html('<option value="">请选择</option>');
+                  $("#contentBox input[name=oqStcd]").val('');
+                  $("#contentBox input[name=oqStname]").val('');
                   table.reload('see-table', {data: []});
-                  form.render('select');
 
                   var loading = layer.load(0);
-                  $.get(
+                  $.post(
                       '${pageContext.request.contextPath}/forecast/oq',
+                      {
+                        stcd: currentStcd,
+                        forecastTime: $("input[name=forecastTime]").val()
+                      },
                       function (data) {
                           if( data.code == 200 ) {
-                              var html = '';
                               oqObj = data.data;
-                              $.each(data.data, function (key, value) {
-                                  html += '<option value="' + key + '">' + value.stname + '</option>';
-                              });
-                              $("#contentBox select[name=oqStation]").append(html);
-                              form.render('select');
+                              $("#contentBox input[name=oqStcd]").val(data.data.stcd);
+                              $("#contentBox input[name=oqStname]").val(data.data.stname);
+                              table.reload('see-table', {data: data.data.data});
+                          }
+                          layer.close(loading);
+                      }
+                  );
+              }
+          });
+      });
+
+      /* 贡献 */
+      form.on('submit(forecast4)', function(data){
+          var box = layer.open({
+              type: 1
+              ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+              ,id: 'layerDemo2' //防止重复弹出
+              ,content: $('#contentBox2')
+              ,title: '输入贡献'
+              ,area:["900px","480px"]
+              ,btn: ['关闭']
+              ,btnAlign: 'c' //按钮居中
+              ,shade: 0.2 //不显示遮罩
+              ,cancel: function(){
+                  layer.close(box);
+              }
+              ,success: function(layero, index){  //弹出成功的回调
+                  echarts.init(document.getElementById('chart2')).dispose();
+
+                  var loading = layer.load(0);
+                  $.post(
+                      '${pageContext.request.contextPath}/forecast/devote',
+                      {
+                          stcd: currentStcd
+                      },
+                      function (data) {
+                          if( data.code == 200 ) {
+                              draw3(data.data);
+                          }else{
+                              layer.msg(data.msg);
                           }
                           layer.close(loading);
                       }
@@ -1011,7 +732,19 @@
               },
               success : function(data) {
                   if( data.code == 200 ) {
-                      draw(data.data);
+                      currentStcd = data.data.stcd;
+                      if( data.data.hasChild ){
+                          $("#forecast4").show();
+                      }else{
+                          $("#forecast4").hide();
+                      }
+                      if( data.data.sttp == 'RR' ) {
+                          $("#forecast3").show();
+                          draw2(data.data);
+                      }else{
+                          $("#forecast3").hide();
+                          draw1(data.data);
+                      }
                       donePost = true;
                   }else if( data.code == 500 ){
                       parent.layer.alert(data.msg, {title: '错误'});

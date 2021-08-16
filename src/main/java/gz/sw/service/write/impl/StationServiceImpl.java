@@ -84,7 +84,7 @@ public class StationServiceImpl implements StationService {
 
 	@Override
 	@Transactional
-	@Scheduled(cron="0 5 * * * ? ")
+	@Scheduled(cron="0 5,8 * * * ? ")
 	public void unusual() {
 		synchronized (CommonConst.stationLock) {
 			System.out.println("执行");

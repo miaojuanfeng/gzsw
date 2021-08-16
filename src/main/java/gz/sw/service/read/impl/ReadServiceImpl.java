@@ -29,4 +29,9 @@ public class ReadServiceImpl implements ReadService {
         return readDao.selectInitData(stcd, date, year, monthDay);
     }
 
+    @Override
+    public List<Map> selectInqList(String stcd, String forecastTime, String affectTime) {
+        return readDao.selectInqList(stcd, forecastTime, affectTime);
+    }
+
 }

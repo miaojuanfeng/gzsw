@@ -64,6 +64,71 @@ public class ComCalc {
      * QTRR -> QT
      * @return listQT
      */
+//    public static List<BigDecimal> getQT(BigDecimal KE, BigDecimal XE, List<BigDecimal> listR, List<BigDecimal> listQTRR){
+//        List<BigDecimal> listQT = new ArrayList<>();
+//
+//        BigDecimal K = KE;
+//        BigDecimal T = KE;
+//        BigDecimal DECIMAL_0_5 = new BigDecimal("0.5");
+//        /**
+//         * For i = 0 To sum + K -> QT(i) = 0
+//         */
+//        for(int i = 0; i < listR.size() + K.intValue(); i++){
+//            listQT.add(i, NumberConst.ZERO);
+//        }
+//        /**
+//         * C0 = (0.5 * T - KE * XE) / (KE - KE * XE + 0.5 * T)
+//         * C1 = (0.5 * T + KE * XE) / (KE - KE * XE + 0.5 * T)
+//         * C2 = (KE - KE * XE - 0.5 * T) / (KE - KE * XE + 0.5 * T)
+//         */
+//        BigDecimal divide = KE.subtract(KE.multiply(XE)).add(DECIMAL_0_5.multiply(T));
+//        BigDecimal C0 = DECIMAL_0_5.multiply(T).subtract(KE.multiply(XE)).divide(divide, NumberConst.DIGIT, NumberConst.MODE);
+//        BigDecimal C1 = DECIMAL_0_5.multiply(T).add(KE.multiply(XE)).divide(divide, NumberConst.DIGIT, NumberConst.MODE);
+//        BigDecimal C2 = DECIMAL_0_5.multiply(T).subtract(KE.multiply(XE)).divide(divide, NumberConst.DIGIT, NumberConst.MODE);
+//        /**
+//         * Dim QS1 As Single
+//         * Dim QS2 As Single
+//         * Dim QX1 As Single
+//         * Dim QX2 As Single
+//         * QX1 = QTRR(0)
+//         * For i = 0 To sum
+//         *   QS1 = QTRR(i)
+//         *   QS2 = QTRR(i + 1)
+//         *   For J = 1 To K
+//         *     QX2 = C0 * QS2 + C1 * QS1 + C2 * QX1
+//         *     QS1 = QX1
+//         *     QS2 = QX2
+//         *     QX1 = QX2
+//         *   Next
+//         *   QT(i + K) = QX2
+//         * Next
+//         */
+//        BigDecimal QS1;
+//        BigDecimal QS2;
+//        BigDecimal QX1 = listQTRR.get(0);
+//        BigDecimal QX2 = NumberConst.ZERO;
+//        for (int i = 0; i < listR.size(); i++){
+//            QS1 = listQTRR.get(i);
+//            QS2 = listQTRR.get(i+1);
+//            for (int j = 1; j <= K.intValue(); j++){
+//                QX2 = C0.multiply(QS2).add(C1.multiply(QS1)).add(C2.multiply(QX1));
+//                QS1 = QX1;
+//                QS2 = QX2;
+//                QX1 = QX2;
+//            }
+//            listQT.set(i + K.intValue(), QX2.setScale(NumberConst.DIGIT, NumberConst.MODE));
+//        }
+//        /**
+//         * For i = 0 To K - 1
+//         *   QT(i) = QT(K)
+//         * Next
+//         */
+//        for (int i = 0; i <= K.intValue() - 1; i++){
+//            listQT.set(i, listQT.get(K.intValue()));
+//        }
+//
+//        return listQT;
+//    }
     public static List<BigDecimal> getQT(BigDecimal KE, BigDecimal XE, List<BigDecimal> listR, List<BigDecimal> listQTRR){
         List<BigDecimal> listQT = new ArrayList<>();
 
@@ -86,47 +151,62 @@ public class ComCalc {
         BigDecimal C1 = DECIMAL_0_5.multiply(T).add(KE.multiply(XE)).divide(divide, NumberConst.DIGIT, NumberConst.MODE);
         BigDecimal C2 = DECIMAL_0_5.multiply(T).subtract(KE.multiply(XE)).divide(divide, NumberConst.DIGIT, NumberConst.MODE);
         /**
-         * Dim QS1 As Single
-         * Dim QS2 As Single
-         * Dim QX1 As Single
-         * Dim QX2 As Single
-         * QX1 = QTRR(0)
+         * Dim QS1(10000) As Single
+         * Dim QS2(10000) As Single
+         * Dim QX1(10000) As Single
+         * Dim QX2(10000) As Single
          * For i = 0 To sum
-         *   QS1 = QTRR(i)
-         *   QS2 = QTRR(i + 1)
-         *   For J = 1 To K
-         *     QX2 = C0 * QS2 + C1 * QS1 + C2 * QX1
-         *     QS1 = QX1
-         *     QS2 = QX2
-         *     QX1 = QX2
+         *   QS1(i) = QTRR(i)
+         *   QS2(i) = QTRR(i + 1)
+         *   QX1(i) = QTRR(i)
+         * Next
+         * For i = 1 To K
+         *   For j = 0 To sum
+         *      QX2(j) = C0 * QS2(j) + C1 * QS1(j) + C2 * QX1(j)
+         *      QX1(j+1) = QX2(j)
          *   Next
-         *   QT(i + K) = QX2
+         *   For j = 0 To sum
+         *      QS1(j) = QX1(j)
+         *      QS2(j) = QX2(j)
+         *   Next
          * Next
          */
-        BigDecimal QS1;
-        BigDecimal QS2;
-        BigDecimal QX1 = listQTRR.get(0);
-        BigDecimal QX2 = NumberConst.ZERO;
+        List<BigDecimal> QS1 = new ArrayList<>();
+        List<BigDecimal> QS2 = new ArrayList<>();
+        List<BigDecimal> QX1 = new ArrayList<>();
+        List<BigDecimal> QX2 = new ArrayList<>();
         for (int i = 0; i < listR.size(); i++){
-            QS1 = listQTRR.get(i);
-            QS2 = listQTRR.get(i+1);
-            for (int j = 1; j <= K.intValue(); j++){
-                QX2 = C0.multiply(QS2).add(C1.multiply(QS1)).add(C2.multiply(QX1));
-                QS1 = QX1;
-                QS2 = QX2;
-                QX1 = QX2;
+            QS1.add(listQTRR.get(i));
+            QS2.add(listQTRR.get(i+1));
+            QX1.add(listQTRR.get(i));
+        }
+        for (int i = 1; i < K.intValue(); i++){
+            for( int j = 0; j < listR.size(); j++ ){
+                BigDecimal temp = C0.multiply(QS2.get(j)).add(C1.multiply(QS1.get(j))).add(C2.multiply(QX1.get(j)));
+                QX2.add(temp);
+                if( j < QX1.size()-1 ) {
+                    QX1.set(j+1, temp);
+                }else{
+                    QX1.add(temp);
+                }
             }
-            listQT.set(i + K.intValue(), QX2.setScale(NumberConst.DIGIT, NumberConst.MODE));
+            for (int j = 0; j < listR.size(); j++){
+                QS1.set(j, QX1.get(j));
+                QS2.set(j, QX2.get(j));
+            }
         }
         /**
-         * For i = 0 To K - 1
-         *   QT(i) = QT(K)
+         * For i = 0 To sum
+         *    QT(i) = QX2(i)
          * Next
          */
-        for (int i = 0; i <= K.intValue() - 1; i++){
-            listQT.set(i, listQT.get(K.intValue()));
+        for (int i = 0; i < listR.size(); i++){
+            listQT.set(i, QX2.get(i));
         }
-
+        /** 小数位处理 */
+        for (int i=0; i<listQT.size(); i++){
+            listQT.set(i, listQT.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
+        }
         return listQT;
     }
 
@@ -253,7 +333,10 @@ public class ComCalc {
             listOQ.set(i+1, listOQ.get(i));
             Temp_OQ = listOQ.get(i+1);
         }
-
+        /** 小数位处理 */
+        for (int i=0; i<listOQ.size(); i++){
+            listOQ.set(i, listOQ.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
+        }
         return listOQ;
     }
 
