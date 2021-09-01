@@ -6,6 +6,7 @@ import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.write.RainRunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,5 +47,14 @@ public class RainRunController {
 	public Map pointList(Integer pid) {
 		List listRainRun = rainRunService.selectPointList(pid);
 		return RetVal.OK(listRainRun.size(), listRainRun);
+	}
+
+	@PostMapping("delete")
+	@ResponseBody
+	@Transactional
+	public JSONObject delete(Integer id) {
+		rainRunService.deleteById(id);
+		rainRunService.delete(id);
+		return RetVal.OK();
 	}
 }

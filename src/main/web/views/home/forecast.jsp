@@ -30,7 +30,7 @@
   <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md3">
-        <div class="layui-card layui-form" style="height: 532px;">
+        <div class="layui-card layui-form">
           <div class="layui-card-header">预报参数</div>
           <table class="layui-table" style="margin:0;">
             <colgroup>
@@ -103,7 +103,9 @@
             <div style="float:none;clear:both"></div>
           </div>
           <div class="layui-card-body layui-row">
-            <div id="chart" style="width:100%;height:469px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+            <div id="chart0" style="width:100%;height:269px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+            <div id="chart1" style="width:100%;height:269px;display: none;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+            <div id="chart2" style="width:100%;height:469px;display: none;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
           </div>
         </div>
       </div>
@@ -361,7 +363,7 @@
   </form>
 
   <form class="layui-form" lay-filter="contentBox2" id="contentBox2" style="padding:15px;display: none;">
-    <div id="chart2" style="width:100%;height:369px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+    <div id="chart3" style="width:100%;height:369px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
   </form>
 
   <script>
@@ -384,6 +386,16 @@
       var oqObj = {};
       var currentStcd = '';
       var donePost = false;
+
+      function resize(){
+          var h = $(window).height() - 15 * 2;
+          console.log(h);
+          $('#area').css('height', (h-43-196-43-10)+'px');
+          $('#chart0').css('height', (h-63)+'px');
+          $('#chart1').css('height', (h/2-63)+'px');
+          $('#chart2').css('height', (h/2)+'px');
+      }
+      resize();
 
       laydate.render({
           elem: '#forecastTime'
@@ -602,7 +614,7 @@
               return false;
           }
           type = 1;
-          doPost(type, dataTree[0].stcd, dataTree);
+          doPost(type, dataTree[0].stcd, dataTree, true);
           return false;
       });
 
@@ -619,7 +631,7 @@
               return false;
           }
           type = 2;
-          doPost(type, dataTree[0].stcd, dataTree);
+          doPost(type, dataTree[0].stcd, dataTree, true);
           return false;
       });
 
@@ -646,7 +658,7 @@
                       layer.msg('请填妥相关信息');
                       return false;
                   }
-                  doPost(type, dataTree[0].stcd, dataTree, JSON.stringify(oqObj));
+                  doPost(type, dataTree[0].stcd, dataTree, true, currentStcd, JSON.stringify(oqObj));
                   layer.close(box);
               }
               ,cancel: function(){
@@ -694,7 +706,7 @@
                   layer.close(box);
               }
               ,success: function(layero, index){  //弹出成功的回调
-                  echarts.init(document.getElementById('chart2')).dispose();
+                  echarts.init(document.getElementById('chart3')).dispose();
 
                   var loading = layer.load(0);
                   $.post(
@@ -715,7 +727,7 @@
           });
       });
       
-      function doPost(type, stcd, data, oqStr) {
+      function doPost(type, stcd, data, updateModel, oqStcd, oqStr) {
           var loading = layer.load(0);
           $.post({
               url: "${pageContext.request.contextPath}/forecast/compute",
@@ -728,11 +740,15 @@
                   day: $("select[name=day]").val(),
                   unit: $("select[name=unit]").val(),
                   data: JSON.stringify(data),
+                  oqStcd: oqStcd,
                   oqStr: oqStr
               },
               success : function(data) {
                   if( data.code == 200 ) {
                       currentStcd = data.data.stcd;
+                      if( updateModel ){
+                          dataTree = data.data.model;
+                      }
                       if( data.data.hasChild ){
                           $("#forecast4").show();
                       }else{

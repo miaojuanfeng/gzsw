@@ -1,6 +1,7 @@
 package gz.sw.mapper.write;
 
 import gz.sw.entity.write.Rain;
+import gz.sw.entity.write.RainPoint;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,6 +14,7 @@ public interface RainDao {
 	Map selectMap(Integer id);
 	int insert(Rain rain);
 	int insertPointList(List<Map> list);
+	int insertPointBatch(List<RainPoint> rainPoints);
 	int update(Rain rain);
 	int delete(Integer id);
 

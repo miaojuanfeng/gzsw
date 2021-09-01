@@ -1,6 +1,7 @@
 package gz.sw.service.write.impl;
 
 import gz.sw.entity.write.Rain;
+import gz.sw.entity.write.RainPoint;
 import gz.sw.mapper.write.RainDao;
 import gz.sw.service.write.RainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,11 @@ public class RainServiceImpl implements RainService {
 	@Override
 	public int insertPointList(List<Map> list) {
 		return rainDao.insertPointList(list);
+	}
+
+	@Override
+	public int insertPointBatch(List<RainPoint> rainPoints) {
+		return rainDao.insertPointBatch(rainPoints);
 	}
 
 	@Override

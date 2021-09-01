@@ -77,6 +77,14 @@
             (#{item.rain},#{item.stcd})
         </foreach>
     </insert>
+    <insert id="insertPointBatch" parameterType="gz.sw.entity.write.RainPoint">
+        insert into rain_station
+        (rain, stcd, weight)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.rain},#{item.stcd},#{item.weight})
+        </foreach>
+    </insert>
     <update id="update" parameterType="gz.sw.entity.write.Plan">
         update rain
         <set>

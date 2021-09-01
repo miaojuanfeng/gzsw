@@ -2,9 +2,12 @@ package gz.sw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import gz.sw.common.RetVal;
+import gz.sw.entity.write.Discharge;
 import gz.sw.entity.write.UnitLine;
 import gz.sw.enums.StationTypeEnum;
-import gz.sw.service.write.RainRunService;
+import gz.sw.mapper.write.DischargeDao;
+import gz.sw.service.write.DischargeService;
+import gz.sw.service.write.StationService;
 import gz.sw.service.write.UnitLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,49 +18,49 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
-@RequestMapping("unitLine")
-public class UnitLineController {
+@RequestMapping("discharge")
+public class DischargeController {
 	
 	@Autowired
-	private UnitLineService unitLineService;
+	private DischargeService dischargeService;
+
+	@Autowired
+	private StationService stationService;
 
 	@GetMapping("list")
 	public String list(ModelMap map) {
-		map.put("sttps", StationTypeEnum.getList());
-		return "unitline/list";
+		map.put("stations", stationService.selectListByType(StationTypeEnum.getCode(StationTypeEnum.RR.getId())));
+		return "discharge/list";
 	}
 
 	@PostMapping("list")
 	@ResponseBody
 	public JSONObject list(Integer page, Integer limit, String sttp, String stcd, String name) {
-		return RetVal.OK(unitLineService.selectCount(sttp, stcd, name), unitLineService.selectList(page, limit, sttp, stcd, name));
+		return RetVal.OK(dischargeService.selectCount(sttp, stcd, name), dischargeService.selectList(page, limit, sttp, stcd, name));
 	}
 
 	@PostMapping("delete")
 	@ResponseBody
 	@Transactional
 	public JSONObject delete(Integer id) {
-		UnitLine unitLine = unitLineService.select(id);
-		unitLineService.deletePoint(unitLine.getLid());
-		unitLineService.delete(id);
+		dischargeService.deletePoint(id);
+		dischargeService.delete(id);
 		return RetVal.OK();
 	}
 
-	@PostMapping("getUnitLine")
+	@PostMapping("getDischarge")
 	@ResponseBody
-	public JSONObject getUnitLine(String stcd) {
-		return RetVal.OK(unitLineService.selectListByStcd(stcd));
+	public JSONObject getDischarge(String stcd) {
+		return RetVal.OK(dischargeService.selectListByStcd(stcd));
 	}
 
 	@PostMapping("pointList")
 	@ResponseBody
 	public JSONObject pointList(Integer lid) {
-		List listRainRun = unitLineService.selectPointList(lid);
-		return RetVal.OK(listRainRun.size(), listRainRun);
+		List listDischarge = dischargeService.selectPointList(lid);
+		return RetVal.OK(listDischarge.size(), listDischarge);
 	}
 }

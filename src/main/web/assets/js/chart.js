@@ -1,7 +1,12 @@
 function draw1(data) {
-    echarts.init(document.getElementById('chart')).dispose();
-    var chart = echarts.init(document.getElementById('chart'));
-    var option = {
+    document.getElementById('chart0').style.display = 'block';
+    document.getElementById('chart1').style.display = 'none';
+    document.getElementById('chart2').style.display = 'none';
+    echarts.init(document.getElementById('chart0')).dispose();
+    echarts.init(document.getElementById('chart1')).dispose();
+    echarts.init(document.getElementById('chart2')).dispose();
+    var chart0 = echarts.init(document.getElementById('chart0'));
+    var option0 = {
         title: {
             text: data.stname + '洪水过程',
             x: 'center',
@@ -137,13 +142,19 @@ function draw1(data) {
             }
         ]
     };
-    chart.setOption(option);
+    chart0.setOption(option0);
 }
 
 function draw2(data) {
-    echarts.init(document.getElementById('chart')).dispose();
-    var chart = echarts.init(document.getElementById('chart'));
-    var option = {
+    document.getElementById('chart0').style.display = 'none';
+    document.getElementById('chart1').style.display = 'block';
+    document.getElementById('chart2').style.display = 'block';
+    echarts.init(document.getElementById('chart0')).dispose();
+    echarts.init(document.getElementById('chart1')).dispose();
+    echarts.init(document.getElementById('chart2')).dispose();
+    var chart1 = echarts.init(document.getElementById('chart1'));
+    var chart2 = echarts.init(document.getElementById('chart2'));
+    var option1 = {
         title: {
             text: data.stname + '洪水过程',
             x: 'center',
@@ -172,7 +183,7 @@ function draw2(data) {
             }
         },
         legend: {
-            data:['降雨量','预报入库','实测入库','水位','出库'],
+            data:['降雨量','水位'],
             x: 'center',
             top: '30px'
         },
@@ -202,10 +213,122 @@ function draw2(data) {
         ],
         yAxis: [
             {
-                name: '数值',
+                name: '水位(m)',
                 type: 'value',
                 max: data.riverMax,
                 min: data.riverMin
+            },
+            {
+                name: '降雨量(mm)',
+                nameLocation: 'start',
+                max: data.rainfallMax,
+                type: 'value',
+                inverse: true
+            }
+        ],
+        series: [
+            {
+                name:'水位',
+                type:'line',
+                animation: true,
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 1,
+                itemStyle:{
+                    normal:{
+                        color: '#ffff00',
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#ffff00',
+                        width: 2,
+                        shadowColor: 'rgba(0,0,0,0.4)',
+                        shadowBlur: 6,
+                        shadowOffsetY: 6
+                    }
+                },
+                data: data.Z
+            },
+            {
+                name:'降雨量',
+                type:'bar',
+                itemStyle:{
+                    normal:{
+                        color:'#7EC0EE',
+
+                    }
+                },
+                // barWidth: '40%',
+                yAxisIndex:1,
+                animation: true,
+                data: data.P
+            }
+        ]
+    };
+    var option2 = {
+        title: {
+            text: data.stname + '洪水过程',
+            x: 'center',
+            align: 'right'
+        },
+        grid: {
+            bottom: 80
+        },
+        toolbox: {
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        tooltip : {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                animation: false,
+                label: {
+                    backgroundColor: '#505765'
+                }
+            }
+        },
+        legend: {
+            data:['降雨量','预报入库','实测入库','出库'],
+            x: 'center',
+            top: '30px'
+        },
+        dataZoom: [
+            {
+                show: false,
+                realtime: true,
+                // start: 65,
+                // end: 85
+            },
+            {
+                type: 'inside',
+                realtime: true,
+                start: 65,
+                end: 85
+            }
+        ],
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap : true,
+                axisLine: {onZero: false},
+                data: data.timeArr.map(function (str) {
+                    return str.replace('-', '/').replace('-', '/').replace(' ', '\n')
+                })
+            }
+        ],
+        yAxis: [
+            {
+                name: '流量(m³/s)',
+                type: 'value',
+                max: data.yMax,
+                min: data.yMin
             },
             {
                 name: '降雨量(mm)',
@@ -248,12 +371,12 @@ function draw2(data) {
                 symbolSize: 1,
                 itemStyle:{
                     normal:{
-                        color: '#ff0000',
+                        color: '#0000ff',
                     }
                 },
                 lineStyle: {
                     normal: {
-                        color: '#ff0000',
+                        color: '#0000ff',
                         width: 2,
                         shadowColor: 'rgba(0,0,0,0.4)',
                         shadowBlur: 6,
@@ -261,29 +384,6 @@ function draw2(data) {
                     }
                 },
                 data: data.INQ
-            },
-            {
-                name:'水位',
-                type:'line',
-                animation: true,
-                smooth: true,
-                symbol: 'circle',
-                symbolSize: 1,
-                itemStyle:{
-                    normal:{
-                        color: '#ffff00',
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        color: '#ffff00',
-                        width: 2,
-                        shadowColor: 'rgba(0,0,0,0.4)',
-                        shadowBlur: 6,
-                        shadowOffsetY: 6
-                    }
-                },
-                data: data.Z
             },
             {
                 name:'出库',
@@ -324,13 +424,14 @@ function draw2(data) {
             }
         ]
     };
-    chart.setOption(option);
+    chart1.setOption(option1);
+    chart2.setOption(option2);
 }
 
 function draw3(data) {
     var color = ['#ff0000', '#ffff00', '#00ff00', '#0000ff', '#ff00ff'];
-    var chart = echarts.init(document.getElementById('chart2'));
-    var option = {
+    var chart3 = echarts.init(document.getElementById('chart3'));
+    var option3 = {
         title: {
             text: data.stname + '输入贡献',
             x: 'center',
@@ -359,7 +460,7 @@ function draw3(data) {
             }
         },
         legend: {
-            data:['降雨量',data.stname+'演算后',data.stname+'演算前'],
+            data:['降雨量',data.stname,'区间'],
             x: 'center',
             top: '30px'
         },
@@ -389,7 +490,7 @@ function draw3(data) {
         ],
         yAxis: [
             {
-                name: '数值',
+                name: '流量',
                 type: 'value',
                 max: data.riverMax,
                 min: data.riverMin
@@ -418,7 +519,7 @@ function draw3(data) {
                 data: data.P
             },
             {
-                name: data.stname + '演算后',
+                name: data.stname,
                 type:'line',
                 animation: true,
                 smooth: true,
@@ -441,7 +542,7 @@ function draw3(data) {
                 data: data.QTRR
             },
             {
-                name: data.stname + '演算前',
+                name: '区间',
                 type:'line',
                 animation: true,
                 smooth: true,
@@ -490,8 +591,8 @@ function draw3(data) {
             },
             data: d.QT
         }
-        option.series.push(t);
-        option.legend.data.push(d.stname);
+        option3.series.push(t);
+        option3.legend.data.push(d.stname);
     }
-    chart.setOption(option);
+    chart3.setOption(option3);
 }

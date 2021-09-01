@@ -1,6 +1,7 @@
 package gz.sw.service.write;
 
 import gz.sw.entity.write.Rain;
+import gz.sw.entity.write.RainPoint;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ public interface RainService {
     Map selectMap(Integer id);
     int insert(Rain rain);
     int insertPointList(List<Map> list);
+    int insertPointBatch(List<RainPoint> rainPoints);
     int update(Rain rain);
     int delete(Integer id);
 

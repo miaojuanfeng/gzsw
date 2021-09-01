@@ -1,6 +1,7 @@
 package gz.sw.service.write.impl;
 
 import gz.sw.entity.write.UnitLine;
+import gz.sw.entity.write.UnitLinePoint;
 import gz.sw.mapper.write.UnitLineDao;
 import gz.sw.service.write.UnitLineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,16 @@ public class UnitLineServiceImpl implements UnitLineService {
 	}
 
 	@Override
+	public int insertBatch(List<UnitLine> unitLines) {
+		return unitLineDao.insertBatch(unitLines);
+	}
+
+	@Override
+	public int insertPointBatch(List<UnitLinePoint> unitLinePoints) {
+		return unitLineDao.insertPointBatch(unitLinePoints);
+	}
+
+	@Override
 	public int update(UnitLine unitLine) {
 		return unitLineDao.update(unitLine);
 	}
@@ -32,6 +43,11 @@ public class UnitLineServiceImpl implements UnitLineService {
 	@Override
 	public int delete(Integer id) {
 		return unitLineDao.delete(id);
+	}
+
+	@Override
+	public int deletePoint(Integer lid) {
+		return unitLineDao.deletePoint(lid);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ spring:
       password: haosql
       username: sa
     read2:
-      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=rwdb
       password: haosql
       username: sa
     write:

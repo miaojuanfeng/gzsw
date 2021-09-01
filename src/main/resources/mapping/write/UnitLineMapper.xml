@@ -43,6 +43,9 @@
         and u2.n > ${(page-1)*limit}
         order by u2.n asc
     </select>
+    <select id="select" resultType="gz.sw.entity.write.UnitLine">
+        select * from unitline where id = #{id}
+    </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
         	id, name, stcd
@@ -64,4 +67,26 @@
         where lid = #{lid}
         order by ptno asc
     </select>
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into unitline
+        (stcd, lname, lid, name, create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.stcd},#{item.lname},#{item.lid},#{item.name},#{item.createTime})
+        </foreach>
+    </insert>
+    <insert id="insertPointBatch" parameterType="java.util.List">
+        insert into unitline_point
+        (lid, ptno, f, h)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lid},#{item.ptno},#{item.f},#{item.h})
+        </foreach>
+    </insert>
+    <delete id="delete">
+        delete unitline where id = #{id}
+    </delete>
+    <delete id="deletePoint">
+        delete unitline_point where lid = #{lid}
+    </delete>
 </mapper>

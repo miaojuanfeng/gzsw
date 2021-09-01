@@ -54,9 +54,9 @@
               </div>
             </div>
           </div>
-          <%--<div class="layui-form-item">--%>
-            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入经验单位线</button>--%>
-          <%--</div>--%>
+          <div class="layui-form-item">
+            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入经验单位线</button>
+          </div>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>
@@ -66,10 +66,47 @@
 
 <script type="text/html" id="edit">
     <a class="layui-btn layui-btn-sm" lay-event="see">查看单位线</a>
+    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</a>
 </script>
 
 <form class="layui-form" lay-filter="contentBox" id="contentBox" style="display: none;">
   <table id="see-table" class="layui-hide" lay-filter="see-data"></table>
+</form>
+
+<form class="layui-form" lay-filter="contentBox2" id="contentBox2" style="padding:15px;display: none;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">方案名称</label>
+    <div class="layui-input-block">
+      <input type="text" id="planName" name="planName" autocomplete="off" class="layui-input" placeholder="请输入"/>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">文件类型</label>
+    <div class="layui-input-block">
+      <select name="fileType" lay-filter="fileType" lay-search="">
+        <option value="">请选择</option>
+        <option value="1">单位线</option>
+        <option value="2">单位点</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">选择文件</label>
+    <div id="uploadBox" class="layui-input-block"></div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn" id="test9">开始上传</button>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-block">
+      <div><a href="${pageContext.request.contextPath}/assets/excel/unit_line.xlsx">下载：经验单位线文件模板.xlsx</a></div>
+      <div style="margin-top:10px;"><a href="${pageContext.request.contextPath}/assets/excel/unit_line_point.xlsx">下载：经验单位点文件模板.xlsx</a></div>
+    </div>
+  </div>
 </form>
 
 <script>
@@ -77,10 +114,11 @@
         base: base //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table'], function(){
+    }).use(['index', 'table', 'upload'], function(){
         var $ = layui.$
             ,admin = layui.admin
             ,table = layui.table
+            ,upload = layui.upload
             ,form = layui.form;
         ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
 
@@ -94,8 +132,9 @@
                 ,{field:'stname', width:120, title: '站点名称'}
                 ,{field:'name', title: '方案名称'}
                 ,{field:'lname', title: '关系线名称'}
+                ,{field:'lid', title: 'LID'}
                 ,{field:'createTime', width:170, title: '创建时间'}
-                ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
+                ,{fixed: 'right', width:180, align:'center', toolbar: '#edit', title: '操作'}
             ]]
             ,page: true
         });
@@ -136,6 +175,8 @@
                         });
                     }
                 });
+            }else if(obj.event === 'delete'){
+                deleteConfirm('unitLine/delete', '确认删除吗？', obj);
             }
         });
 
@@ -164,8 +205,74 @@
         });
 
         form.on('submit(import)', function(data){
+            var box = layer.open({
+                type: 1
+                ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                ,id: 'layerDemo2' //防止重复弹出
+                ,content: $('#contentBox2')
+                ,title: '单位线导入'
+                ,area:["500px","440px"]
+                ,btn: []
+                ,btnAlign: 'c' //按钮居中
+                ,shade: 0.2 //不显示遮罩
+                ,btn1: function(index, layero){
 
+                }
+                ,cancel: function(){
+                    layer.close(box);
+                }
+                ,success: function(layero, index){  //弹出成功的回调
+                    $("input[name=planName]").val('');
+                    $("select[name=fileType]").val('');
+                    form.render('select');
+                    $("#uploadBox").html(
+                        "<div class='layui-upload-drag' id='test8' style='width: calc(100% - 62px)'>" +
+                        "<i class='layui-icon'></i>" +
+                        "<p>点击上传，或将文件拖拽到此处</p>" +
+                        "</div>"
+                    );
+                    //选完文件后不自动上传
+                    upload.render({
+                        elem: '#test8'
+                        ,url: '${pageContext.request.contextPath}/excel/importUnitLine' //此处配置你自己的上传接口即可
+                        ,auto: false
+                        ,data: {
+                            name: function(){ return $("input[name=planName]").val()},
+                            fileType: function(){ return $("select[name=fileType]").val()}
+                        }
+                        //,multiple: true
+                        ,accept: 'file' //普通文件
+                        ,exts: 'xls|xlsx'
+                        ,bindAction: '#test9'
+                        ,before: function(obj){
+                            layer.load(0);
+                        }
+                        ,done: function(res){
+                            if( res.code == 200 ) {
+                                layer.msg('上传成功');
+                                layer.close(box);
+                                table.reload('data-table');
+                            }else{
+                                layer.msg(res.msg);
+                            }
+                            layer.closeAll("loading");
+                        }
+                        ,error: function (res) {
+                            layer.msg('上传失败，请检查文件格式');
+                            layer.closeAll("loading");
+                        }
+                    });
+                }
+            });
         });
+
+        // $("#importPlanName").on("input",function(e){
+        //     if(e.delegateTarget.value == ''){
+        //         $("#test9").hide();
+        //     }else{
+        //         $("#test9").show();
+        //     }
+        // });
 
         $("#search").click(function () {
             table.reload('data-table', {
@@ -174,7 +281,7 @@
                 }
                 ,where: {
                     sttp: $("select[name=sttp]").val(),
-                    stcd: $("input[name=stcd]").val(),
+                    stcd: $("select[name=station]").val(),
                     name: $("input[name=name]").val()
                 }
             });

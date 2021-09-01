@@ -1,5 +1,7 @@
 package gz.sw.service.write.impl;
 
+import gz.sw.entity.write.Discharge;
+import gz.sw.entity.write.DischargePoint;
 import gz.sw.entity.write.Model;
 import gz.sw.mapper.write.DischargeDao;
 import gz.sw.mapper.write.UnitLineDao;
@@ -17,23 +19,33 @@ public class DischargeServiceImpl implements DischargeService {
 	private DischargeDao dischargeDao;
 
 	@Override
-	public Model select(Integer id) {
+	public Discharge select(Integer id) {
 		return dischargeDao.select(id);
 	}
 
 	@Override
-	public int insert(Model model) {
-		return dischargeDao.insert(model);
+	public int insert(Discharge discharge) {
+		return dischargeDao.insert(discharge);
 	}
 
 	@Override
-	public int update(Model model) {
-		return dischargeDao.update(model);
+	public int insertPointBatch(List<DischargePoint> dischargePoints) {
+		return dischargeDao.insertPointBatch(dischargePoints);
+	}
+
+	@Override
+	public int update(Discharge discharge) {
+		return dischargeDao.update(discharge);
 	}
 
 	@Override
 	public int delete(Integer id) {
 		return dischargeDao.delete(id);
+	}
+
+	@Override
+	public int deletePoint(Integer lid) {
+		return dischargeDao.deletePoint(lid);
 	}
 
 	@Override
@@ -49,5 +61,10 @@ public class DischargeServiceImpl implements DischargeService {
 	@Override
 	public List selectListByStcd(String stcd) {
 		return dischargeDao.selectListByStcd(stcd);
+	}
+
+	@Override
+	public List selectPointList(Integer lid) {
+		return dischargeDao.selectPointList(lid);
 	}
 }

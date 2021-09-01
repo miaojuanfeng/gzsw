@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.read2.InitDao" >
+    <select id="selectInit" resultType="java.util.Map">
+        select
+          avg(Wu) as wu,
+          avg(Wd) as wl,
+          avg(Wl) as wd
+        from ST_Pa_W0
+        where stcd in
+        <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
+            #{stcd}
+        </foreach>
+        and #{affectTime} = tm
+    </select>
+</mapper>

@@ -118,6 +118,9 @@ public class XajCalc {
         BigDecimal WUup = plan.getBigDecimal("WU0");
         BigDecimal WLup = plan.getBigDecimal("WL0");
         BigDecimal WDup = plan.getBigDecimal("WD0");
+        WUup = NumberUtil.gt(WUup, WUM) ? WUM : WUup;
+        WLup = NumberUtil.gt(WLup, WLM) ? WLM : WLup;
+        WDup = NumberUtil.gt(WDup, WDM) ? WDM : WDup;
         BigDecimal Wup = WUup.add(WLup).add(WDup);
         BigDecimal Sup = plan.getBigDecimal("S0");
         BigDecimal FRup = plan.getBigDecimal("FR0");
@@ -395,7 +398,6 @@ public class XajCalc {
         BigDecimal base = NumberConst.ONE.subtract(Wup.divide(Wm, NumberConst.DIGIT, NumberConst.MODE));
         BigDecimal power = NumberConst.ONE.divide(B.add(NumberConst.ONE), NumberConst.DIGIT, NumberConst.MODE);
         return Wmm.multiply(NumberConst.ONE.subtract(NumberUtil.pow(base, power)));
-
     }
 
     private static BigDecimal getFR(BigDecimal PE, BigDecimal R) {

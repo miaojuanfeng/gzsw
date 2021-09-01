@@ -66,4 +66,32 @@
         where rl.pid = #{pid}
         order by rl.pa asc, rp.pino asc
     </select>
+    <insert id="insert" parameterType="gz.sw.entity.write.RainRun" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into rainrun(name,stcd,create_time)
+        values(#{name},#{stcd},#{createTime})
+    </insert>
+    <insert id="insertLineBatch" parameterType="gz.sw.entity.write.RainRun">
+        insert into rainrun_line
+        (stcd, lname, lid, pa, pid, create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.stcd},#{item.lname},#{item.lid},#{item.pa},#{item.pid},#{item.createTime})
+        </foreach>
+    </insert>
+    <insert id="insertPointBatch" parameterType="gz.sw.entity.write.RainRunPoint">
+        insert into rainrun_point
+        (lid, pino, r, d)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lid},#{item.pino},#{item.r},#{item.d})
+        </foreach>
+    </insert>
+    <delete id="delete">
+        delete from rainrun where id = #{id}
+    </delete>
+    <delete id="deleteById">
+        delete rl,rp from rainrun_point rp
+         left join rainrun_line rl on rp.lid = rl.lid
+        where rl.pid = #{pid}
+    </delete>
 </mapper>

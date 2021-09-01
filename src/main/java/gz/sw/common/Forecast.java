@@ -32,7 +32,8 @@ public class Forecast {
 
     private Map<String, List<BigDecimal>> listOQ = new HashMap<>();
 
-//    private Map<String, List<BigDecimal>> listW = new HashMap<>();
+    private Map<String, List<BigDecimal>> listW = new HashMap<>();
+
     private Map<String, List<BigDecimal>> listINQ = new HashMap<>();
 
     private Map<String, List<BigDecimal>> listZ = new HashMap<>();
@@ -56,6 +57,10 @@ public class Forecast {
     private Map<String, BigDecimal> listRiverMax = new HashMap<>();
 
     private Map<String, BigDecimal> listRiverMin = new HashMap<>();
+
+    private Map<String, BigDecimal> listYMax = new HashMap<>();
+
+    private Map<String, BigDecimal> listYMin = new HashMap<>();
 
     private Map<String, List<String>> listChildStcd = new HashMap<>();
 
@@ -115,14 +120,13 @@ public class Forecast {
         this.listOQ.put(stcd, listOQ);
     }
 
-//    public List<BigDecimal> getListW(String stcd) {
-//        return listW.get(stcd);
-//    }
-//
-//    public void setListW(String stcd, List<BigDecimal> listW) {
-//        this.listW.put(stcd, listW);
-//    }
+    public List<BigDecimal> getListW(String stcd) {
+        return listW.get(stcd);
+    }
 
+    public void setListW(String stcd, List<BigDecimal> listW) {
+        this.listW.put(stcd, listW);
+    }
 
     public List<BigDecimal> getListINQ(String stcd) {
         return listINQ.get(stcd);
@@ -218,6 +222,22 @@ public class Forecast {
 
     public void setRiverMin(String stcd, BigDecimal riverMin) {
         this.listRiverMin.put(stcd, riverMin);
+    }
+
+    public BigDecimal getYMax(String stcd) {
+        return listYMax.get(stcd);
+    }
+
+    public void setYMax(String stcd, BigDecimal listYMax) {
+        this.listYMax.put(stcd, listYMax);
+    }
+
+    public BigDecimal getYMin(String stcd) {
+        return listYMin.get(stcd);
+    }
+
+    public void setYMin(String stcd, BigDecimal listYMin) {
+        this.listYMin.put(stcd, listYMin);
     }
 
     public List<String> getListChildStcd(String stcd) {

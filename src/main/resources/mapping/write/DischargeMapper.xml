@@ -3,9 +3,9 @@
 <mapper namespace="gz.sw.mapper.write.DischargeDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
-        	count(u.id)
-        from unitline u
-        left join station s on u.stcd = s.stcd
+        	count(d.id)
+        from discharge d
+        left join station s on d.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
@@ -13,19 +13,16 @@
         </if>
         <if test="stcd != null and stcd != ''" >
             and s.stcd = #{stcd}
-        </if>
-        <if test="name != null and name != ''" >
-            and u.name like '%' + #{name} + '%'
         </if>
     </select>
     <select id="selectList" resultType="java.util.Map">
-        select u1.id, u1.name, u1.lname, u1.lid, CONVERT(varchar(100), u1.create_time, 20) as createTime, s.stname, t.name as sttype
-        from unitline u1
-        left join station s on u1.stcd = s.stcd
+        select d1.id, CONVERT(varchar(100), d1.create_time, 20) as createTime, s.stname, t.name as sttype
+        from discharge d1
+        left join station s on d1.stcd = s.stcd
         left join sttype t on s.type = t.code,
-        (select TOP ${page*limit} row_number() OVER (order by u.id desc, u.ID desc) n, u.ID
-        from unitline u
-        left join station s on u.stcd = s.stcd
+        (select TOP ${page*limit} row_number() OVER (order by d.id desc, d.ID desc) n, d.ID
+        from discharge d
+        left join station s on d.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
         <if test="sttp != null and sttp != ''" >
@@ -34,38 +31,53 @@
         <if test="stcd != null and stcd != ''" >
             and s.stcd = #{stcd}
         </if>
-        <if test="name != null and name != ''" >
-            and u.name like '%' + #{name} + '%'
-        </if>
-        ) u2
+        ) d2
         where 1=1
-        and u1.id = u2.id
-        and u2.n > ${(page-1)*limit}
-        order by u2.n asc
+        and d1.id = d2.id
+        and d2.n > ${(page-1)*limit}
+        order by d2.n asc
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
+        	dp.id, dp.z0, dp.hcoq
+        from discharge_point dp
+        left join discharge d on dp.lid = d.id
+        where d.stcd = #{stcd}
+        order by dp.id asc
+    </select>
+    <select id="selectPointList" resultType="java.util.Map">
+        select
         	id, z0, hcoq
-        from discharge
-        where 1=1
+        from discharge_point
+        where lid = #{lid}
         order by id asc
     </select>
-    <select id="select" resultType="gz.sw.entity.write.UnitLine">
-        select m.* from model m
-        where m.id = #{id}
+    <select id="select" resultType="gz.sw.entity.write.Discharge">
+        select * from discharge
+        where id = #{id}
     </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.UnitLine" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into model(name, stcd, create_time) values(#{name}, #{stcd}, #{createTime})
+    <insert id="insert" parameterType="gz.sw.entity.write.Discharge" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into discharge(stcd, create_time) values(#{stcd}, #{createTime})
     </insert>
-    <update id="update" parameterType="gz.sw.entity.write.UnitLine">
-        update model
+    <update id="update" parameterType="gz.sw.entity.write.Discharge">
+        update discharge
         <set>
-            <if test="name != null" > name = #{name},</if>
             <if test="stcd != null" > stcd = #{stcd},</if>
         </set>
         where id = #{id}
     </update>
     <delete id="delete" parameterType="java.lang.Integer">
-        delete from model where id = #{id}
+        delete from discharge where id = #{id}
     </delete>
+    <delete id="deletePoint" parameterType="java.lang.Integer">
+        delete from discharge_point where lid = #{lid}
+    </delete>
+    <insert id="insertPointBatch" parameterType="java.util.List">
+        insert into discharge_point
+        (lid, z0, hcoq)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lid},#{item.z0},#{item.hcoq})
+        </foreach>
+    </insert>
 </mapper>

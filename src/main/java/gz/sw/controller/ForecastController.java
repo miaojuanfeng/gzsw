@@ -23,6 +23,7 @@ import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.ReadService;
 import gz.sw.service.read.RiverService;
 import gz.sw.service.read.ZqService;
+import gz.sw.service.read2.InitService;
 import gz.sw.service.write.*;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
@@ -81,6 +82,9 @@ public class ForecastController {
 	@Autowired
 	private RainService rainService;
 
+	@Autowired
+	private InitService initService;
+
 	@GetMapping("home")
 	public String home(ModelMap map) {
 		map.put("date", DateUtil.getDate());
@@ -96,7 +100,7 @@ public class ForecastController {
 		return "home/forecast";
 	}
 
-	private JSONObject getRetval(HttpServletRequest request, String stcd){
+	private JSONObject getRetval(HttpServletRequest request, String stcd, JSONArray model){
         JSONObject data = new JSONObject();
 		SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
 		Forecast forecast = sessionUser.getForecast();
@@ -115,6 +119,9 @@ public class ForecastController {
 		data.put("stname", forecast.getStname(stcd));
 		data.put("stcd", stcd);
 		data.put("sttp", forecast.getSttp(stcd));
+		if( model != null ){
+			data.put("model", model);
+		}
 		if( forecast.getListChildStcd(stcd) != null && forecast.getListChildStcd(stcd).size() > 0 ){
 			data.put("hasChild", true);
 		}else{
@@ -124,6 +131,8 @@ public class ForecastController {
 			data.put("INQ", forecast.getListINQ(stcd));
 			data.put("Z", forecast.getListZ(stcd));
 			data.put("OQ", forecast.getListOQ(stcd));
+			data.put("yMax", forecast.getYMax(stcd).intValue());
+			data.put("yMin", forecast.getYMin(stcd).intValue());
 		}
 
         return RetVal.OK(data);
@@ -139,7 +148,7 @@ public class ForecastController {
     		HttpServletRequest request,
             @RequestParam("stcd") String stcd
     ) {
-        return getRetval(request, stcd);
+        return getRetval(request, stcd, null);
     }
 
 	/**
@@ -230,6 +239,7 @@ public class ForecastController {
 			@RequestParam("day") Integer day,
 			@RequestParam("unit") Integer unit,
 			@RequestParam("data") String data,
+			String oqStcd,
 			String oqStr
 	) {
 		JSONArray model = JSONArray.parseArray(data);
@@ -264,7 +274,7 @@ public class ForecastController {
 		} catch (ParamException e) {
 			return RetVal.Error(e.getMessage());
 		}
-		return getRetval(request, stcd);
+		return getRetval(request, oqStcd != null ? oqStcd : stcd, model);
 	}
 
 	private Map getP(Integer rain, String forecastTime, String affectTime, Integer day, Integer unit) throws ParamException {
@@ -278,7 +288,7 @@ public class ForecastController {
 			stcdIds.add(String.valueOf(rainPointList.get(i).get("stcd")));
 		}
 		if (stcdIds.isEmpty()){
-			throw new ParamException("雨量方案(ID" + rain + ")雨量站点为空");
+			throw new ParamException("雨量方案(ID=" + rain + ")雨量站点为空");
 		}
 //        stcdIds.add(stcd);
 		/**
@@ -381,6 +391,12 @@ public class ForecastController {
         /**
          * 测试代码结束
          */
+        Date d = DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss");
+        Date c = DateUtil.str2date(affectTime.substring(0, 10) + " 08:00:00", "yyyy-MM-dd HH:mm:ss");
+		d = d.before(c) ? DateUtil.addDay(c, -1) : c;
+        Map map = initService.selectInit(stcdIds, DateUtil.date2str(d, "yyyy-MM-dd HH:mm:ss"));
+
+        retval.put("init", map);
 		retval.put("rainfallMax", rainfallMax.multiply(new BigDecimal("3.5")).intValue());
 		retval.put("timeList", listTime);
 		retval.put("rainfallList", listRainfall);
@@ -427,6 +443,10 @@ public class ForecastController {
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");
 			listTime = (List<String>)rainfallMap.get("timeList");
 			rainfallMax = (Integer)rainfallMap.get("rainfallMax");
+			Map<String, BigDecimal> init = (Map<String, BigDecimal>)rainfallMap.get("init");
+			plan.put("WU0", init.get("wu"));
+			plan.put("WL0", init.get("wl"));
+			plan.put("WD0", init.get("wd"));
 
 //			if( stcd.trim().equals("62303130") ) {
 //				for (BigDecimal pm : listP) {
@@ -705,6 +725,9 @@ public class ForecastController {
 					if (initData.get("lim") == null && initData.get("lim_bk") == null) {
 						throw new ParamException(stname + "(" + stcd + ")汛限水位参数为空(表ST_RSVRFSR_B字段FSLTDZ)");
 					}
+					if (listDischarge.size() == 0) {
+						throw new ParamException(stname + "(" + stcd + ")泄流曲线不存在");
+					}
 					for (Map zvarl : listZvarl) {
 						Z_CUR.add(new BigDecimal(String.valueOf(zvarl.get("rz"))));
 						V_CUR.add(new BigDecimal(String.valueOf(zvarl.get("w"))));
@@ -723,12 +746,12 @@ public class ForecastController {
 					if( !updateOQ ) {
 						listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR, listW, listZ);
 						sessionUser.getForecast().setListOQ(stcd, listOQ);
-//						sessionUser.getForecast().setListW(stcd, listW);
+						sessionUser.getForecast().setListW(stcd, listW);
 						sessionUser.getForecast().setListZ(stcd, listZ);
 					}else{
 						listOQ = sessionUser.getForecast().getListOQ(stcd);
 						listQTRR = sessionUser.getForecast().getListQTRR(stcd);
-//						listW = sessionUser.getForecast().getListW(stcd);
+						listW = sessionUser.getForecast().getListW(stcd);
 						listZ = sessionUser.getForecast().getListZ(stcd);
 						ComCalc.rvrOQ(m.getBigDecimal("intv"), listOQ, listQTRR, listW, listZ);
 					}
@@ -752,22 +775,28 @@ public class ForecastController {
 					}
 					sessionUser.getForecast().setListINQ(stcd, listINQ);
 					/** 寻找最大值 */
+					BigDecimal yMin = NumberConst.ZERO;
+					BigDecimal yMax = NumberConst.ZERO;
+					extremum = NumberUtil.find2Extremum(yMin, yMax, listQTRR, true);
+					yMin = extremum.get(0);
+					yMax = extremum.get(1);
+					extremum = NumberUtil.find2Extremum(yMin, yMax, listOQ, true);
+					yMin = extremum.get(0);
+					yMax = extremum.get(1);
+					extremum = NumberUtil.find2Extremum(yMin, yMax, listINQ, true);
+					yMin = extremum.get(0);
+					yMax = extremum.get(1);
+					yMin = yMin.multiply(new BigDecimal("0.05"));
+					yMax = yMax.multiply(new BigDecimal("1.8"));
+					sessionUser.getForecast().setYMax(stcd, yMax);
+					sessionUser.getForecast().setYMin(stcd, yMin);
 					riverMin = NumberConst.ZERO;
 					riverMax = NumberConst.ZERO;
-					extremum = NumberUtil.find2Extremum(riverMin, riverMax, listQTRR, true);
-					riverMin = extremum.get(0);
-					riverMax = extremum.get(1);
-					extremum = NumberUtil.find2Extremum(riverMin, riverMax, listOQ, true);
-					riverMin = extremum.get(0);
-					riverMax = extremum.get(1);
-					extremum = NumberUtil.find2Extremum(riverMin, riverMax, listINQ, true);
-					riverMin = extremum.get(0);
-					riverMax = extremum.get(1);
 					extremum = NumberUtil.find2Extremum(riverMin, riverMax, listZ, true);
 					riverMin = extremum.get(0);
 					riverMax = extremum.get(1);
-					riverMin = riverMin.multiply(new BigDecimal("0.05"));
-					riverMax = riverMax.multiply(new BigDecimal("1.8"));
+					riverMin = riverMin.subtract(new BigDecimal(1));
+					riverMax = riverMax.add(new BigDecimal(3));
 					sessionUser.getForecast().setRiverMax(stcd, riverMax);
 					sessionUser.getForecast().setRiverMin(stcd, riverMin);
 

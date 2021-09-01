@@ -1,7 +1,7 @@
 package gz.sw.service.write.impl;
 
-import gz.sw.entity.write.Model;
 import gz.sw.entity.write.RainRun;
+import gz.sw.entity.write.RainRunPoint;
 import gz.sw.mapper.write.RainRunDao;
 import gz.sw.service.write.RainRunService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,16 @@ public class RainRunServiceImpl implements RainRunService {
 	}
 
 	@Override
+	public int insertLineBatch(List<RainRun> rainRuns) {
+		return rainRunDao.insertLineBatch(rainRuns);
+	}
+
+	@Override
+	public int insertPointBatch(List<RainRunPoint> rainRunPoints) {
+		return rainRunDao.insertPointBatch(rainRunPoints);
+	}
+
+	@Override
 	public int update(RainRun rainRun) {
 		return rainRunDao.update(rainRun);
 	}
@@ -33,6 +43,11 @@ public class RainRunServiceImpl implements RainRunService {
 	@Override
 	public int delete(Integer id) {
 		return rainRunDao.delete(id);
+	}
+
+	@Override
+	public int deleteById(Integer pid) {
+		return rainRunDao.deleteById(pid);
 	}
 
 	@Override
