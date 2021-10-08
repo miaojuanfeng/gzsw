@@ -139,21 +139,21 @@ public class XajCalc {
         BigDecimal SMF = NumberConst.ZERO;
         BigDecimal SMMF = SM.multiply(EX.add(NumberConst.ONE));
 //        BigDecimal U = F.divide(T.multiply(new BigDecimal("3.6")), NumberConst.DIGIT, NumberConst.MODE);
-        /**
-         * C0 = (0.5 * T - KE * XE) / (KE - KE * XE + 0.5 * T)
-         * C1 = (0.5 * T + KE * XE) / (KE - KE * XE + 0.5 * T)
-         * C2 = (KE - KE * XE - 0.5 * T) / (KE - KE * XE + 0.5 * T)
-         * temp1 = 0.5 * T
-         * temp2 = KE * XE
-         * temp3 = KE - KE * XE + 0.5 * T
-         */
-        T = KE;
-        BigDecimal temp1 = T.multiply(new BigDecimal("0.5"));
-        BigDecimal temp2 = KE.multiply(XE);
-        BigDecimal temp3 = KE.subtract(temp2).add(temp1);
-        BigDecimal C0 = temp1.subtract(temp2).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
-        BigDecimal C1 = temp1.add(temp2).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
-        BigDecimal C2 = KE.subtract(temp2).subtract(temp1).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
+//        /**
+//         * C0 = (0.5 * T - KE * XE) / (KE - KE * XE + 0.5 * T)
+//         * C1 = (0.5 * T + KE * XE) / (KE - KE * XE + 0.5 * T)
+//         * C2 = (KE - KE * XE - 0.5 * T) / (KE - KE * XE + 0.5 * T)
+//         * temp1 = 0.5 * T
+//         * temp2 = KE * XE
+//         * temp3 = KE - KE * XE + 0.5 * T
+//         */
+//        T = KE;
+//        BigDecimal temp1 = T.multiply(new BigDecimal("0.5"));
+//        BigDecimal temp2 = KE.multiply(XE);
+//        BigDecimal temp3 = KE.subtract(temp2).add(temp1);
+//        BigDecimal C0 = temp1.subtract(temp2).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
+//        BigDecimal C1 = temp1.add(temp2).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
+//        BigDecimal C2 = KE.subtract(temp2).subtract(temp1).divide(temp3, NumberConst.DIGIT, NumberConst.MODE);
         /**
          * 循环雨量P
          */
@@ -361,7 +361,7 @@ public class XajCalc {
         for(int i = LAG; i < listP.size() + LAG; i++){
             listQTRR.add(listQTR.get(i-LAG));
         }
-        if( NumberUtil.gt(KE, new BigDecimal(LAG)) ){
+        if( KE != null && NumberUtil.gt(KE, new BigDecimal(LAG)) ){
             for(int i = listP.size() + LAG; i < listP.size() + KE.intValue(); i++){
                 listQTRR.add(listQTR.get(listQTR.size()-1));
             }
@@ -371,19 +371,6 @@ public class XajCalc {
             listQTRR.set(i, listQTRR.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
         return listQTRR;
-    }
-
-    /**
-     * 蒸发量是写死还是动态读取?
-     * @return
-     */
-    private static BigDecimal getE() {
-		/*
-			月分取P的月份/天数/小时
-		 */
-//		BigDecimal E = NumberConfig.E.get(9).divide(new BigDecimal(31), NumberConst.DIGIT, NumberConst.MODE).divide(new BigDecimal(24), NumberConst.DIGIT, NumberConst.MODE);
-//		return E;
-        return new BigDecimal("0.14");
     }
 
     private static BigDecimal getKSSD(BigDecimal KG, BigDecimal KSS, BigDecimal T){

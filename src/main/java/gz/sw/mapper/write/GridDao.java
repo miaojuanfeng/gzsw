@@ -1,6 +1,6 @@
-package gov.gz.hydrology.mapper.write;
+package gz.sw.mapper.write;
 
-import gov.gz.hydrology.entity.write.Grid;
+import gz.sw.entity.write.Grid;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

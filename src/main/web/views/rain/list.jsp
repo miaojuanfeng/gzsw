@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>雨量方案列表</title>
+  <title>实测雨量方案列表</title>
   <%@ include file="../linker.jsp" %>
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md12">
       <div class="layui-card">
-        <div class="layui-card-header">雨量方案列表</div>
+        <div class="layui-card-header">实测雨量方案列表</div>
         <div class="layui-card-body">
           <div class="layui-form-item">
             <div class="layui-form">
@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <div class="layui-inline">
-                  <label class="layui-form-label">雨量名称</label>
+                  <label class="layui-form-label">实测雨量名称</label>
                   <div class="layui-input-inline">
                     <input type="text" name="name" class="layui-input" placeholder="支持模糊查询">
                   </div>
@@ -50,7 +50,7 @@
             </div>
           </div>
           <div class="layui-form-item">
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入雨量方案</button>
+            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入实测雨量方案</button>
           </div>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
@@ -84,7 +84,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label"></label>
     <div class="layui-input-block">
-      <div><a href="${pageContext.request.contextPath}/assets/excel/rain.xlsx">下载：雨量方案文件模板.xlsx</a></div>
+      <div><a href="${pageContext.request.contextPath}/assets/excel/rain.xlsx">下载：实测雨量方案文件模板.xlsx</a></div>
     </div>
   </div>
 </form>
@@ -110,7 +110,7 @@
                 {field:'id', width:80, title: 'ID', sort: true}
                 ,{field:'sttype', width:120, title: '站点类型'}
                 ,{field:'stname', width:120, title: '预报站点'}
-                ,{field:'name', title: '雨量名称'}
+                ,{field:'name', title: '实测雨量名称'}
                 ,{field:'createTime', width:170, title: '创建时间'}
                 ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
@@ -120,7 +120,7 @@
 
         table.on('tool(data)', function(obj){
             if(obj.event === 'update'){
-                openTabsPage('rain/update/' + obj.data.id, '编辑雨量方案');
+                openTabsPage('rain/update/' + obj.data.id, '编辑实测雨量方案');
             }else if(obj.event === 'delete'){
                 deleteConfirm('rain/delete', '确认删除吗？', obj);
             }
@@ -156,7 +156,7 @@
                 ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
                 ,id: 'layerDemo2' //防止重复弹出
                 ,content: $('#contentBox2')
-                ,title: '雨量方案导入'
+                ,title: '实测雨量方案导入'
                 ,area:["500px","440px"]
                 ,btn: []
                 ,btnAlign: 'c' //按钮居中

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>新建雨量方案</title>
+  <title>新建实测雨量方案</title>
   <%@ include file="../linker.jsp" %>
 </head>
 <style type="text/css">
@@ -24,24 +24,24 @@
       display: none;
   }
   .layui-form-label{
-      width: 100px;
+      width: 120px;
   }
   .layui-input-block {
-      margin-left: 130px;
+      margin-left: 150px;
   }
 </style>
 <body>
 
   <div class="layui-fluid">
     <div class="layui-card">
-      <div class="layui-card-header">雨量方案信息</div>
+      <div class="layui-card-header">实测雨量方案信息</div>
       <div class="layui-card-body" style="padding: 15px;">
         <form class="layui-form" action="" lay-filter="component-form-group">
           <div class="layui-form-item">
-            <label class="layui-form-label">雨量方案名称</label>
+            <label class="layui-form-label">实测雨量方案名称</label>
             <div class="layui-input-block">
               <input type="hidden" name="id" value="${rainArea.ID}">
-              <input type="text" name="name" lay-verify="name" autocomplete="off" placeholder="请输入雨量方案名称" class="layui-input" value="${rainArea.NAME}">
+              <input type="text" name="name" lay-verify="name" autocomplete="off" placeholder="请输入实测雨量方案名称" class="layui-input" value="${rainArea.NAME}">
             </div>
           </div>
 
@@ -74,7 +74,7 @@
           </div>
 
           <div class="layui-form-item">
-            <label class="layui-form-label">雨量方案站点</label>
+            <label class="layui-form-label">实测雨量方案站点</label>
             <div class="layui-input-block">
                 <div id="transBox" class="demo-transfer"></div>
             </div>
@@ -171,7 +171,7 @@
     form.on('submit(save)', function(data){
         var rainStation = transfer.getData('transBox');
         if( $("input[name=name]").val() == "" ){
-            layer.msg('请填妥雨量方案名称');
+            layer.msg('请填妥实测雨量方案名称');
             return false;
         }
         if( $("select[name=station]").val() == "" ){
@@ -179,7 +179,7 @@
             return false;
         }
         if( rainStation.length == 0 ){
-            layer.msg('请填妥雨量方案站点');
+            layer.msg('请填妥实测雨量方案站点');
             return false;
         }
         var action = $("input[name=id]").val() == '' ? 'insert' : 'update/' + $("input[name=id]").val();

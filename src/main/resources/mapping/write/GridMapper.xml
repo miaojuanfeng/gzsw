@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gov.gz.hydrology.mapper.write.GridDao" >
-	<resultMap id="BaseResultMap" type="gov.gz.hydrology.entity.write.Grid" >
-		<id column="stcd" property="stcd" jdbcType="VARCHAR" />
-		<result column="grid_id" property="gridId" jdbcType="VARCHAR" />
-	</resultMap>
-
-	<select id="selectByStcd" resultMap="BaseResultMap">
+<mapper namespace="gz.sw.mapper.write.GridDao" >
+	<select id="selectByStcd" resultType="gz.sw.entity.write.Grid">
 		select * from grid_station
 		where stcd = #{stcd}
 	</select>

@@ -1,5 +1,6 @@
 package gz.sw.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import gz.sw.calc.ApiCalc;
@@ -15,6 +16,7 @@ import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.read.River;
 import gz.sw.entity.read.Zq;
+import gz.sw.entity.write.Grid;
 import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
@@ -85,17 +87,20 @@ public class ForecastController {
 	@Autowired
 	private InitService initService;
 
+	@Autowired
+	private GridService gridService;
+
 	@GetMapping("home")
 	public String home(ModelMap map) {
 		map.put("date", DateUtil.getDate());
 		map.put("models", modelService.selectAll());
 		Date date = new Date();
-		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
-		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+//		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
+//		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
 //		map.put("forecastTime", "2021-05-20 08:00:00");
 //		map.put("affectTime", "2021-05-15 08:00:00");
-//		map.put("forecastTime", "2018-05-20 08:00:00");
-//		map.put("affectTime", "2018-05-15 08:00:00");
+		map.put("forecastTime", "2018-05-20 08:00:00");
+		map.put("affectTime", "2018-05-15 08:00:00");
 
 		return "home/forecast";
 	}
@@ -240,9 +245,11 @@ public class ForecastController {
 			@RequestParam("unit") Integer unit,
 			@RequestParam("data") String data,
 			String oqStcd,
-			String oqStr
+			String oqStr,
+			String unitArr
 	) {
 		JSONArray model = JSONArray.parseArray(data);
+		JSONArray uArr = JSONArray.parseArray(unitArr);
 		try {
 			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
 			Boolean updateOQ = false;
@@ -270,14 +277,14 @@ public class ForecastController {
 			}
 			forecastTime = DateUtil.date2str(DateUtil.str2date(forecastTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 			affectTime = DateUtil.date2str(DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
-			modelStation(request, stcd, null, forecastTime, affectTime, day, unit, type, model, updateOQ);
+			modelStation(request, stcd, null, forecastTime, affectTime, day, unit, type, model, updateOQ, uArr);
 		} catch (ParamException e) {
 			return RetVal.Error(e.getMessage());
 		}
 		return getRetval(request, oqStcd != null ? oqStcd : stcd, model);
 	}
 
-	private Map getP(Integer rain, String forecastTime, String affectTime, Integer day, Integer unit) throws ParamException {
+	private Map getP(Integer rain, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray unitArr) throws ParamException {
 		Map retval = new HashMap<>();
 		/**
 		 * 获取子站id
@@ -300,7 +307,7 @@ public class ForecastController {
 		if( CommonConst.FUTURE_RAINFALL_MEASURE.equals(unit) ) {
 			List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, endDay, startDay);
 			for (Rainfall rainfall : rainfalls) {
-				forecastMap.put(rainfall.getDate().substring(0, rainfall.getDate().length()-2), rainfall.getRainfall());
+				forecastMap.put(rainfall.getDate().substring(0, rainfall.getDate().length() - 2), rainfall.getRainfall());
 			}
 
 //			Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
@@ -316,7 +323,15 @@ public class ForecastController {
 //				}
 //				iDay = DateUtil.addHour(iDay, -1);
 //			}
-        /**
+		/**
+		 * 手动输入
+		 */
+		}else if( CommonConst.FUTURE_RAINFALL_MANUAL.equals(unit) ){
+			for (int i=0; i<unitArr.size(); i++) {
+				JSONObject unitObj = unitArr.getJSONObject(i);
+				forecastMap.put(unitObj.getString("h").substring(0, unitObj.getString("h").length() - 2), new BigDecimal(unitObj.getString("p")));
+			}
+		/**
          * 欧洲台或日本台
          */
 		}else{
@@ -404,7 +419,7 @@ public class ForecastController {
 		return retval;
 	}
 
-	private List<BigDecimal> modelStation(HttpServletRequest request, String rootStcd, String fatherStcd, String forecastTime, String affectTime, Integer day, Integer unit, Integer type, JSONArray model, Boolean updateOQ) throws ParamException {
+	private List<BigDecimal> modelStation(HttpServletRequest request, String rootStcd, String fatherStcd, String forecastTime, String affectTime, Integer day, Integer unit, Integer type, JSONArray model, Boolean updateOQ, JSONArray unitArr) throws ParamException {
 		List<BigDecimal> retval = new ArrayList<>();
 	    List<List<BigDecimal>> result = new ArrayList<>();
 	    for( int i = 0; i < model.size(); i++ ){
@@ -417,7 +432,7 @@ public class ForecastController {
 			 * 子站输出数据
 			 */
 			if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
-                childList = modelStation(request, rootStcd, stcd, forecastTime, affectTime, day, unit, type, m.getJSONArray("children"), updateOQ);
+                childList = modelStation(request, rootStcd, stcd, forecastTime, affectTime, day, unit, type, m.getJSONArray("children"), updateOQ, unitArr);
 			}
 			/**
 			 * 子站数据和本站数据做运算
@@ -437,7 +452,7 @@ public class ForecastController {
 
 			System.out.println("计算站点: " + m.getString("stname"));
 			System.out.println("getP开始: " + System.currentTimeMillis());
-			Map rainfallMap = getP(plan.getInteger("RAIN"), forecastTime, affectTime, day, unit);
+			Map rainfallMap = getP(plan.getInteger("RAIN"), forecastTime, affectTime, day, unit, unitArr);
 			System.out.println("getP结束: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");

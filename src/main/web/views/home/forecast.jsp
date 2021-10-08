@@ -21,7 +21,8 @@
   #model_cl_5,
   #model_hl_6,
   #forecast3,
-  #forecast4{
+  #forecast4,
+  #unit99{
     display: none;
   }
 </style>
@@ -64,7 +65,7 @@
             <tr>
               <td>预报天数</td>
               <td class="input-tr">
-                <select name="day" lay-verify="required" lay-search="">
+                <select name="day" lay-filter="day" lay-verify="required" lay-search="">
                   <option value="">请选择</option>
                   <option value="3">3天</option>
                   <option value="5">5天</option>
@@ -74,12 +75,16 @@
             <tr>
               <td>未来降雨</td>
               <td class="input-tr">
-                <select name="unit" lay-verify="required" lay-search="">
+                <select name="unit" lay-filter="unit" lay-verify="required" lay-search="">
                   <option value="">请选择</option>
                   <option value="0">实测雨量</option>
-                  <%--<option value="2">日本台</option>--%>
-                  <%--<option value="6">欧洲台</option>--%>
+                  <option value="1">中央台</option>
+                  <option value="2">日本台</option>
+                  <option value="3">江西台</option>
+                  <option value="6">欧洲台</option>
+                  <option value="99">手动输入</option>
                 </select>
+                <button id="unit99" lay-filter="unit99" class="layui-btn layui-btn-fluid layui-btn-sm">输入未来降雨</button>
               </td>
             </tr>
             </tbody>
@@ -366,6 +371,29 @@
     <div id="chart3" style="width:100%;height:369px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
   </form>
 
+  <form class="layui-form" lay-filter="unitBox" id="unitBox" style="padding:15px;display: none;">
+    <div class="layui-form-item">
+      <div class="layui-inline">
+        <label class="layui-form-label">总小时</label>
+        <div class="layui-input-inline">
+          <input type="number" name="unitH" autocomplete="off" class="layui-input"/>
+        </div>
+      </div>
+      <div class="layui-inline">
+        <label class="layui-form-label">总雨量</label>
+        <div class="layui-input-inline">
+          <input type="number" name="unitP" autocomplete="off" class="layui-input"/>
+        </div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">未来降雨</label>
+      <div class="layui-input-block">
+        <table id="unit-table" class="layui-hide" lay-filter="unit-data"></table>
+      </div>
+    </div>
+  </form>
+
   <script>
   layui.config({
     base: base //静态资源所在路径
@@ -384,22 +412,30 @@
       var dataTree = [];
       var type = 1;
       var oqObj = {};
+      var unitH = '';
+      var unitP = '';
+      var unitTemp = [];
+      var unitArr = [];
       var currentStcd = '';
       var donePost = false;
 
-      function resize(){
+      function resize(size){
           var h = $(window).height() - 15 * 2;
-          console.log(h);
-          $('#area').css('height', (h-43-196-43-10)+'px');
+          $('#area').css('height', (h-43-196-43-10-size)+'px');
           $('#chart0').css('height', (h-63)+'px');
           $('#chart1').css('height', (h/2-63)+'px');
           $('#chart2').css('height', (h/2)+'px');
       }
-      resize();
+      resize(0);
 
       laydate.render({
           elem: '#forecastTime'
           ,type: 'datetime'
+          ,done: function (value) {
+              if( value != '' ){
+                  unitTable(unitH, unitP, value, true);
+              }
+          }
       });
 
       laydate.render({
@@ -526,6 +562,26 @@
           }
       });
 
+      form.on('select(day)', function(){
+          if ($("input[name=forecastTime]").val() == "" ||
+              $("select[name=day]").val() == "" ||
+              $("select[name=unit]").val() == ""
+          ) {
+              return false;
+          }
+          unitTable(unitH, unitP, $("#forecastTime").val(), true);
+      });
+
+      form.on('select(unit)', function(data){
+          if( data.value == 99 ){
+              $("#unit99").show();
+              resize($("#unit99").height());
+          }else{
+              $("#unit99").hide();
+              resize(0);
+          }
+      });
+
       function loadStation(stcd) {
           var loading = layer.load(0);
           $.post({
@@ -571,6 +627,19 @@
           ,limit: 1000000
       });
 
+      table.render({
+          elem: '#unit-table'
+          ,id: 'unit-table'
+          ,cols: [[
+              {field:'id', title: 'ID'}
+              ,{field:'h', title: '时间'}
+              ,{field:'p', title: '雨量', edit: 'text'}
+          ]]
+          ,data: []
+          ,page: false
+          ,limit: 1000000
+      });
+
       //监听单元格编辑
       table.on('edit(see-data)', function(obj) {
           var value = obj.value //得到修改后的值
@@ -608,13 +677,14 @@
               $("input[name=affectTime]").val() == "" ||
               $("select[name=day]").val() == "" ||
               $("select[name=unit]").val() == "" ||
-              dataTree.length == 0
-          ) {
+              dataTree.length == 0 ||
+              ($("select[name=unit]").val() == 99 && unitArr.length == 0)
+              ) {
               layer.msg('请填妥相关信息');
               return false;
           }
           type = 1;
-          doPost(type, dataTree[0].stcd, dataTree, true);
+          doPost(type, dataTree[0].stcd, dataTree, true, unitArr);
           return false;
       });
 
@@ -625,15 +695,127 @@
               $("input[name=affectTime]").val() == "" ||
               $("select[name=day]").val() == "" ||
               $("select[name=unit]").val() == "" ||
-              dataTree.length == 0
+              dataTree.length == 0 ||
+              ($("select[name=unit]").val() == 99 && unitArr.length == 0)
           ) {
               layer.msg('请填妥相关信息');
               return false;
           }
           type = 2;
-          doPost(type, dataTree[0].stcd, dataTree, true);
+          doPost(type, dataTree[0].stcd, dataTree, true, unitArr);
           return false;
       });
+
+      /* 未来降雨 */
+      $('#unit99').on('click', function(data){
+          if ($("select[name=model]").val() == "" ||
+              $("input[name=forecastTime]").val() == "" ||
+              $("input[name=affectTime]").val() == "" ||
+              $("select[name=day]").val() == "" ||
+              $("select[name=unit]").val() == "" ||
+              dataTree.length == 0
+          ) {
+              layer.msg('请填妥相关信息');
+              return false;
+          }
+          var box = layer.open({
+              type: 1
+              ,offset: 'auto'
+              ,id: 'layerDemo0'
+              ,content: $('#unitBox')
+              ,title: '未来降雨'
+              ,area:["700px","480px"]
+              ,btn: ['确定','关闭']
+              ,btnAlign: 'c' //按钮居中
+              ,shade: 0.2 //不显示遮罩
+              ,btn1: function(index, layero){
+                  if ($("#unitBox input[name=unitH]").val() == "" ||
+                      $("#unitBox input[name=unitP]").val() == "" ||
+                      unitTemp.length == 0
+                  ) {
+                      layer.msg('请填妥相关信息');
+                      return false;
+                  }
+                  unitH = $("#unitBox input[name=unitH]").val();
+                  unitP = $("#unitBox input[name=unitP]").val();
+                  unitArr = unitTemp;
+                  layer.close(box);
+              }
+              ,cancel: function(){
+                  layer.close(box);
+              }
+              ,success: function(layero, index){  //弹出成功的回调
+                  $("#unitBox input[name=unitH]").val(unitH);
+                  $("#unitBox input[name=unitP]").val(unitP);
+                  table.reload('unit-table', {data: unitArr});
+              }
+          });
+      });
+
+      //监听未来雨量单元格编辑
+      table.on('edit(unit-data)', function(obj) {
+          var value = obj.value //得到修改后的值
+              , data = obj.data //得到所在行所有键值
+              , field = obj.field; //得到字段
+          unitTemp[data.id-1].p = Number(zhzs(value, 1));
+          table.reload('unit-table', {data: unitTemp});
+      });
+
+      $("input[name=forecastTime]").on('change', function () {
+          var value = $("input[name=forecastTime]").val();
+          if( value != '' ){
+              unitTable(unitH, unitP, value, true);
+          }
+      });
+      
+      $("input[name=unitH]").on('change', function () {
+          unitTable($("input[name=unitH]").val(), $("input[name=unitP]").val(), $("#forecastTime").val(), false);
+      });
+
+      $("input[name=unitP]").on('change', function () {
+          unitTable($("input[name=unitH]").val(), $("input[name=unitP]").val(), $("#forecastTime").val(), false);
+      });
+
+      function unitTable(uH, uP, time, auto){
+          unitTemp = [];
+          if( uH != '' && uP != '' &&
+              uH > 0 && uP >= 0 ){
+              var curTime = new Date(time);
+              curTime = new Date(curTime.setHours(curTime.getHours() + 1));
+              var p = (uP / uH).toFixed(1);
+              for (var i = 1; i <= $("select[name=day]").val() * 24; i++) {
+                  if( i > uH ){
+                      p = 0;
+                  }
+                  var unit = {
+                      id: i,
+                      h: dateToStr(curTime),
+                      p: p
+                  };
+                  unitTemp.push(unit);
+                  curTime = new Date(curTime.setHours(curTime.getHours() + 1));
+              }
+          }
+          table.reload('unit-table', {data: unitTemp});
+          if( auto ){
+              unitArr = unitTemp;
+          }
+      }
+
+      function dateToStr(date) {
+          var year = date.getFullYear();//年
+          var month = date.getMonth();//月
+          var day = date.getDate();//日
+          var hours = date.getHours();//时
+          var min = date.getMinutes();//分
+          var second = date.getSeconds();//秒
+          return year + "-" +
+              ((month + 1) > 9 ? (month + 1) : "0" + (month + 1)) + "-" +
+              (day > 9 ? day : ("0" + day)) + " " +
+              (hours > 9 ? hours : ("0" + hours)) + ":" +
+              (min > 9 ? min : ("0" + min)) + ":" +
+              (second > 9 ? second : ("0" + second));
+      }
 
       /* 预报OQ */
       form.on('submit(forecast3)', function(data){
@@ -658,7 +840,7 @@
                       layer.msg('请填妥相关信息');
                       return false;
                   }
-                  doPost(type, dataTree[0].stcd, dataTree, true, currentStcd, JSON.stringify(oqObj));
+                  doPost(type, dataTree[0].stcd, dataTree, true, unitArr, currentStcd, oqObj);
                   layer.close(box);
               }
               ,cancel: function(){
@@ -727,7 +909,7 @@
           });
       });
       
-      function doPost(type, stcd, data, updateModel, oqStcd, oqStr) {
+      function doPost(type, stcd, data, updateModel, unitArr, oqStcd, oqStr) {
           var loading = layer.load(0);
           $.post({
               url: "${pageContext.request.contextPath}/forecast/compute",
@@ -741,7 +923,8 @@
                   unit: $("select[name=unit]").val(),
                   data: JSON.stringify(data),
                   oqStcd: oqStcd,
-                  oqStr: oqStr
+                  oqStr: JSON.stringify(oqStr),
+                  unitArr: JSON.stringify(unitArr)
               },
               success : function(data) {
                   if( data.code == 200 ) {
@@ -775,12 +958,13 @@
 
   });
 
-  function zhzs(value) {
-      value = parseFloat(value.replace(/^0{1,}/g, '')).toFixed(3);
+  function zhzs(value, fixed) {
+      if(fixed == undefined) fixed = 3;
+      value = parseFloat(value.replace(/^0{1,}/g, '')).toFixed(fixed);
       if( !isNaN(value) ){
           return value;
       }else{
-          return parseFloat(0).toFixed(3);
+          return parseFloat(0).toFixed(fixed);
       }
   }
   </script>

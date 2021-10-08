@@ -120,16 +120,30 @@
               </dl>
             </li>
             <li data-name="home" class="layui-nav-item">
-              <a href="javascript:;" lay-tips="雨量方案" lay-direction="2">
+              <a href="javascript:;" lay-tips="实测雨量方案" lay-direction="2">
                 <i class="layui-icon layui-icon-water"></i>
-                <cite>雨量方案</cite>
+                <cite>实测雨量方案</cite>
               </a>
               <dl class="layui-nav-child">
                 <dd data-name="console">
-                  <a lay-href="<c:url value="rain/list"></c:url>">雨量方案列表</a>
+                  <a lay-href="<c:url value="rain/list"></c:url>">实测雨量方案列表</a>
                 </dd>
                 <dd data-name="console">
-                  <a lay-href="<c:url value="rain/insert"></c:url>">新建雨量方案</a>
+                  <a lay-href="<c:url value="rain/insert"></c:url>">新建实测雨量方案</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="未来雨量方案" lay-direction="2">
+                <i class="layui-icon layui-icon-water"></i>
+                <cite>未来雨量方案</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="rainf/list"></c:url>">未来雨量方案列表</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="<c:url value="rainf/insert"></c:url>">新建未来雨量方案</a>
                 </dd>
               </dl>
             </li>

@@ -1,10 +1,8 @@
-package gov.gz.hydrology.service.write;
+package gz.sw.service.write;
 
-import gov.gz.hydrology.entity.write.Grid;
-import gov.gz.hydrology.entity.write.Station;
+import gz.sw.entity.write.Grid;
 
 import java.util.List;
-import java.util.Map;
 
 public interface GridService {
 	List<Grid> selectByStcd(String stcd);

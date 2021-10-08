@@ -1,4 +1,4 @@
-package gov.gz.hydrology.entity.write;
+package gz.sw.entity.write;
 
 public class Grid {
 	private String stcd;

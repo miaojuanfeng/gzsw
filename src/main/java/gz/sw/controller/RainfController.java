@@ -5,7 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import gz.sw.common.RetVal;
 import gz.sw.entity.write.Rain;
 import gz.sw.enums.StationTypeEnum;
-import gz.sw.service.write.*;
+import gz.sw.service.write.RainService;
+import gz.sw.service.write.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @Controller
-@RequestMapping("rain")
-public class RainController {
+@RequestMapping("rainf")
+public class RainfController {
 
 	@Autowired
 	private RainService rainService;

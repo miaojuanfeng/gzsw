@@ -8,6 +8,7 @@ public class CommonConst {
 
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final Integer FUTURE_RAINFALL_MEASURE = 0;
+    public static final Integer FUTURE_RAINFALL_MANUAL = 99;
 //    public static final Integer FUTURE_RAINFALL_JAPAN = 2;
 //    public static final Integer FUTURE_RAINFALL_EUROPE = 6;
 //    public static final Integer FORECAST_LIULIANG = 1;
