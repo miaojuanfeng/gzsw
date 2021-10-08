@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <div class="layui-inline">
-                  <label class="layui-form-label">实测雨量名称</label>
+                  <label class="layui-form-label">名称</label>
                   <div class="layui-input-inline">
                     <input type="text" name="name" class="layui-input" placeholder="支持模糊查询">
                   </div>
@@ -110,7 +110,7 @@
                 {field:'id', width:80, title: 'ID', sort: true}
                 ,{field:'sttype', width:120, title: '站点类型'}
                 ,{field:'stname', width:120, title: '预报站点'}
-                ,{field:'name', title: '实测雨量名称'}
+                ,{field:'name', title: '名称'}
                 ,{field:'createTime', width:170, title: '创建时间'}
                 ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]

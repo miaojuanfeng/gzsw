@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <div class="layui-inline">
-                  <label class="layui-form-label">未来雨量名称</label>
+                  <label class="layui-form-label">名称</label>
                   <div class="layui-input-inline">
                     <input type="text" name="name" class="layui-input" placeholder="支持模糊查询">
                   </div>
@@ -49,9 +49,9 @@
               </div>
             </div>
           </div>
-          <div class="layui-form-item">
-            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入未来雨量方案</button>
-          </div>
+          <%--<div class="layui-form-item">--%>
+            <%--<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="import">导入未来雨量方案</button>--%>
+          <%--</div>--%>
           <table id="data-table" class="layui-hide" lay-filter="data"></table>
         </div>
       </div>
@@ -105,12 +105,12 @@
         table.render({
             elem: '#data-table'
             ,method: 'post'
-            ,url: "${pageContext.request.contextPath}/rain/list"
+            ,url: "${pageContext.request.contextPath}/rainf/list"
             ,cols: [[
                 {field:'id', width:80, title: 'ID', sort: true}
                 ,{field:'sttype', width:120, title: '站点类型'}
                 ,{field:'stname', width:120, title: '预报站点'}
-                ,{field:'name', title: '未来雨量名称'}
+                ,{field:'name', title: '名称'}
                 ,{field:'createTime', width:170, title: '创建时间'}
                 ,{fixed: 'right', width:140, align:'center', toolbar: '#edit', title: '操作'}
             ]]
@@ -120,9 +120,9 @@
 
         table.on('tool(data)', function(obj){
             if(obj.event === 'update'){
-                openTabsPage('rain/update/' + obj.data.id, '编辑未来雨量方案');
+                openTabsPage('rainf/update/' + obj.data.id, '编辑未来雨量方案');
             }else if(obj.event === 'delete'){
-                deleteConfirm('rain/delete', '确认删除吗？', obj);
+                deleteConfirm('rainf/delete', '确认删除吗？', obj);
             }
         });
 
@@ -180,7 +180,7 @@
                     //选完文件后不自动上传
                     upload.render({
                         elem: '#test8'
-                        ,url: '${pageContext.request.contextPath}/excel/importRain' //此处配置你自己的上传接口即可
+                        ,url: '${pageContext.request.contextPath}/excel/importRainf' //此处配置你自己的上传接口即可
                         ,auto: false
                         ,data: {
                             name: function(){ return $("input[name=planName]").val()}

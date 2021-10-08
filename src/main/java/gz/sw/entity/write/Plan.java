@@ -11,6 +11,7 @@ public class Plan {
 	private String stcd;
 	private String name;
 	private Integer rain;
+	private Integer rainf;
 	private Integer modelCl;
 	private Integer modelHl;
 	private Integer rainRun;
@@ -97,6 +98,14 @@ public class Plan {
 
 	public void setRain(Integer rain) {
 		this.rain = rain;
+	}
+
+	public Integer getRainf() {
+		return rainf;
+	}
+
+	public void setRainf(Integer rainf) {
+		this.rainf = rainf;
 	}
 
 	public Integer getModelCl() {

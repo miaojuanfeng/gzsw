@@ -74,7 +74,7 @@
           </div>
 
           <div class="layui-form-item">
-            <label class="layui-form-label">未来雨量方案站点</label>
+            <label class="layui-form-label">未来雨量方案格点</label>
             <div class="layui-input-block">
                 <div id="transBox" class="demo-transfer"></div>
             </div>
@@ -143,7 +143,7 @@
       });
       var loading = layer.load(0);
       $.post(
-          '${pageContext.request.contextPath}/rain/station',
+          '${pageContext.request.contextPath}/rainf/station',
           {},
           function (data) {
               if( data.code == 200 ) {
@@ -162,7 +162,7 @@
       elem: '#transBox'
       ,id: 'transBox'
       ,data: []
-      ,title: ['所有站点', '流域站点']
+      ,title: ['所有格点', '流域格点']
       ,showSearch: true
       ,value: [${stcds}]
     });
@@ -179,7 +179,7 @@
             return false;
         }
         if( rainStation.length == 0 ){
-            layer.msg('请填妥未来雨量方案站点');
+            layer.msg('请填妥未来雨量方案格点');
             return false;
         }
         var action = $("input[name=id]").val() == '' ? 'insert' : 'update/' + $("input[name=id]").val();
@@ -190,7 +190,7 @@
 
         var loading = layer.load(0);
         $.post({
-            url: "${pageContext.request.contextPath}/rain/" + action,
+            url: "${pageContext.request.contextPath}/rainf/" + action,
             contentType: "application/x-www-form-urlencoded",
             data: data,
             success : function(result) {

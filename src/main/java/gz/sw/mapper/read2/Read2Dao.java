@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface InitDao {
+public interface Read2Dao {
     Map selectInit(@Param("list") List list, @Param("affectTime") String affectTime);
+    List<Map> selectGridStation();
 }

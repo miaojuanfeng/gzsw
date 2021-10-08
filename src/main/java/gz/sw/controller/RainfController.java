@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import gz.sw.common.RetVal;
 import gz.sw.entity.write.Rain;
 import gz.sw.enums.StationTypeEnum;
+import gz.sw.service.read2.Read2Service;
 import gz.sw.service.write.RainService;
 import gz.sw.service.write.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,15 @@ public class RainfController {
 	private RainService rainService;
 
 	@Autowired
+	private Read2Service read2Service;
+
+	@Autowired
 	private StationService stationService;
 
 	@GetMapping("list")
 	public String list(ModelMap map) {
 		map.put("sttps", StationTypeEnum.getList());
-		return "rain/list";
+		return "rainf/list";
 	}
 
 	@PostMapping("list")
@@ -41,7 +45,7 @@ public class RainfController {
 	public String insert(ModelMap map) {
 		map.put("sttps", StationTypeEnum.getList());
 		map.put("area", stationService.selectRain());
-		return "rain/insert";
+		return "rainf/insert";
 	}
 
 	@PostMapping("insert")
@@ -85,7 +89,7 @@ public class RainfController {
 		map.put("stcds", stcds);
 		map.put("stations", stationService.selectListByType(String.valueOf(rainArea.get("sttype"))));
 		map.put("rainArea", rainArea);
-		return "rain/insert";
+		return "rainf/insert";
 	}
 
 	@PostMapping("update/{id}")
@@ -126,7 +130,7 @@ public class RainfController {
 	@PostMapping("station")
 	@ResponseBody
 	public JSONObject station() {
-		return RetVal.OK(stationService.selectRain());
+		return RetVal.OK(read2Service.selectGridStation());
 	}
 
 	@PostMapping("getRain")

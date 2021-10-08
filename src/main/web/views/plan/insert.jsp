@@ -74,7 +74,7 @@
           </div>
 
           <div class="layui-form-item">
-            <label class="layui-form-label">雨量方案</label>
+            <label class="layui-form-label">实测雨量方案</label>
             <div class="layui-input-block">
                 <select name="rain" lay-filter="rain" lay-verify="required" lay-search="">
                     <option value="">请选择</option>
@@ -84,6 +84,18 @@
                 </select>
             </div>
           </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">未来雨量方案</label>
+            <div class="layui-input-block">
+                <select name="rainf" lay-filter="rainf" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <c:forEach items="${rainfs}" var="rainf" varStatus="id">
+                        <option value="${rainf.id}" <c:if test="${plan.RAINF==rainf.id}">selected</c:if>>${rainf.name}</option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
 
           <div class="layui-form-item">
             <label class="layui-form-label">产流方案类型</label>
@@ -528,7 +540,11 @@
             return false;
         }
         if( $("select[name=rain]").val() == "" ){
-            layer.msg('请填妥雨量方案');
+            layer.msg('请填妥实测雨量方案');
+            return false;
+        }
+        if( $("select[name=rainf]").val() == "" ){
+            layer.msg('请填妥未来雨量方案');
             return false;
         }
         if( $("select[name=modelCl]").val() == "" ){
@@ -574,6 +590,7 @@
         data.name = $("input[name=name]").val();
         data.stcd = $("select[name=station]").val();
         data.rain = $("select[name=rain]").val();
+        data.rainf = $("select[name=rainf]").val();
         data.modelCl = $("select[name=modelCl]").val();
         data.rainRun = $("select[name=rainRun]").val();
         data.modelHl = $("select[name=modelHl]").val();

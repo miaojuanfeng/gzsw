@@ -1,6 +1,5 @@
 package gz.sw.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import gz.sw.calc.ApiCalc;
@@ -16,8 +15,6 @@ import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.read.River;
 import gz.sw.entity.read.Zq;
-import gz.sw.entity.write.Grid;
-import gz.sw.entity.write.Plan;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.exception.ParamException;
@@ -25,7 +22,7 @@ import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.ReadService;
 import gz.sw.service.read.RiverService;
 import gz.sw.service.read.ZqService;
-import gz.sw.service.read2.InitService;
+import gz.sw.service.read2.Read2Service;
 import gz.sw.service.write.*;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
@@ -85,7 +82,7 @@ public class ForecastController {
 	private RainService rainService;
 
 	@Autowired
-	private InitService initService;
+	private Read2Service read2Service;
 
 	@Autowired
 	private GridService gridService;
@@ -409,7 +406,7 @@ public class ForecastController {
         Date d = DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss");
         Date c = DateUtil.str2date(affectTime.substring(0, 10) + " 08:00:00", "yyyy-MM-dd HH:mm:ss");
 		d = d.before(c) ? DateUtil.addDay(c, -1) : c;
-        Map map = initService.selectInit(stcdIds, DateUtil.date2str(d, "yyyy-MM-dd HH:mm:ss"));
+        Map map = read2Service.selectInit(stcdIds, DateUtil.date2str(d, "yyyy-MM-dd HH:mm:ss"));
 
         retval.put("init", map);
 		retval.put("rainfallMax", rainfallMax.multiply(new BigDecimal("3.5")).intValue());

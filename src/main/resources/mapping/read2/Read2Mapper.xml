@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.read2.InitDao" >
+<mapper namespace="gz.sw.mapper.read2.Read2Dao" >
     <select id="selectInit" resultType="java.util.Map">
         select
           avg(Wu) as wu,
@@ -12,5 +12,11 @@
             #{stcd}
         </foreach>
         and #{affectTime} = tm
+    </select>
+
+    <select id="selectGridStation" resultType="java.util.Map">
+        select id as value, address as title
+        from F_RNFL_GRID
+        order by id asc
     </select>
 </mapper>
