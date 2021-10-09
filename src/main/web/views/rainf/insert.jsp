@@ -164,7 +164,7 @@
       ,data: []
       ,title: ['所有格点', '流域格点']
       ,showSearch: true
-      ,value: [${stcds}]
+      ,value: [${stids}]
     });
     loadStation();
 

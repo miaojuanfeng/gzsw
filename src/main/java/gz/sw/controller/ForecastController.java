@@ -15,6 +15,9 @@ import gz.sw.constant.NumberConst;
 import gz.sw.entity.read.Rainfall;
 import gz.sw.entity.read.River;
 import gz.sw.entity.read.Zq;
+import gz.sw.entity.write.Grid;
+import gz.sw.entity.write.Rainf;
+import gz.sw.entity.write.RainfPoint;
 import gz.sw.enums.ModelTypeEnum;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.exception.ParamException;
@@ -81,6 +84,9 @@ public class ForecastController {
 	@Autowired
 	private RainService rainService;
 
+    @Autowired
+    private RainfService rainfService;
+
 	@Autowired
 	private Read2Service read2Service;
 
@@ -92,12 +98,12 @@ public class ForecastController {
 		map.put("date", DateUtil.getDate());
 		map.put("models", modelService.selectAll());
 		Date date = new Date();
-//		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
-//		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
+		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
 //		map.put("forecastTime", "2021-05-20 08:00:00");
 //		map.put("affectTime", "2021-05-15 08:00:00");
-		map.put("forecastTime", "2018-05-20 08:00:00");
-		map.put("affectTime", "2018-05-15 08:00:00");
+//		map.put("forecastTime", "2018-05-20 08:00:00");
+//		map.put("affectTime", "2018-05-15 08:00:00");
 
 		return "home/forecast";
 	}
@@ -281,7 +287,7 @@ public class ForecastController {
 		return getRetval(request, oqStcd != null ? oqStcd : stcd, model);
 	}
 
-	private Map getP(Integer rain, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray unitArr) throws ParamException {
+	private Map getP(Integer rain, Integer rainf, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray unitArr) throws ParamException {
 		Map retval = new HashMap<>();
 		/**
 		 * 获取子站id
@@ -292,9 +298,8 @@ public class ForecastController {
 			stcdIds.add(String.valueOf(rainPointList.get(i).get("stcd")));
 		}
 		if (stcdIds.isEmpty()){
-			throw new ParamException("雨量方案(ID=" + rain + ")雨量站点为空");
+			throw new ParamException("实测雨量方案(ID=" + rain + ")雨量站点为空");
 		}
-//        stcdIds.add(stcd);
 		/**
 		 * 实测雨量
 		 */
@@ -306,20 +311,6 @@ public class ForecastController {
 			for (Rainfall rainfall : rainfalls) {
 				forecastMap.put(rainfall.getDate().substring(0, rainfall.getDate().length() - 2), rainfall.getRainfall());
 			}
-
-//			Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
-//			Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
-//			Date iDay = eDay;
-//			BigDecimal lastP = NumberConst.ZERO;
-//			while (!iDay.before(sDay)) {
-//				String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
-//				if( !forecastMap.containsKey(key) || forecastMap.get(key) == null ){
-//					forecastMap.put(key, lastP);
-//				}else{
-//					lastP = forecastMap.get(key);
-//				}
-//				iDay = DateUtil.addHour(iDay, -1);
-//			}
 		/**
 		 * 手动输入
 		 */
@@ -332,45 +323,55 @@ public class ForecastController {
          * 欧洲台或日本台
          */
 		}else{
-//			List<Grid> gridList = gridService.selectByStcd(stcd);
-//			List<String> gridId = new ArrayList<>();
-//			for (Grid grid : gridList){
-//				gridId.add(grid.getGridId());
-//			}
-//
-//			String fymdh = DateUtil.date2str(DateUtil.addDay(new Date(), -1)) + " 20:00:00";
-//			List<Forecast> forecastList = forecastService.selectForecast(gridId, fymdh, unit, startDay, endDay);
-//
-//			if( forecastList.size() > 0 ) {
-//				for (Forecast forecast : forecastList) {
-//					forecastMap.put(DateUtil.date2str(forecast.getYmdh(), CommonConst.DATETIME_FORMAT), forecast.getRn());
-//				}
-//
-//				Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
-//				Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
-//				Date iDay = eDay;
-//				BigDecimal n = forecastList.get(forecastList.size()-1).getRn();
-//				//                    Date d = forecastList.get(forecastList.size()-1).getYmdh();
-//				Integer c = 0;
-//				while (!iDay.before(sDay)) {
-//					String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
-//					if( forecastMap.containsKey(key) ){
-//						n = forecastMap.get(key);
-//						c = 0;
-//					}else{
-//						c++;
-//						if( c >= 3 ){
-//							n = NumberConst.ZERO;
-//						}
-//					}
-//					if( iDay.after(forecastList.get(forecastList.size()-1).getYmdh()) ){
-//						n = NumberConst.ZERO;
-//					}
-//					forecastMap.put(key, n);
-//					iDay = DateUtil.addHour(iDay, -1);
-//				}
-//				//                    Integer a = 1;
-//			}
+			List<Map> gridList = rainfService.selectRainfPoint(rainf);
+			List<Integer> gridId = new ArrayList<>();
+			for (Map grid : gridList){
+				gridId.add(Integer.valueOf(String.valueOf(grid.get("stid"))));
+			}
+			if (gridId.isEmpty()){
+				throw new ParamException("未来雨量方案(ID=" + rainf + ")雨量站点为空");
+			}
+			String fymdh = "";
+			Date date = DateUtil.str2date(forecastTime, CommonConst.DATETIME_FORMAT);
+			Date startDate = DateUtil.str2date(forecastTime.substring(0, 10) + " 00:00:00", CommonConst.DATETIME_FORMAT);
+            Date endDate   = DateUtil.str2date(forecastTime.substring(0, 10) + " 08:00:00", CommonConst.DATETIME_FORMAT);
+			if( !date.before(startDate) && !date.after(endDate) ){
+			    fymdh = DateUtil.date2str(DateUtil.addDay(date, -2)) + " 20:00:00";
+            }else{
+                fymdh = DateUtil.date2str(DateUtil.addDay(date, -1)) + " 20:00:00";
+            }
+			List<Map> forecastList = read2Service.selectGridPoint(gridId, fymdh, unit, startDay, endDay);
+
+			if( forecastList.size() > 0 ) {
+				for (Map forecast : forecastList) {
+					forecastMap.put(String.valueOf(forecast.get("ymdh")).substring(0, 19), new BigDecimal(String.valueOf(forecast.get("rn"))));
+				}
+
+				Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
+				Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
+				Date iDay = eDay;
+				BigDecimal n = new BigDecimal(String.valueOf(forecastList.get(forecastList.size()-1).get("rn"))).divide(new BigDecimal(3),2, NumberConst.MODE);
+				//                    Date d = forecastList.get(forecastList.size()-1).getYmdh();
+				Integer c = 0;
+				while (iDay.after(sDay)) {
+					String key = DateUtil.date2str(iDay, CommonConst.DATETIME_FORMAT);
+					if( forecastMap.containsKey(key) ){
+						n = forecastMap.get(key).divide(new BigDecimal(3),2, NumberConst.MODE);
+						c = 0;
+					}else{
+						c++;
+						if( c >= 3 ){
+							n = NumberConst.ZERO;
+						}
+					}
+					if( iDay.after(DateUtil.str2date(String.valueOf(forecastList.get(forecastList.size()-1).get("ymdh")), CommonConst.DATETIME_FORMAT)) ){
+						n = NumberConst.ZERO;
+					}
+					forecastMap.put(key, n);
+					iDay = DateUtil.addHour(iDay, -1);
+				}
+				//                    Integer a = 1;
+			}
 		}
 		//            List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdId, plusDay(day, forecastTime), affectTime);
 		List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, forecastTime, affectTime);
@@ -403,10 +404,10 @@ public class ForecastController {
         /**
          * 测试代码结束
          */
-        Date d = DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss");
-        Date c = DateUtil.str2date(affectTime.substring(0, 10) + " 08:00:00", "yyyy-MM-dd HH:mm:ss");
+        Date d = DateUtil.str2date(affectTime, CommonConst.DATETIME_FORMAT);
+        Date c = DateUtil.str2date(affectTime.substring(0, 10) + " 08:00:00", CommonConst.DATETIME_FORMAT);
 		d = d.before(c) ? DateUtil.addDay(c, -1) : c;
-        Map map = read2Service.selectInit(stcdIds, DateUtil.date2str(d, "yyyy-MM-dd HH:mm:ss"));
+        Map map = read2Service.selectInit(stcdIds, DateUtil.date2str(d, CommonConst.DATETIME_FORMAT));
 
         retval.put("init", map);
 		retval.put("rainfallMax", rainfallMax.multiply(new BigDecimal("3.5")).intValue());
@@ -449,7 +450,7 @@ public class ForecastController {
 
 			System.out.println("计算站点: " + m.getString("stname"));
 			System.out.println("getP开始: " + System.currentTimeMillis());
-			Map rainfallMap = getP(plan.getInteger("RAIN"), forecastTime, affectTime, day, unit, unitArr);
+			Map rainfallMap = getP(plan.getInteger("RAIN"), plan.getInteger("RAINF"), forecastTime, affectTime, day, unit, unitArr);
 			System.out.println("getP结束: " + System.currentTimeMillis());
 
 			listP = (List<BigDecimal>)rainfallMap.get("rainfallList");

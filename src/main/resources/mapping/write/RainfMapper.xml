@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="gz.sw.mapper.write.RainDao">
+<mapper namespace="gz.sw.mapper.write.RainfDao">
     <select id="selectCount" resultType="java.lang.Integer">
         select
         	count(r.id)
-        from rain r
+        from rainf r
         left join station s on r.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
@@ -20,11 +20,11 @@
     </select>
     <select id="selectList" resultType="java.util.Map">
         select r1.id, r1.name, CONVERT(varchar(100), r1.create_time, 20) as createTime, s.stname, t.name as sttype
-        from rain r1
+        from rainf r1
         left join station s on r1.stcd = s.stcd
         left join sttype t on s.type = t.code,
         (select TOP ${page*limit} row_number() OVER (order by r.id desc, r.ID desc) n, r.ID
-        from rain r
+        from rainf r
         left join station s on r.stcd = s.stcd
         left join sttype t on s.type = t.code
         where 1=1
@@ -45,48 +45,48 @@
     </select>
     <select id="selectMap" resultType="java.util.Map">
         select r.*, rtrim(s.type) as sttype, rtrim(s.stcd) as stcd
-        from rain r
+        from rainf r
         left join station s on r.stcd = s.stcd
         where r.id = #{id}
     </select>
     <select id="selectListByStcd" resultType="java.util.Map">
         select
         	id, name, stcd
-        from rain
+        from rainf
         where stcd = #{stcd}
         order by id desc
     </select>
-    <select id="selectRainPoint" resultType="java.util.Map">
+    <select id="selectRainfPoint" resultType="java.util.Map">
         select
-        	rs.stcd
-        from rain_station rs
-        where rs.rain = #{rain}
+        	rs.stid
+        from rainf_station rs
+        where rs.rainf = #{rainf}
         order by rs.id asc
     </select>
-    <insert id="insert" parameterType="gz.sw.entity.write.Rain" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into rain
+    <insert id="insert" parameterType="gz.sw.entity.write.Rainf" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into rainf
         (stcd, name, create_user, create_time)
         values
         (#{stcd},#{name},#{createUser},#{createTime})
     </insert>
     <insert id="insertPointList" parameterType="java.util.Map">
-        insert into rain_station
-        (rain, stcd)
+        insert into rainf_station
+        (rainf, stid)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.rain},#{item.stcd})
+            (#{item.rainf},#{item.stid})
         </foreach>
     </insert>
-    <insert id="insertPointBatch" parameterType="gz.sw.entity.write.RainPoint">
-        insert into rain_station
-        (rain, stcd, weight)
+    <insert id="insertPointBatch" parameterType="gz.sw.entity.write.RainfPoint">
+        insert into rainf_station
+        (rainf, stid, weight)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.rain},#{item.stcd},#{item.weight})
+            (#{item.rainf},#{item.stid},#{item.weight})
         </foreach>
     </insert>
-    <update id="update" parameterType="gz.sw.entity.write.Rain">
-        update rain
+    <update id="update" parameterType="gz.sw.entity.write.Rainf">
+        update rainf
         <set>
             <if test="stcd != null" >stcd = #{stcd},</if>
             <if test="name != null" >name = #{name},</if>
@@ -94,9 +94,9 @@
         where id = #{id}
     </update>
     <delete id="delete">
-        delete from rain where id = #{id}
+        delete from rainf where id = #{id}
     </delete>
     <delete id="deleteListById">
-        delete from rain_station where rain = #{id}
+        delete from rainf_station where rainf = #{id}
     </delete>
 </mapper>

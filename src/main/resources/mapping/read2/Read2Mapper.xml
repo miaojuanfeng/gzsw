@@ -19,4 +19,18 @@
         from F_RNFL_GRID
         order by id asc
     </select>
+
+    <select id="selectGridPoint" resultType="java.util.Map">
+        select ymdh, rn/10 as rn
+        from F_RNFL_M
+        where id in
+        <foreach collection="list" item="stid" index="index" open="(" close=")" separator=",">
+            #{stid}
+        </foreach>
+        and fymdh = #{fymdh}
+        and unitname = #{unit}
+        and ymdh > #{startDay}
+        and #{endDay} >= ymdh
+        order by ymdh asc
+    </select>
 </mapper>

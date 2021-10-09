@@ -39,6 +39,9 @@ public class PlanController {
 	private RainService rainService;
 
 	@Autowired
+	private RainfService rainfService;
+
+	@Autowired
 	private UnitLineService unitLineService;
 
 	@GetMapping("list")
@@ -79,6 +82,7 @@ public class PlanController {
 		Map plan = planService.selectMap(id);
 		map.put("stations", stationService.selectListByType(String.valueOf(plan.get("sttype"))));
 		map.put("rains", rainService.selectListByStcd(String.valueOf(plan.get("STCD"))));
+		map.put("rainfs", rainfService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("rainRuns", rainRunService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("unitLines", unitLineService.selectListByStcd(String.valueOf(plan.get("STCD"))));
 		map.put("plan", plan);

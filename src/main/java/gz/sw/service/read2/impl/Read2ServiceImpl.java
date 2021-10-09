@@ -23,4 +23,9 @@ public class Read2ServiceImpl implements Read2Service {
     public List<Map> selectGridStation() {
         return read2Dao.selectGridStation();
     }
+
+    @Override
+    public List<Map> selectGridPoint(List list, String fymdh, Integer unit, String startDay, String endDay) {
+        return read2Dao.selectGridPoint(list, fymdh, unit, startDay, endDay);
+    }
 }

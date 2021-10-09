@@ -11,4 +11,5 @@ import java.util.Map;
 public interface Read2Dao {
     Map selectInit(@Param("list") List list, @Param("affectTime") String affectTime);
     List<Map> selectGridStation();
+    List<Map> selectGridPoint(@Param("list") List list, @Param("fymdh") String fymdh, @Param("unit") Integer unit, @Param("startDay") String startDay, @Param("endDay") String endDay);
 }

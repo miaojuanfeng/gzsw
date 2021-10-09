@@ -6,6 +6,7 @@ public class CommonConst {
 //    public static final int HTTP_OK = 200;
 //    public static ApplicationContext APPLICATION_CONTEXT = null;
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final Integer FUTURE_RAINFALL_MEASURE = 0;
     public static final Integer FUTURE_RAINFALL_MANUAL = 99;

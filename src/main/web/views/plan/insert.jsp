@@ -418,10 +418,13 @@
     });
 
     form.on('select(station)', function(data){
+        $("select[name=rain]").html('<option value="">请选择</option>');
+        $("select[name=rainf]").html('<option value="">请选择</option>');
         $("select[name=modelCl]").val('');
-        $("select[name=rainrun]").html('<option value="">请选择</option>');
+        $("select[name=rainRun]").html('<option value="">请选择</option>');
         $("select[name=modelHl]").val('');
-        $("select[name=unitline]").html('<option value="">请选择</option>');
+        $("select[name=unitLine]").html('<option value="">请选择</option>');
+        form.render('select');
         var stcd = $("select[name=station]").val();
         if( stcd != "" ){
             var loading = layer.load(0);
@@ -437,7 +440,21 @@
                         $("select[name=rain]").append(html);
                         form.render('select');
                     }
-                    layer.close(loading);
+                    $.post(
+                        '${pageContext.request.contextPath}/rainf/getRain',
+                        {stcd: stcd},
+                        function (data) {
+                            if( data.code == 200 ) {
+                                var html = '';
+                                $.each(data.data, function (key, value) {
+                                    html += '<option value="' + value.id + '">' + value.name + '</option>';
+                                });
+                                $("select[name=rainf]").append(html);
+                                form.render('select');
+                            }
+                            layer.close(loading);
+                        }
+                    );
                 }
             );
         }
@@ -465,7 +482,7 @@
                     function (data) {
                         if( data.code == 200 ) {
                             var html = '';
-                            $.each(data, function (key, value) {
+                            $.each(data.data, function (key, value) {
                                 html += '<option value="' + value.id + '">' + value.name + '</option>';
                             });
                             $("select[name=rainRun]").append(html);
@@ -504,7 +521,7 @@
                     function (data) {
                         if( data.code == 200 ) {
                             var html = '';
-                            $.each(data, function (key, value) {
+                            $.each(data.data, function (key, value) {
                                 html += '<option value="' + value.id + '">' + value.name + '</option>';
                             });
                             $("select[name=unitLine]").append(html);
