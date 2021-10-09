@@ -346,11 +346,12 @@ public class ForecastController {
 				for (Map forecast : forecastList) {
 					forecastMap.put(String.valueOf(forecast.get("ymdh")).substring(0, 19), new BigDecimal(String.valueOf(forecast.get("rn"))));
 				}
+			}
 
 				Date sDay = DateUtil.str2date(startDay, CommonConst.DATETIME_FORMAT);
 				Date eDay = DateUtil.str2date(endDay, CommonConst.DATETIME_FORMAT);
 				Date iDay = eDay;
-				BigDecimal n = new BigDecimal(String.valueOf(forecastList.get(forecastList.size()-1).get("rn"))).divide(new BigDecimal(3),2, NumberConst.MODE);
+				BigDecimal n = forecastList.size() > 0 ? new BigDecimal(String.valueOf(forecastList.get(forecastList.size()-1).get("rn"))).divide(new BigDecimal(3),2, NumberConst.MODE) : NumberConst.ZERO;
 				//                    Date d = forecastList.get(forecastList.size()-1).getYmdh();
 				Integer c = 0;
 				while (iDay.after(sDay)) {
@@ -364,14 +365,12 @@ public class ForecastController {
 							n = NumberConst.ZERO;
 						}
 					}
-					if( iDay.after(DateUtil.str2date(String.valueOf(forecastList.get(forecastList.size()-1).get("ymdh")), CommonConst.DATETIME_FORMAT)) ){
+					if( forecastList.isEmpty() || iDay.after(DateUtil.str2date(String.valueOf(forecastList.get(forecastList.size()-1).get("ymdh")), CommonConst.DATETIME_FORMAT)) ){
 						n = NumberConst.ZERO;
 					}
 					forecastMap.put(key, n);
 					iDay = DateUtil.addHour(iDay, -1);
 				}
-				//                    Integer a = 1;
-			}
 		}
 		//            List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdId, plusDay(day, forecastTime), affectTime);
 		List<Rainfall> rainfalls = rainfallService.selectRainfallRange(stcdIds, forecastTime, affectTime);
