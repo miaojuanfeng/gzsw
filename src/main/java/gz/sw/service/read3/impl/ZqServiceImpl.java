@@ -1,12 +1,10 @@
-package gz.sw.service.read.impl;
+package gz.sw.service.read3.impl;
 
-import gz.sw.entity.read.Zq;
-import gz.sw.mapper.read.ZqDao;
-import gz.sw.service.read.ZqService;
+import gz.sw.mapper.read3.ZqDao;
+import gz.sw.service.read3.ZqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service

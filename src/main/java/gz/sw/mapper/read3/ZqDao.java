@@ -1,4 +1,4 @@
-package gz.sw.mapper.read;
+package gz.sw.mapper.read3;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

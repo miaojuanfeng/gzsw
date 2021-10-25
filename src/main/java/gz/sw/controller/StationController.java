@@ -10,7 +10,7 @@ import gz.sw.entity.write.Station;
 import gz.sw.enums.StationTypeEnum;
 import gz.sw.service.read.RainfallService;
 import gz.sw.service.read.RiverService;
-import gz.sw.service.read.ReadService;
+import gz.sw.service.read3.Read3Service;
 import gz.sw.service.write.StationService;
 import gz.sw.util.DateUtil;
 import gz.sw.util.NumberUtil;
@@ -32,7 +32,7 @@ public class StationController {
 	private StationService stationService;
 
 	@Autowired
-	private ReadService readService;
+	private Read3Service read3Service;
 
 	@Autowired
 	private RainfallService rainfallService;
@@ -76,7 +76,7 @@ public class StationController {
 	@Transactional
 	public JSONObject refresh() {
 		synchronized (CommonConst.stationLock) {
-			List<Map> stbprpList = readService.selectStbprpList();
+			List<Map> stbprpList = read3Service.selectStbprpList();
 			if (stbprpList.size() > 0) {
 				List<Station> stationList = new ArrayList<>();
 				stationService.clear();

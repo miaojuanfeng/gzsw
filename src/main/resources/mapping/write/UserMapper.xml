@@ -45,7 +45,7 @@
 		insert into [user]
 		(phone,name,password,admin,create_time,update_time)
 		values
-		(#{item.phone},#{item.name},#{item.password},#{item.admin},#{item.createTime},#{item.updateTime})
+		(#{phone},#{name},#{password},#{admin},#{createTime},#{updateTime})
 	</insert>
     <update id="update" parameterType="gz.sw.entity.write.User">
         update [user]

@@ -121,6 +121,9 @@ public class XajCalc {
         WUup = NumberUtil.gt(WUup, WUM) ? WUM : WUup;
         WLup = NumberUtil.gt(WLup, WLM) ? WLM : WLup;
         WDup = NumberUtil.gt(WDup, WDM) ? WDM : WDup;
+        plan.put("WU0", WUup);
+        plan.put("WL0", WLup);
+        plan.put("WD0", WDup);
         BigDecimal Wup = WUup.add(WLup).add(WDup);
         BigDecimal Sup = plan.getBigDecimal("S0");
         BigDecimal FRup = plan.getBigDecimal("FR0");
@@ -163,20 +166,36 @@ public class XajCalc {
             /**
              * 产流量计算
              */
+//            System.out.print("i: " + i);
             if( NumberUtil.gt(listPE.get(i), NumberConst.ZERO) ){
                 xajParam.listRd.set(i, listPE.get(i));
                 if( NumberUtil.ge(listPE.get(i).add(listA.get(i)), Wmm) ){
+//                    System.out.println("listPE.get(i): " + listPE.get(i));
+//                    System.out.println("Wm: " + Wm);
+//                    System.out.println("Wup: " + Wup);
                     listR.set(i, listPE.get(i).subtract(Wm.subtract(Wup)));
                 }else{
                     BigDecimal base = NumberConst.ONE.subtract(listPE.get(i).add(listA.get(i)).divide(Wmm, NumberConst.DIGIT, NumberConst.MODE));
                     BigDecimal power = NumberConst.ONE.add(B);
+//                    System.out.println("listA.get(i): " + listA.get(i));
+//                    System.out.println("Wmm: " + Wmm);
+//                    System.out.println("listPE.get(i): " + listPE.get(i));
+//                    System.out.println("Wup: " + Wup);
+//                    System.out.println("Wm: " + Wm);
+//                    System.out.println("base: " + base);
+//                    System.out.println("power: " + power);
+//                    System.out.println("equal: " + Wm.multiply(NumberUtil.pow(base, power)));
                     BigDecimal R = listPE.get(i).add(Wup).subtract(Wm).add(Wm.multiply(NumberUtil.pow(base, power)));
                     listR.set(i, R);
+                    if( NumberUtil.lt(listR.get(i), NumberConst.ZERO) ){
+                        listR.set(i, new BigDecimal("0.000001"));
+                    }
                 }
             }else{
                 xajParam.listRd.set(i, NumberConst.ZERO);
                 listR.set(i, NumberConst.ZERO);
             }
+//            System.out.println(",R: " + listR.get(i));
             /**
              * 蒸发计算
              */
@@ -260,6 +279,7 @@ public class XajCalc {
                 listS.set(i, Sup.subtract(xajParam.listRss.get(i).add(xajParam.listRg.get(i)).divide(FRup, NumberConst.DIGIT, NumberConst.MODE)));
             }else{
                 listFR.set(i, getFR(listPE.get(i), listR.get(i)));
+//                System.out.println("i: " + i + ",Sup: " + Sup + ",FR: " + listFR.get(i));
                 listS.set(i, FRup.multiply(Sup).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listQ.set(i, listR.get(i).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listN.set(i, new BigDecimal(listQ.get(i).divide(new BigDecimal(5), NumberConst.DIGIT, NumberConst.MODE).intValue()).add(NumberConst.ONE));
@@ -306,6 +326,7 @@ public class XajCalc {
                     xajParam.listRg.set(i, xajParam.listRg.get(i).add(listRGD.get(j)));
                 }
             }
+//            System.out.println("i: " + i + ",S: " + listS.get(i) + ",Sup: " + Sup + ",FR: " + listFR.get(i));
             Sup = listS.get(i);
             FRup = listFR.get(i);
             /**
@@ -389,6 +410,7 @@ public class XajCalc {
 
     private static BigDecimal getFR(BigDecimal PE, BigDecimal R) {
         // FR=R/PE
+//        System.out.println("R: " + R + ",PE: " + PE);
         return R.divide(PE, NumberConst.DIGIT, NumberConst.MODE);
     }
 
@@ -417,6 +439,7 @@ public class XajCalc {
         // AU = SMMF * (1 - ( 1 - S / SMF ) ^ [ 1 / ( 1 + EX ) ] )
         BigDecimal base = NumberConst.ONE.subtract(S.divide(SMF, NumberConst.DIGIT, NumberConst.MODE));
         BigDecimal power = NumberConst.ONE.divide(NumberConst.ONE.add(EX), NumberConst.DIGIT, NumberConst.MODE);
+//        System.out.println("SMMF:"+SMMF+",S:"+S+",SMF:"+SMF+",EX:"+EX+",base:"+base+",power:"+power);
         return SMMF.multiply(NumberConst.ONE.subtract(NumberUtil.pow(base, power)));
     }
 

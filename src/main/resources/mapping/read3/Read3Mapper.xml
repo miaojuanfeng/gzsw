@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gz.sw.mapper.read3.Read3Dao" >
+    <select id="selectStbprpList" resultType="java.util.Map">
+        select *
+        from ST_STBPRP_B
+    </select>
+    <select id="selectZvarlList" resultType="java.util.Map">
+        select rz, w, ptno
+        from ST_ZVARL_B z,
+        (select top 1 MSTM from ST_ZVARL_B where STCD = '${stcd}' and '${date}' >= MSTM order by MSTM desc) n
+        where 1=1
+        and z.STCD = '${stcd}'
+		and z.MSTM = n.MSTM
+        order by z.PTNO asc
+    </select>
+    <select id="selectDischargeList" resultType="java.util.Map">
+        select *
+        from ST_DISCHARGE_B
+    </select>
+</mapper>

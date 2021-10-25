@@ -9,10 +9,10 @@
 
 	<select id="selectRainfallTotal" resultMap="BaseResultMap">
 		select top 10 stcd, sum(drp) as rainfall from st_pptn_r
-		where tm > #{startDay} and #{endDay} >= tm
+		where tm > '${startDay}' and '${endDay}' >= tm
         and stcd in
 		<foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
-			#{stcd}
+			'${stcd}'
 		</foreach>
 		group by stcd
         order by sum(drp) desc
@@ -20,20 +20,20 @@
 
     <select id="selectRainfallDaily" resultMap="BaseResultMap">
         select tm as date, sum(drp) as rainfall from st_pptn_r
-        where tm > #{startDay} and #{endDay} >= tm
+        where tm > '${startDay}' and '${endDay}' >= tm
         and stcd in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
-            #{stcd}
+            '${stcd}'
         </foreach>
         group by tm
     </select>
 
     <select id="selectRainfallRange" resultMap="BaseResultMap">
         select tm as date, avg(drp) as rainfall from st_pptn_r
-        where tm > #{affectTime} and #{forecastTime} >= tm
+        where tm > '${affectTime}' and '${forecastTime}' >= tm
         and stcd in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
-            #{stcd}
+            '${stcd}'
         </foreach>
         group by tm
         order by tm asc
@@ -44,10 +44,10 @@
           stcd as stcd,
           drp as p
         from st_pptn_r s
-        where s.tm = #{date}
+        where s.tm = '${date}'
         and ltrim(rtrim(s.stcd)) in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
-            #{stcd}
+            '${stcd}'
         </foreach>
     </select>
 </mapper>

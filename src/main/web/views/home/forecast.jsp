@@ -485,7 +485,11 @@
                   e.intv = $("#updateform input[name=INTV]").val();
                   e.ke = $("#updateform input[name=KE]").val();
                   e.xe = $("#updateform input[name=XE]").val();
+                  console.log(e.update);
+                  e.plan.update = true;
+                  console.log(e.update);
                   clearForm();
+                  console.log(dataTree);
                   layer.closeAll();
               }
               ,btn2: function(index, layero){

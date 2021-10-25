@@ -9,9 +9,9 @@
         from ST_Pa_W0
         where stcd in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">
-            #{stcd}
+            '${stcd}'
         </foreach>
-        and #{affectTime} = tm
+        and '${affectTime}' = tm
     </select>
 
     <select id="selectGridStation" resultType="java.util.Map">
@@ -25,12 +25,12 @@
         from F_RNFL_M
         where id in
         <foreach collection="list" item="stid" index="index" open="(" close=")" separator=",">
-            #{stid}
+            '${stid}'
         </foreach>
-        and fymdh = #{fymdh}
-        and unitname = #{unit}
-        and ymdh > #{startDay}
-        and #{endDay} >= ymdh
+        and fymdh = '${fymdh}'
+        and unitname = '${unit}'
+        and ymdh > '${startDay}'
+        and '${endDay}' >= ymdh
         order by ymdh asc
     </select>
 </mapper>

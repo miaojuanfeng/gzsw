@@ -250,6 +250,7 @@
     }
 
     function openForm(action, deptId){
+        var isShow = true;
         layer.open({
             type: 1
             ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
@@ -261,7 +262,7 @@
             ,shade: 0.2 //不显示遮罩
             ,btn1: function(index, layero){
                 if( action == "new" || action == "add" ) {
-                    if( checkEmpty(action) ){
+                    if( checkEmpty(action, isShow) ){
                         layer.msg('请填妥相关参数');
                         return false;
                     }
@@ -309,11 +310,11 @@
                         data: data1
                     });
                 }else if(action == "update"){
-                    if( checkEmpty(action) ){
+                    if( checkEmpty(action, isShow) ){
                         layer.msg('请填妥相关参数');
                         return false;
                     }
-                    function each(data) {
+                    function each(data, first) {
                         data.forEach(function (e) {
                             if (e.id == deptId) {
                                 var title = $("#addform select[name=station]").find("option:selected").text();
@@ -330,13 +331,16 @@
                                 e.intv = $("#addform input[name=INTV]").val();
                                 e.ke = $("#addform input[name=KE]").val();
                                 e.xe = $("#addform input[name=XE]").val();
+                                if (first) {
+                                    $("input[name=stcd]").val(e.stcd);
+                                }
                             }
                             if (e.children != undefined && e.children.length > 0) {
-                                each(e.children);
+                                each(e.children, false);
                             }
                         })
                     }
-                    each(data1);
+                    each(data1, true);
                     tree.reload('test9', {
                         data: data1
                     });
@@ -355,9 +359,11 @@
             ,success: function(layero, index){  //弹出成功的回调
                 clearForm();
                 if( action == "new" ){
+                    isShow = false;
                     $("#addform #ke-tr").hide();
                     $("#addform #xe-tr").hide();
                 }else if( action == "add" ){
+                    isShow = true;
                     $("#addform #ke-tr").show();
                     $("#addform #xe-tr").show();
                 }else if( action == "update" ){
@@ -378,9 +384,11 @@
                     }
                     var e = each(data1);
                     if( e.stcd != $("input[name=stcd]").val() ){
+                        isShow = true;
                         $("#addform #ke-tr").show();
                         $("#addform #xe-tr").show();
                     }else{
+                        isShow = false;
                         $("#addform #ke-tr").hide();
                         $("#addform #xe-tr").hide();
                     }
@@ -499,11 +507,11 @@
         openForm("new", 0);
     });
 
-    function checkEmpty(action) {
+    function checkEmpty(action, isShow) {
         if ($("#addform select[name=sttp]").val() == "" ||
             $("#addform select[name=station]").val() == "" ||
             $("#addform select[name=plan]").val() == "" ||
-            (action != "new" && ($("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "")) ||
+            (isShow && ($("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "")) ||
             // $("#addform input[name=KE]").val() == "" || $("#addform input[name=XE]").val() == "" ||
             ($("#addform select[name=sttp]").val() == "RR" && $("#addform input[name=INTV]").val() == "")
         ) {

@@ -239,7 +239,9 @@
           elem: '#startTime'
           ,type: 'datetime'
           ,done: function(value, date){ //监听日期被切换
-              getChart();
+              if( value != '' ) {
+                  getChart(value, $("#endTime").val());
+              }
           }
       });
 
@@ -247,7 +249,9 @@
           elem: '#endTime'
           ,type: 'datetime'
           ,done: function(value, date){ //监听日期被切换
-              getChart();
+              if( value != '' ) {
+                  getChart($("#startTime").val(), value);
+              }
           }
       });
 
@@ -318,15 +322,15 @@
       }
       var chart1 = echarts.init(document.getElementById('chart1'));
 
-      function getChart1(){
+      function getChart1(startTime, endTime){
           // var loading = layer.load(0);
           loading(chart1);
           $.post(
               '${pageContext.request.contextPath}/station/chart1',
               {
                   stcd: stcd,
-                  startTime: $("#startTime").val(),
-                  endTime:   $("#endTime").val()
+                  startTime: startTime,
+                  endTime:   endTime
               },
               function (data) {
                   if( data.code == 200 ) {
@@ -380,14 +384,14 @@
       }
       var chart2 = echarts.init(document.getElementById('chart2'));
 
-      function getChart2(){
+      function getChart2(startTime, endTime){
           loading(chart2);
           $.post(
               '${pageContext.request.contextPath}/station/chart2',
               {
                   stcd: stcd,
-                  startTime: $("#startTime").val(),
-                  endTime:   $("#endTime").val()
+                  startTime: startTime,
+                  endTime:   endTime
               },
               function (data) {
                   if( data.code == 200 ) {
@@ -400,9 +404,9 @@
           );
       }
 
-      function getChart(){
-          getChart1();
-          getChart2();
+      function getChart(startTime, endTime){
+          getChart1(startTime, endTime);
+          getChart2(startTime, endTime);
       }
 
       function loading(chart){
@@ -418,15 +422,15 @@
       $("a.layadmin-backlog-body").click(function () {
           stcd = $(this).attr("stcd");
           stname = $(this).attr("stname");
-          getChart();
+          getChart($("#startTime").val(), $("#endTime").val());
       });
       $("#startTime, #endTime").on("change", function () {
-          getChart();
+          getChart($("#startTime").val(), $("#endTime").val());
       });
 
       var stcd = '62303500';
       var stname = '汾坑';
-      getChart();
+      getChart($("#startTime").val(), $("#endTime").val());
   });
   </script>
 </body>

@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="gz.sw.mapper.read.ReadDao" >
-    <select id="selectStbprpList" resultType="java.util.Map">
-        select *
-        from ST_STBPRP_B
-    </select>
-    <select id="selectZvarlList" resultType="java.util.Map">
-        select rz, w, ptno
-        from ST_ZVARL_B z,
-        (select top 1 MSTM from ST_ZVARL_B where STCD = #{stcd} and #{date} >= MSTM order by MSTM desc) n
-        where 1=1
-        and z.STCD = #{stcd}
-		and z.MSTM = n.MSTM
-        order by z.PTNO asc
-    </select>
-    <select id="selectDischargeList" resultType="java.util.Map">
-        select *
-        from ST_DISCHARGE_B
-    </select>
     <select id="selectInitData" resultType="java.util.Map">
         select
-        (select RZ from ST_RSVR_R where stcd = #{stcd} and tm = #{date}) as rz,
-        (select top 1 otq from ST_RSVR_R where stcd = #{stcd} and #{date} >= tm and otq is not null order by tm desc) as oq,
-        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = #{stcd} and #{monthDay} >= bgmd and edmd >= #{monthDay} order by actyr desc) as lim,
-        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = #{stcd} order by actyr desc, fsltdz desc) as lim_bk
+        (select RZ from ST_RSVR_R where stcd = '${stcd}' and tm = '${date}') as rz,
+        (select top 1 RZ from ST_RSVR_R where stcd = '${stcd}' and '${date}' >= tm order by tm desc) as rz_bk,
+        (select top 1 otq from ST_RSVR_R where stcd = '${stcd}' and '${date}' >= tm and otq is not null order by tm desc) as oq,
+        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = '${stcd}' and '${monthDay}' >= bgmd and edmd >= '${monthDay}' order by actyr desc) as lim,
+        (select top 1 fsltdz from ST_RSVRFSR_B where stcd = '${stcd}' order by actyr desc, fsltdz desc) as lim_bk
     </select>
     <select id="selectInqList" resultType="java.util.Map">
         select tm, inq
         from ST_RSVR_R
-        where stcd = #{stcd}
-        and RIGHT(CONVERT(varchar(19),tm,120),5)='00:00'
-        and tm > #{affectTime} and #{forecastTime} >= tm
+        where stcd = '${stcd}'
+        and DATEPART(MINUTE,tm) = 0
+        and DATEPART(SECOND,tm) = 0
+        and tm > '${affectTime}' and '${forecastTime}' >= tm
         and inq is not null
         order by tm asc
     </select>

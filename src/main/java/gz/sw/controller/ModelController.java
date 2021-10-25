@@ -196,7 +196,9 @@ public class ModelController {
 			if( modelStation.containsKey("children") && modelStation.getJSONArray("children").size() > 0 ) {
 				setModelStationPlan(modelStation.getJSONArray("children"));
 			}
-			modelStation.put("plan", planService.selectMap(modelStation.getInteger("planId")));
+			Map plan = planService.selectMap(modelStation.getInteger("planId"));
+			plan.put("update", false);
+			modelStation.put("plan", plan);
 		}
 	}
 }
