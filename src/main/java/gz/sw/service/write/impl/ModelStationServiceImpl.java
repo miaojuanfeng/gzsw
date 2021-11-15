@@ -20,6 +20,11 @@ public class ModelStationServiceImpl implements ModelStationService {
 	}
 
 	@Override
+	public List selectByPlan(Integer planId) {
+		return modelStationDao.selectByPlan(planId);
+	}
+
+	@Override
 	public int selectCountByPlan(Integer planId) {
 		return modelStationDao.selectCountByPlan(planId);
 	}

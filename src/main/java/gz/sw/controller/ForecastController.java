@@ -80,8 +80,15 @@ public class ForecastController {
 	private Read3Service read3Service;
 
 	@GetMapping("home")
-	public String home(ModelMap map) {
-		map.put("date", DateUtil.getDate());
+	public String home(@RequestParam("show") Integer show, ModelMap map) {
+//		map.put("date", DateUtil.getDate());
+		map.put("show", show);
+		if( show.equals(1) ){
+			map.put("areaName", "流域河系");
+		}else{
+			map.put("sttps", StationTypeEnum.getList());
+			map.put("areaName", "站点信息");
+		}
 		map.put("models", modelService.selectAll());
 		Date date = new Date();
 		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));

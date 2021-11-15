@@ -120,7 +120,7 @@ public class ModelController {
 		for (int i = 0; i < modelStationList.size(); i++){
 			Map modelStation = modelStationList.get(i);
 			String m = (String)modelStation.get("FA_STCD");
-			if( fatherId.trim().equals(String.valueOf(modelStation.get("FA_STCD")).trim()) ){
+			if( fatherId.trim().equals(m.trim()) ){
 				JSONObject station = new JSONObject();
 				String title = String.valueOf(modelStation.get("STNAME")).trim();
 				title += "（";
@@ -186,6 +186,14 @@ public class ModelController {
 	@ResponseBody
 	public JSONObject getArea(@RequestParam("modelId") Integer modelId) {
 		JSONArray modelStationList = getModelStationData("0", modelStationService.selectByModel(modelId));
+		setModelStationPlan(modelStationList);
+		return RetVal.OK(modelStationList);
+	}
+
+	@PostMapping("getSolo")
+	@ResponseBody
+	public JSONObject getSolo(@RequestParam("planId") Integer planId) {
+		JSONArray modelStationList = getModelStationData("0", modelStationService.selectByPlan(planId));
 		setModelStationPlan(modelStationList);
 		return RetVal.OK(modelStationList);
 	}

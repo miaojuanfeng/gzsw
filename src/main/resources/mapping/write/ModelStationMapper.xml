@@ -13,6 +13,21 @@
 		and ms.model_id = #{modelId}
 		order by ms.id asc
 	</select>
+	<select id="selectByPlan" resultType="java.util.Map">
+		select
+			p.stcd as STCD,
+			0 as KE,
+			0 as XE,
+			0 as INTV,
+			'0' as FA_STCD,
+			p.id as PLAN_ID,
+			p.name as PLAN_NAME,
+			(select s.stname from station s where p.stcd = s.stcd) as STNAME,
+			(select s.type from station s where p.stcd = s.stcd) as STTP
+		from [plan] p
+		where 1=1
+		and p.id = #{planId}
+	</select>
 	<select id="selectCountByPlan" resultType="java.lang.Integer">
 		select
 			count(ms.plan_id) as PLAN_COUNT

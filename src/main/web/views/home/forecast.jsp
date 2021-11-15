@@ -33,12 +33,13 @@
       <div class="layui-col-md3">
         <div class="layui-card layui-form">
           <div class="layui-card-header">预报参数</div>
-          <table class="layui-table" style="margin:0;">
+          <table id="table-show" class="layui-table" style="margin:0;">
             <colgroup>
               <col width="40%">
               <col width="60%">
             </colgroup>
             <tbody>
+            <c:if test="${show==1}">
             <tr>
               <td>河系方案</td>
               <td class="input-tr">
@@ -50,6 +51,36 @@
                 </select>
               </td>
             </tr>
+            </c:if>
+            <c:if test="${show==2}">
+            <tr>
+              <td>站点类型</td>
+              <td class="input-tr">
+                <select name="sttp" lay-filter="sttp" lay-verify="required" lay-search="">
+                  <option value="">请选择</option>
+                  <c:forEach items="${sttps}" var="sttp" varStatus="id">
+                    <option value="${sttp.code}" <c:if test="${plan.sttype==sttp.code}">selected</c:if>>${sttp.text}</option>
+                  </c:forEach>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>站点名称</td>
+              <td class="input-tr">
+                <select name="station" lay-filter="station" lay-verify="required" lay-search="">
+                  <option value="">请选择</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>预报方案</td>
+              <td class="input-tr">
+                <select name="plan" lay-filter="plan" lay-verify="required" lay-search="">
+                  <option value="">请选择</option>
+                </select>
+              </td>
+            </tr>
+            </c:if>
             <tr>
               <td>预报时间</td>
               <td class="input-tr">
@@ -90,7 +121,7 @@
             </tbody>
           </table>
 
-          <div class="layui-card-header">流域河系</div>
+          <div class="layui-card-header">${areaName}</div>
           <div id="area" class="demo-tree demo-tree-box" style="width: 100%; height: 240px; overflow-y: scroll; padding-top:10px;"></div>
         </div>
       </div>
@@ -421,7 +452,7 @@
 
       function resize(size){
           var h = $(window).height() - 15 * 2;
-          $('#area').css('height', (h-43-196-43-10-size)+'px');
+          $('#area').css('height', (h-43-$("#table-show").height()-43-10-size)+'px');
           $('#chart0').css('height', (h-63)+'px');
           $('#chart1').css('height', (h/2-63)+'px');
           $('#chart2').css('height', (h/2)+'px');
@@ -563,6 +594,83 @@
                     layer.close(loading);
                 }
             );
+          }
+      });
+
+      form.on('select(sttp)', function(data){
+          $("select[name=station]").html('<option value="">请选择</option>');
+          $("select[name=plan]").html('<option value="">请选择</option>');
+          form.render('select');
+          var sttp = $("select[name=sttp]").val();
+          if( sttp != "" ){
+              var loading = layer.load(0);
+              $.post(
+                  '${pageContext.request.contextPath}/station/getStation',
+                  {sttp: sttp},
+                  function (data) {
+                      if( data.code == 200 ) {
+                          var html = '';
+                          $.each(data.data, function (key, value) {
+                              html += '<option value="' + value.stcd + '">' + value.stname + '</option>';
+                          });
+                          $("select[name=station]").append(html);
+                          form.render('select');
+                      }
+                      layer.close(loading);
+                  }
+              );
+          }
+      });
+
+      form.on('select(station)', function(data){
+          $("select[name=plan]").html('<option value="">请选择</option>');
+          form.render('select');
+          var stcd = $("select[name=station]").val();
+          if( stcd != "" ){
+              var loading = layer.load(0);
+              $.post(
+                  '${pageContext.request.contextPath}/plan/getPlan',
+                  {
+                      stcd: stcd
+                  },
+                  function (data) {
+                      if( data.code == 200 ) {
+                          var html = '';
+                          $.each(data.data, function (key, value) {
+                              html += '<option value="' + value.id + '">' + value.name + '</option>';
+                          });
+                          $("select[name=plan]").append(html);
+                          form.render('select');
+                      }
+                      layer.close(loading);
+                  }
+              );
+          }
+      });
+
+      form.on('select(plan)', function(data){
+          dataTree = {};
+          tree.reload('area', {
+              data: dataTree
+          });
+          if( data.value != '' ){
+              var loading = layer.load(0);
+              $.post(
+                  '${pageContext.request.contextPath}/model/getSolo',
+                  {
+                      planId: data.value
+                  },
+                  function (data) {
+                      if( data.code == 200 ) {
+                          dataTree = data.data;
+                          tree.reload('area', {
+                              data: dataTree
+                          });
+                          donePost = false;
+                      }
+                      layer.close(loading);
+                  }
+              );
           }
       });
 

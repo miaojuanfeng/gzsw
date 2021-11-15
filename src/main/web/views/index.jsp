@@ -82,11 +82,21 @@
           </div>
           
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-            <li data-name="home" class="layui-nav-item">
-              <a href="javascript:;" lay-href="<c:url value="forecast/home"></c:url>" lay-tips="预报" lay-direction="2">
+            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+              <a href="javascript:;" lay-tips="预报" lay-direction="2">
                 <i class="layui-icon layui-icon-water"></i>
                 <cite>预报</cite>
               </a>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="forecast/home?show=1"></c:url>">河系预报</a>
+                </dd>
+              </dl>
+              <dl class="layui-nav-child">
+                <dd data-name="console">
+                  <a lay-href="<c:url value="forecast/home?show=2"></c:url>">单站预报</a>
+                </dd>
+              </dl>
             </li>
             <li data-name="home" class="layui-nav-item layui-nav-itemed">
               <a href="javascript:;" lay-tips="站点" lay-direction="2">
