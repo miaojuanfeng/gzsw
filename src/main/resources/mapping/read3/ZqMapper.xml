@@ -7,8 +7,15 @@
         <result column="y" property="y"/>
 	</resultMap>
 
+    <select id="selectYear" resultType="java.lang.String">
+        select top 1 lnnm from ST_ZQRL_B where stcd = '${stcd}' group by lnnm order by lnnm desc
+    </select>
+
     <select id="selectZq" resultMap="BaseResultMap">
-        select q as x, z as y from ST_ZQRL_B where stcd = '${stcd}' order by bgtm desc, q desc
+        select q as x, z as y from ST_ZQRL_B
+        where stcd = '${stcd}'
+        and lnnm = '${year}'
+        order by bgtm desc, q desc
     </select>
 
 </mapper>

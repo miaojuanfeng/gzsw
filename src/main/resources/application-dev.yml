@@ -1,3 +1,7 @@
+logging:
+  level:
+     gz.sw.mapper.write : debug
+
 spring:
 
   mvc:
@@ -19,6 +23,10 @@ spring:
 #      password: Mjf19921030
 #      username: sa
     read:
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
+      password: haosql
+      username: sa
+    read3:
       jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
       password: haosql
       username: sa

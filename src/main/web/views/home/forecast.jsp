@@ -688,7 +688,7 @@
               return false;
           }
           type = 1;
-          doPost(type, dataTree[0].stcd, dataTree, true, unitArr);
+          doPost(type, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
           return false;
       });
 
@@ -706,7 +706,7 @@
               return false;
           }
           type = 2;
-          doPost(type, dataTree[0].stcd, dataTree, true, unitArr);
+          doPost(type, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
           return false;
       });
 
@@ -915,6 +915,7 @@
       
       function doPost(type, stcd, data, updateModel, unitArr, oqStcd, oqStr) {
           var loading = layer.load(0);
+          oqStcd = oqStcd != '' ? oqStcd : stcd;
           $.post({
               url: "${pageContext.request.contextPath}/forecast/compute",
               contentType: "application/x-www-form-urlencoded",

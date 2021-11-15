@@ -6,4 +6,4 @@ server:
 #spring 配置文件
 spring:
   profiles:
-    active: prod
+    active: dev

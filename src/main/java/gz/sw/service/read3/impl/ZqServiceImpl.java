@@ -14,7 +14,12 @@ public class ZqServiceImpl implements ZqService {
     private ZqDao zqDao;
 
     @Override
-    public List selectZq(String stcd) {
-        return zqDao.selectZq(stcd);
+    public String selectYear(String stcd) {
+        return zqDao.selectYear(stcd);
+    }
+
+    @Override
+    public List selectZq(String stcd, String year) {
+        return zqDao.selectZq(stcd, year);
     }
 }

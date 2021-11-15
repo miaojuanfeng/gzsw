@@ -273,13 +273,18 @@ public class XajCalc {
             if( NumberUtil.le(listPE.get(i), NumberConst.ZERO) ){
                 xajParam.listRs.set(i, NumberConst.ZERO);
                 listFR.set(i, getFR(listW.get(i), Wm, B));
+                if( NumberUtil.gt(listFR.get(i), NumberConst.ONE) ){
+                    listFR.set(i, NumberConst.ONE);
+                }
                 FRup = listFR.get(i);
                 xajParam.listRss.set(i, Sup.multiply(KSSD).multiply(FRup));
                 xajParam.listRg.set(i, Sup.multiply(KGD).multiply(FRup));
                 listS.set(i, Sup.subtract(xajParam.listRss.get(i).add(xajParam.listRg.get(i)).divide(FRup, NumberConst.DIGIT, NumberConst.MODE)));
             }else{
                 listFR.set(i, getFR(listPE.get(i), listR.get(i)));
-//                System.out.println("i: " + i + ",Sup: " + Sup + ",FR: " + listFR.get(i));
+                if( NumberUtil.gt(listFR.get(i), NumberConst.ONE) ){
+                    listFR.set(i, NumberConst.ONE);
+                }
                 listS.set(i, FRup.multiply(Sup).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listQ.set(i, listR.get(i).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listN.set(i, new BigDecimal(listQ.get(i).divide(new BigDecimal(5), NumberConst.DIGIT, NumberConst.MODE).intValue()).add(NumberConst.ONE));

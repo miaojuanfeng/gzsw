@@ -7,5 +7,6 @@ import java.util.List;
 
 @Mapper
 public interface ZqDao {
-    List selectZq(@Param("stcd") String stcd);
+    String selectYear(@Param("stcd") String stcd);
+    List selectZq(@Param("stcd") String stcd, @Param("year") String year);
 }

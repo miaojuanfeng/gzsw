@@ -449,18 +449,18 @@ public class ForecastController {
 			/////////
 			/////////
 			/////////
-			if( stcd.equals("62302700") ){
-				Map<String, BigDecimal> init = (Map<String, BigDecimal>)rainfallMap.get("init");
-				System.out.println("WU0: " + init.get("wu"));
-				System.out.println("WL0: " + init.get("wl"));
-				System.out.println("WD0: " + init.get("wd"));
-				for( BigDecimal p : listP ){
-					System.out.println(p);
-				}
-				for( String t : listTime ){
-					System.out.println(t);
-				}
-			}
+//			if( stcd.equals("62302700") ){
+//				Map<String, BigDecimal> init = (Map<String, BigDecimal>)rainfallMap.get("init");
+//				System.out.println("WU0: " + init.get("wu"));
+//				System.out.println("WL0: " + init.get("wl"));
+//				System.out.println("WD0: " + init.get("wd"));
+//				for( BigDecimal p : listP ){
+//					System.out.println(p);
+//				}
+//				for( String t : listTime ){
+//					System.out.println(t);
+//				}
+//			}
 			/////////
 			/////////
 			/////////
@@ -672,7 +672,12 @@ public class ForecastController {
 				riverMin = riverMin.multiply(new BigDecimal("0.8"));
 				riverMax = riverMax.multiply(new BigDecimal("1.2"));
 			}else if( type == 2 && !StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(sttp) ){
-				List<Zq> zqList = zqService.selectZq(stcd);
+				List<Zq> zqList = zqService.selectZq(stcd, zqService.selectYear(stcd));
+//				System.out.println(stname);
+//				for(int k=0; k<zqList.size(); k++) {
+//					Zq zq = zqList.get(k);
+//					System.out.println("x: " + zq.getX() + " y: " + zq.getY());
+//				}
 				for(int j=0; j<listQTRR.size(); j++){
 					BigDecimal r = listQTRR.get(j);
 					Zq zqMin = null;
