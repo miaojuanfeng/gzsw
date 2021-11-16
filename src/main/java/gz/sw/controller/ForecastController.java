@@ -92,7 +92,7 @@ public class ForecastController {
 		map.put("models", modelService.selectAll());
 		Date date = new Date();
 		map.put("forecastTime", DateUtil.date2str(date, "yyyy-MM-dd HH:00:00"));
-		map.put("affectTime", DateUtil.date2str(DateUtil.addMonth(date, -1), "yyyy-MM-dd HH:00:00"));
+		map.put("affectTime", DateUtil.date2str(DateUtil.addDay(date, -3), "yyyy-MM-dd HH:00:00"));
 //		map.put("forecastTime", "2021-05-20 08:00:00");
 //		map.put("affectTime", "2021-05-15 08:00:00");
 //		map.put("forecastTime", "2020-03-11 08:00:00");

@@ -82,7 +82,7 @@
           </div>
           
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+            <li data-name="home" class="layui-nav-item">
               <a href="javascript:;" lay-tips="预报" lay-direction="2">
                 <i class="layui-icon layui-icon-water"></i>
                 <cite>预报</cite>
@@ -98,7 +98,7 @@
                 </dd>
               </dl>
             </li>
-            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+            <li data-name="home" class="layui-nav-item">
               <a href="javascript:;" lay-tips="站点" lay-direction="2">
                   <i class="layui-icon layui-icon-template"></i>
                   <cite>站点</cite>

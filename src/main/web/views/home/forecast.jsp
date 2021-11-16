@@ -465,9 +465,22 @@
           ,done: function (value) {
               if( value != '' ){
                   unitTable(unitH, unitP, value, true);
+                  $("#affectTime").val(getNextDate(value,-3));
               }
           }
       });
+
+      function getNextDate(date,day) {
+          var dd = new Date(date);
+          dd.setDate(dd.getDate() + day);
+          var y = dd.getFullYear();
+          var m = dd.getMonth() + 1 < 10 ? "0" + (dd.getMonth() + 1) : dd.getMonth() + 1;
+          var d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate();
+          var h = dd.getHours() < 10 ? "0" + dd.getHours() : dd.getHours();
+          var i = dd.getMinutes() < 10 ? "0" + dd.getMinutes() : dd.getMinutes();
+          var s = dd.getSeconds() < 10 ? "0" + dd.getSeconds() : dd.getSeconds();
+          return y + "-" + m + "-" + d + " " + h + ":" + i + ":" + s;
+      };
 
       laydate.render({
           elem: '#affectTime'
