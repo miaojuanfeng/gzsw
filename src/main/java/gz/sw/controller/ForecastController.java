@@ -101,14 +101,14 @@ public class ForecastController {
 		return "home/forecast";
 	}
 
-	private JSONObject getRetval(HttpServletRequest request, String stcd, JSONArray model){
+	private JSONObject getRetval(HttpServletRequest request, String stcd, JSONArray model, Integer type){
         JSONObject data = new JSONObject();
 		SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
 		Forecast forecast = sessionUser.getForecast();
 		data.put("timeArr", forecast.getListTime(stcd));
 		data.put("P", forecast.getListP(stcd));
 		data.put("R", forecast.getListR(stcd));
-		data.put("QTRR", forecast.getListQTRR(stcd));
+		data.put("QTRR", type == 1 ? forecast.getListQTRR(stcd) : forecast.getListZTRR(stcd));
 		data.put("River", forecast.getListRiver(stcd));
 		data.put("rainfallMax", forecast.getListMaxP(stcd).intValue());
 		data.put("forecastText", forecast.getForecastText(stcd));
@@ -147,9 +147,10 @@ public class ForecastController {
     @ResponseBody
     public JSONObject station(
     		HttpServletRequest request,
-            @RequestParam("stcd") String stcd
+            @RequestParam("stcd") String stcd,
+			@RequestParam("type") Integer type
     ) {
-        return getRetval(request, stcd, null);
+        return getRetval(request, stcd, null, type);
     }
 
 	/**
@@ -279,7 +280,7 @@ public class ForecastController {
 			return RetVal.Error(e.getMessage());
 		}
 		System.out.println("--------------------河系计算时间: " + (System.currentTimeMillis() - t)/1000 + "秒");
-		return getRetval(request, oqStcd != null ? oqStcd : stcd, model);
+		return getRetval(request, oqStcd != null ? oqStcd : stcd, model, type);
 	}
 
 	private Map getP(Integer rain, Integer rainf, String forecastTime, String affectTime, Integer day, Integer unit, JSONArray unitArr) throws ParamException {
@@ -434,6 +435,7 @@ public class ForecastController {
 			List<String> listTime = new ArrayList<>();
 			List<BigDecimal> listQTR = new ArrayList<>();
 			List<BigDecimal> listQTRR = new ArrayList<>();
+			List<BigDecimal> listZTRR = new ArrayList<>();
 			Integer rainfallMax = 0;
 
 			SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonConst.SESSION_USER);
@@ -456,7 +458,7 @@ public class ForecastController {
 			/////////
 			/////////
 			/////////
-//			if( stcd.equals("62302700") ){
+//			if( stcd.equals("62302350") ){
 //				Map<String, BigDecimal> init = (Map<String, BigDecimal>)rainfallMap.get("init");
 //				System.out.println("WU0: " + init.get("wu"));
 //				System.out.println("WL0: " + init.get("wl"));
@@ -464,6 +466,7 @@ public class ForecastController {
 //				for( BigDecimal p : listP ){
 //					System.out.println(p);
 //				}
+//				int a  =1;
 //				for( String t : listTime ){
 //					System.out.println(t);
 //				}
@@ -729,7 +732,7 @@ public class ForecastController {
 					}else{
 						throw new ParamException("ZQ转换错误");
 					}
-					listQTRR.set(j, r);
+					listZTRR.add(r);
 					if( NumberUtil.gt(r, riverMax) ){
 						riverMax = r;
 					}
@@ -743,6 +746,7 @@ public class ForecastController {
 			System.out.println("转换水位时间: " + (System.currentTimeMillis() - swTime) + "毫秒");
  			sessionUser.getForecast().setRiverMax(stcd, riverMax);
 			sessionUser.getForecast().setRiverMin(stcd, riverMin);
+			sessionUser.getForecast().setListZTRR(stcd, listZTRR);
 
             /**
              * 根据站的类型选择马斯京根或调洪演算

@@ -24,6 +24,8 @@ public class Forecast {
 
     private Map<String, List<BigDecimal>> listQT = new HashMap<>();
 
+    private Map<String, List<BigDecimal>> listZTRR = new HashMap<>();
+
     private Map<String, List<BigDecimal>> listQTR = new HashMap<>();
 
     private Map<String, List<BigDecimal>> listQTRR = new HashMap<>();
@@ -86,6 +88,14 @@ public class Forecast {
 
     public void setListQT(String stcd, List<BigDecimal> listQT) {
         this.listQT.put(stcd, listQT);
+    }
+
+    public List<BigDecimal> getListZTRR(String stcd) {
+        return listZTRR.get(stcd);
+    }
+
+    public void setListZTRR(String stcd, List<BigDecimal> listZTRR) {
+        this.listZTRR.put(stcd, listZTRR);
     }
 
     public Map<String, List<BigDecimal>> getListQTR() {

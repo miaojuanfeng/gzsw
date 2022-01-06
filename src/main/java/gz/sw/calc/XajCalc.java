@@ -285,7 +285,7 @@ public class XajCalc {
                 if( NumberUtil.gt(listFR.get(i), NumberConst.ONE) ){
                     listFR.set(i, NumberConst.ONE);
                 }
-                System.out.println(listFR.get(i));
+//                System.out.println(listFR.get(i));
                 listS.set(i, FRup.multiply(Sup).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listQ.set(i, listR.get(i).divide(listFR.get(i), NumberConst.DIGIT, NumberConst.MODE));
                 listN.set(i, new BigDecimal(listQ.get(i).divide(new BigDecimal(5), NumberConst.DIGIT, NumberConst.MODE).intValue()).add(NumberConst.ONE));
@@ -365,6 +365,7 @@ public class XajCalc {
         BigDecimal QRSSup = plan.getBigDecimal("QRSS0");
         BigDecimal QRGup = plan.getBigDecimal("QRG0");
         BigDecimal QTRup = QRSup.add(QRSSup).add(QRGup);
+        BigDecimal Q0 = QRSSup.add(QRSSup).add(QRGup);
         BigDecimal IM = plan.getBigDecimal("IM");
         Integer LAG = plan.getBigDecimal("L").intValue();
         BigDecimal KE = plan.getBigDecimal("KE");
@@ -383,10 +384,10 @@ public class XajCalc {
         }
 
         for(int i = 0; i < LAG; i++){
-            listQTRR.add(listQTR.get(0));
+            listQTRR.add(listQTR.get(0).add(Q0));
         }
         for(int i = LAG; i < listP.size() + LAG; i++){
-            listQTRR.add(listQTR.get(i-LAG));
+            listQTRR.add(listQTR.get(i-LAG).add(Q0));
         }
         if( KE != null && NumberUtil.gt(KE, new BigDecimal(LAG)) ){
             for(int i = listP.size() + LAG; i < listP.size() + KE.intValue(); i++){

@@ -1,5 +1,6 @@
 package gz.sw.calc;
 
+import gz.sw.constant.CommonConst;
 import gz.sw.constant.NumberConst;
 import gz.sw.common.Forecast;
 import gz.sw.util.NumberUtil;
@@ -179,16 +180,15 @@ public class ComCalc {
             QS1.add(listQTRR.get(i));
             QS2.add(listQTRR.get(i+1));
             QX1.add(listQTRR.get(i));
+            QX2.add(NumberConst.ZERO);
         }
+        // 多算一个值j+1
+        QX1.add(QX1.get(QX1.size()-1));
         for (int i = 1; i < K.intValue(); i++){
             for( int j = 0; j < listR.size(); j++ ){
                 BigDecimal temp = C0.multiply(QS2.get(j)).add(C1.multiply(QS1.get(j))).add(C2.multiply(QX1.get(j)));
-                QX2.add(temp);
-                if( j < QX1.size()-1 ) {
-                    QX1.set(j+1, temp);
-                }else{
-                    QX1.add(temp);
-                }
+                QX2.set(j, temp);
+                QX1.set(j + 1, temp);
             }
             for (int j = 0; j < listR.size(); j++){
                 QS1.set(j, QX1.get(j));

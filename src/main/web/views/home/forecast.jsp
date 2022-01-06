@@ -448,6 +448,7 @@
       var unitTemp = [];
       var unitArr = [];
       var currentStcd = '';
+      var currentType = 1;
       var donePost = false;
 
       function resize(size){
@@ -496,7 +497,7 @@
           ,edit: ['update']
           ,click: function(obj){
               if(!donePost) return;
-              loadStation(obj.data.stcd);
+              loadStation(currentType, obj.data.stcd);
           }
           ,operate: function (obj) {
               var type = obj.type;
@@ -707,12 +708,13 @@
           }
       });
 
-      function loadStation(stcd) {
+      function loadStation(type, stcd) {
           var loading = layer.load(0);
           $.post({
               url: "${pageContext.request.contextPath}/forecast/station",
               contentType: "application/x-www-form-urlencoded",
               data: {
+                  type: type,
                   stcd: stcd,
               },
               success : function(data) {
@@ -808,8 +810,8 @@
               layer.msg('请填妥相关信息');
               return false;
           }
-          type = 1;
-          doPost(type, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
+          currentType = 1;
+          doPost(currentType, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
           return false;
       });
 
@@ -826,8 +828,8 @@
               layer.msg('请填妥相关信息');
               return false;
           }
-          type = 2;
-          doPost(type, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
+          currentType = 2;
+          doPost(currentType, dataTree[0].stcd, dataTree, true, unitArr, currentStcd);
           return false;
       });
 
