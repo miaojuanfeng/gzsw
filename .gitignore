@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 application-prod.yml
+VBA版水文模型计算程序/
 
 ### STS ###
 .apt_generated
