@@ -5,7 +5,8 @@
         select
           avg(Wu) as wu,
           avg(Wd) as wl,
-          avg(Wl) as wd
+          avg(Wl) as wd,
+          avg(Pa) as pa
         from ST_Pa_W0
         where stcd in
         <foreach collection="list" item="stcd" index="index" open="(" close=")" separator=",">

@@ -234,6 +234,7 @@ public class ForecastController {
 	@ResponseBody
 	public JSONObject compute(
 			HttpServletRequest request,
+			@RequestParam("show") Integer show,
 			@RequestParam("type") Integer type,
 			@RequestParam("stcd") String stcd,
 			@RequestParam("forecastTime") String forecastTime,
@@ -275,7 +276,7 @@ public class ForecastController {
 			}
 			forecastTime = DateUtil.date2str(DateUtil.str2date(forecastTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
 			affectTime = DateUtil.date2str(DateUtil.str2date(affectTime, "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:00:00");
-			modelStation(request, stcd, null, forecastTime, affectTime, day, unit, type, model, updateOQ, uArr);
+			modelStation(request, stcd, null, forecastTime, affectTime, day, unit, show, type, model, updateOQ, uArr);
 		} catch (ParamException e) {
 			return RetVal.Error(e.getMessage());
 		}
@@ -412,7 +413,7 @@ public class ForecastController {
 		return retval;
 	}
 
-	private List<BigDecimal> modelStation(HttpServletRequest request, String rootStcd, String fatherStcd, String forecastTime, String affectTime, Integer day, Integer unit, Integer type, JSONArray model, Boolean updateOQ, JSONArray unitArr) throws ParamException {
+	private List<BigDecimal> modelStation(HttpServletRequest request, String rootStcd, String fatherStcd, String forecastTime, String affectTime, Integer day, Integer unit, Integer show, Integer type, JSONArray model, Boolean updateOQ, JSONArray unitArr) throws ParamException {
 		List<BigDecimal> retval = new ArrayList<>();
 	    List<List<BigDecimal>> result = new ArrayList<>();
 	    for( int i = 0; i < model.size(); i++ ){
@@ -425,7 +426,7 @@ public class ForecastController {
 			 * 子站输出数据
 			 */
 			if( m.containsKey("children") && m.getJSONArray("children").size() > 0 ) {
-                childList = modelStation(request, rootStcd, stcd, forecastTime, affectTime, day, unit, type, m.getJSONArray("children"), updateOQ, unitArr);
+                childList = modelStation(request, rootStcd, stcd, forecastTime, affectTime, day, unit, show, type, m.getJSONArray("children"), updateOQ, unitArr);
 			}
 			/**
 			 * 子站数据和本站数据做运算
@@ -482,6 +483,7 @@ public class ForecastController {
 				plan.put("WU0", init.get("wu"));
 				plan.put("WL0", init.get("wl"));
 				plan.put("WD0", init.get("wd"));
+				plan.put("PA", init.get("pa"));
 			}
 
 //			if( stcd.trim().equals("62303130") ) {
@@ -564,6 +566,10 @@ public class ForecastController {
             plan.put("KE", m.getBigDecimal("ke"));
 			plan.put("XE", m.getBigDecimal("xe"));
 			plan.put("INTV", m.getBigDecimal("intv"));
+			// 单站预报
+			if( show == 2 ){
+				m.put("intv", plan.getBigDecimal("T"));
+			}
 
 
 			Integer planModelCl = plan.getInteger("MODEL_CL");
@@ -753,8 +759,12 @@ public class ForecastController {
 			 * 根节点站不需要计算QT
              */
 			Long qtTime = System.currentTimeMillis();
-            if( !stcd.equals(rootStcd) ) {
+//            if( !stcd.equals(rootStcd) ) {
 				List<BigDecimal> listQT = new ArrayList<>();
+				List<BigDecimal> listOQ = null;
+				/*
+				 * 调洪演算，计算OQ
+				 */
 				if (StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(sttp)) {
 					SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 					SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMdd");
@@ -790,15 +800,14 @@ public class ForecastController {
 					BigDecimal OTQ = new BigDecimal(String.valueOf(initData.get("oq")));
 					BigDecimal FSLTDZ = new BigDecimal(String.valueOf(initData.get("lim") != null ? initData.get("lim") : initData.get("lim_bk")));
 					ComCalc.init(Z_CUR, V_CUR, Z0, HCOQ, RZ, OTQ, FSLTDZ);
-					List<BigDecimal> listOQ = null;
 					List<BigDecimal> listW = new ArrayList<>();
 					List<BigDecimal> listZ = new ArrayList<>();
-					if( !updateOQ ) {
+					if (!updateOQ) {
 						listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR, listW, listZ);
 						sessionUser.getForecast().setListOQ(stcd, listOQ);
 						sessionUser.getForecast().setListW(stcd, listW);
 						sessionUser.getForecast().setListZ(stcd, listZ);
-					}else{
+					} else {
 						listOQ = sessionUser.getForecast().getListOQ(stcd);
 						listQTRR = sessionUser.getForecast().getListQTRR(stcd);
 						listW = sessionUser.getForecast().getListW(stcd);
@@ -807,16 +816,16 @@ public class ForecastController {
 					}
 					List<Map> listInq = readService.selectInqList(stcd, forecastTime, affectTime);
 					BigDecimal lastInq = NumberConst.ZERO;
-					if( listInq.size() > 0 ){
+					if (listInq.size() > 0) {
 						lastInq = (BigDecimal) listInq.get(0).get("inq");
 					}
 					List<BigDecimal> listINQ = new ArrayList<>();
-					for( int k=0; k<listTime.size(); k++ ){
+					for (int k = 0; k < listTime.size(); k++) {
 						String time = listTime.get(k);
 						listINQ.add(lastInq);
-						for( Map inq : listInq ){
-							String t = DateUtil.date2str((Date)inq.get("tm"), "yyyy-MM-dd HH:mm");
-							if( time.equals(t) && inq.get("inq") != null ){
+						for (Map inq : listInq) {
+							String t = DateUtil.date2str((Date) inq.get("tm"), "yyyy-MM-dd HH:mm");
+							if (time.equals(t) && inq.get("inq") != null) {
 								listINQ.set(k, (BigDecimal) inq.get("inq"));
 								lastInq = listINQ.get(k);
 								break;
@@ -849,15 +858,39 @@ public class ForecastController {
 					riverMax = riverMax.add(new BigDecimal(3));
 					sessionUser.getForecast().setRiverMax(stcd, riverMax);
 					sessionUser.getForecast().setRiverMin(stcd, riverMin);
-
-					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
-				} else {
-					listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
+				}
+				/**
+				 * 马斯京根，计算QT
+				 */
+				if( !stcd.equals(rootStcd) ) {
+					if( StationTypeEnum.getCode(StationTypeEnum.RR.getId()).equals(sttp) ){
+						listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listOQ);
+					} else {
+						listQT = ComCalc.getQT(m.getBigDecimal("ke"), m.getBigDecimal("xe"), listR.isEmpty() ? listQTR : listR, listQTRR);
+					}
 				}
 				result.add(listQT);
 
 				sessionUser.getForecast().setListQT(stcd, listQT);
-			}
+//			}else{
+//				List<BigDecimal> listOQ = null;
+//				List<BigDecimal> listW = new ArrayList<>();
+//				List<BigDecimal> listZ = new ArrayList<>();
+//				listOQ = ComCalc.getOQ(m.getBigDecimal("intv"), listR.isEmpty() ? listQTR : listR, listQTRR, listW, listZ);
+//				sessionUser.getForecast().setListOQ(stcd, listOQ);
+//				sessionUser.getForecast().setListW(stcd, listW);
+//				sessionUser.getForecast().setListZ(stcd, listZ);
+//				/** 寻找最大值 */
+//				BigDecimal yMin = NumberConst.ZERO;
+//				BigDecimal yMax = NumberConst.ZERO;
+//				extremum = NumberUtil.find2Extremum(yMin, yMax, listQTRR, true);
+//				yMin = extremum.get(0);
+//				yMax = extremum.get(1);
+//				yMin = yMin.multiply(new BigDecimal("0.05"));
+//				yMax = yMax.multiply(new BigDecimal("1.8"));
+//				sessionUser.getForecast().setYMax(stcd, yMax);
+//				sessionUser.getForecast().setYMin(stcd, yMin);
+//			}
 			System.out.println("调洪演算时间: " + (System.currentTimeMillis() - qtTime) + "毫秒");
 			if( fatherStcd != null ){
             	sessionUser.getForecast().setListChildStcd(fatherStcd, stcd);

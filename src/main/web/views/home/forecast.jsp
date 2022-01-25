@@ -616,6 +616,7 @@
           $("select[name=plan]").html('<option value="">请选择</option>');
           form.render('select');
           var sttp = $("select[name=sttp]").val();
+          currentStcd = '';
           if( sttp != "" ){
               var loading = layer.load(0);
               $.post(
@@ -777,25 +778,8 @@
           for (var i = data.id - 1; i < oqList.length; i++) {
               oqList[i].oq = v;
           }
-          // var trs = obj.tr.nextAll();
-          // // console.log(trs);
-          // for( var i=0; i<trs.length; i++ ){
-          //     // console.log(trs[i]);
-          //     trs[i].find('td[data-field=oq] input').val(v);
-          // }
-          // console.log(oqList);
           table.reload('see-table', {data: oqList});
-          // obj.update({oq:v});
-          // obj.tr.find('td[data-field=oq] input').val(v);
       });
-
-      // form.on('select(oqStation)', function(data){
-      //     if( data.value != '' ){
-      //         table.reload('see-table', {data: oqObj[data.value].data});
-      //     }else{
-      //         table.reload('see-table', {data: []});
-      //     }
-      // });
 
       /* 预报流量 */
       form.on('submit(forecast1)', function(data){
@@ -1043,6 +1027,7 @@
               url: "${pageContext.request.contextPath}/forecast/compute",
               contentType: "application/x-www-form-urlencoded",
               data: {
+                  show: ${show},
                   type: type,
                   stcd: stcd,
                   forecastTime: $("input[name=forecastTime]").val(),
