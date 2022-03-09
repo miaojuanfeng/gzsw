@@ -249,7 +249,7 @@
         base: base //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use('index', function () {
+    }).use('index', function () {   //index是一个组件
         var $ = layui.$
             ,admin = layui.admin;
         ajaxSetup($, '由于您长时间没有操作, 请重新登录。');

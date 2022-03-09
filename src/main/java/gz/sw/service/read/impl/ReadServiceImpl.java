@@ -21,8 +21,8 @@ public class ReadServiceImpl implements ReadService {
     }
 
     @Override
-    public List<Map> selectInqList(String stcd, String forecastTime, String affectTime) {
-        return readDao.selectInqList(stcd, forecastTime, affectTime);
+    public List<Map> selectRsvrList(String stcd, String forecastTime, String affectTime) {
+        return readDao.selectRsvrList(stcd, forecastTime, affectTime);
     }
 
 }
