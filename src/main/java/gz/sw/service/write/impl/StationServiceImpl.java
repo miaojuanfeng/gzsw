@@ -87,7 +87,6 @@ public class StationServiceImpl implements StationService {
 	@Scheduled(cron="0 5,8 * * * ? ")
 	public void unusual() {
 		synchronized (CommonConst.stationLock) {
-			System.out.println("执行");
 			Date now = new Date();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
 			String date = format.format(now);

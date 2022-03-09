@@ -215,8 +215,8 @@ public class ComCalc {
      * QTRR -> OQ -> QT
      * @return listQT
      */
-    public static List<BigDecimal> getOQ(BigDecimal INTV, List<BigDecimal> listR, List<BigDecimal> listQTRR, List<BigDecimal> W, List<BigDecimal> Z){
-        List<BigDecimal> listOQ = new ArrayList<>();
+    public static void getOQ(BigDecimal INTV, List<BigDecimal> listR, List<BigDecimal> listQTRR, List<BigDecimal> W, List<BigDecimal> Z,int oqStartIndex,List<BigDecimal> listOQ){
+        //List<BigDecimal> listOQ = new ArrayList<>();
 
         // 预见期水位过程
 //        List<BigDecimal> Z = new ArrayList<>();
@@ -244,9 +244,11 @@ public class ComCalc {
         /**
          * 初始化数据
          */
+        Z.add(NumberConst.ZERO);
+        listOQ.add(NumberConst.ZERO);
         for (int i = 0; i <= listR.size(); i++){
-            Z.add(NumberConst.ZERO);
-            listOQ.add(NumberConst.ZERO);
+            //Z.add(NumberConst.ZERO);
+            //listOQ.add(NumberConst.ZERO);
             W.add(NumberConst.ZERO);
         }
 //        /**
@@ -261,13 +263,13 @@ public class ComCalc {
         /**
          * 读取起调水位，从实时数据库读取  ST_RSVR_R，预报时间的水位    字段RZ
          */
-        Z.set(0, RZ);
-        W.set(0, diffVal(Z.get(0), Z_CUR, V_CUR));
+        Z.set(oqStartIndex, RZ);
+        W.set(oqStartIndex, diffVal(Z.get(oqStartIndex), Z_CUR, V_CUR));
         /**
          * 读取初始出库流量，从实时数据库读取  ST_RSVR_R，预报时间往前最近的一个出库流量   字段OTQ
          */
-        listOQ.set(0, OTQ);
-        Temp_OQ = listOQ.get(0);
+        listOQ.set(oqStartIndex, OTQ);
+        Temp_OQ = listOQ.get(oqStartIndex);
         /**
          * 读取汛限水位，从实时数据库的汛期水位表 ST_RSVRFSR_B 读取   字段FSLTDZ      BGMD EDMD两个字段为开始结束时间，根据这两个时间来读汛限水位
          */
@@ -288,7 +290,7 @@ public class ComCalc {
         /**
          * 调洪演算
          */
-        for (int i = 0; i < listR.size(); i++){
+        for (int i = oqStartIndex; i < listR.size(); i++){
             /**
              * Temp_W = W(i) + (QTRR(i) + QTRR(i + 1)) * 0.0018 * INTV - OQ(i) * 0.0036 * INTV
              */
@@ -337,7 +339,7 @@ public class ComCalc {
         for (int i=0; i<listOQ.size(); i++){
             listOQ.set(i, listOQ.get(i).setScale(NumberConst.DIGIT, NumberConst.MODE));
         }
-        return listOQ;
+        //return listOQ;
     }
 
     /**
@@ -346,16 +348,16 @@ public class ComCalc {
      * OQ -> Z
      * @return listQT
      */
-    public static void rvrOQ(BigDecimal INTV, List<BigDecimal> listOQ, List<BigDecimal> listQTRR, List<BigDecimal> listW, List<BigDecimal> listZ) {
+    public static void rvrOQ(BigDecimal INTV, List<BigDecimal> listOQ, List<BigDecimal> listQTRR, List<BigDecimal> listW, List<BigDecimal> listZ, int oqStartIndex) {
         BigDecimal NUM_0_0018 = new BigDecimal("0.0018");
-        for( int i=0; i<listW.size()-1; i++ ){
+        for( int i=oqStartIndex; i<listW.size()-1; i++ ){
             BigDecimal temp1 = listW.get(i);
             BigDecimal temp2 = (listQTRR.get(i+1).add(listQTRR.get(i))).multiply(NUM_0_0018).multiply(INTV);
             BigDecimal temp3 = (listOQ.get(i+1).add(listOQ.get(i))).multiply(NUM_0_0018).multiply(INTV);
             BigDecimal temp = temp1.add(temp2).subtract(temp3);
             listW.set(i+1, temp);
         }
-        for( int i=0; i<listZ.size()-1; i++ ){
+        for( int i=oqStartIndex; i<listZ.size()-1; i++ ){
             BigDecimal temp = diffVal(listW.get(i+1), V_CUR, Z_CUR);
             listZ.set(i+1, temp);
         }

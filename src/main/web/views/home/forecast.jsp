@@ -438,7 +438,7 @@
           ,laydate = layui.laydate
           ,table = layui.table
           ,echarts = layui.echarts;
-      ajaxSetup($, '由于您长时间没有操作, 请重新登录。');
+      ajaxSetup($, '由于您长时间没有操作, 请重新登录。');//每次发送完post请求调用该方法
 
       var dataTree = [];
       var type = 1;
@@ -447,9 +447,9 @@
       var unitP = '';
       var unitTemp = [];
       var unitArr = [];
-      var currentStcd = '';
-      var currentType = 1;
-      var donePost = false;
+      var currentStcd = '';      //当前页面正在浏览的站码
+      var currentType = 1;       //预报类型，1为流量，2为水位
+      var donePost = false;     //当前河系是否做过预报
 
       function resize(size){
           var h = $(window).height() - 15 * 2;
@@ -463,10 +463,10 @@
       laydate.render({
           elem: '#forecastTime'
           ,type: 'datetime'
-          ,done: function (value) {
+          ,done: function (value) {  //输入时间后执行该方法
               if( value != '' ){
-                  unitTable(unitH, unitP, value, true);
-                  $("#affectTime").val(getNextDate(value,-3));
+                  unitTable(unitH, unitP, value, true);  //计算人工输入降雨框的起止时间
+                  $("#affectTime").val(getNextDate(value,-3)); //根据预报时间自动修改影响时间
               }
           }
       });
@@ -495,11 +495,11 @@
           ,onlyIconControl: true
           ,customOperate: true
           ,edit: ['update']
-          ,click: function(obj){
-              if(!donePost) return;
-              loadStation(currentType, obj.data.stcd);
+          ,click: function(obj){     //点击站名时执行的方法
+              if(!donePost) return;  //如果没有做预报，啥都不干
+              loadStation(currentType, obj.data.stcd);  //请求该站的预报数据
           }
-          ,operate: function (obj) {
+          ,operate: function (obj) {   //点站名后那枝笔的时候执行该方法
               var type = obj.type;
               var data = obj.data;
               var elem = obj.elem;
@@ -514,12 +514,12 @@
               type: 1
               ,offset: 'auto'
               ,id: 'layerDemo1'
-              ,content: $('#updateform')
+              ,content: $('#updateform')  //打开哪个form
               ,area:["900px","420px"]
               ,btn: ['确定', '取消']
               ,btnAlign: 'c' //按钮居中
               ,shade: 0.2 //不显示遮罩
-              ,btn1: function(index, layero){
+              ,btn1: function(index, layero){    //点确定时把页面上的数值赋给e对象
                   var e = each(dataTree, deptId);
                   $.each(e.plan, function(key, value){
                       var val = $("#updateform input[name=" + key + "]").val();
@@ -537,15 +537,15 @@
                   console.log(dataTree);
                   layer.closeAll();
               }
-              ,btn2: function(index, layero){
+              ,btn2: function(index, layero){     //点取消时关闭窗体
                   clearForm();
                   layer.closeAll();
               }
-              ,cancel: function(){
+              ,cancel: function(){      //点叉叉时关闭窗体
                   clearForm();
                   layer.closeAll();
               }
-              ,success: function(layero, index){  //弹出成功的回调
+              ,success: function(layero, index){    //弹出成功的回调，把取出的e对象的值赋给窗体
                   clearForm();
                   var e = each(dataTree, deptId);
                   $.each(e.plan, function(key, value){
@@ -569,7 +569,7 @@
               if (e.id == deptId) {
                   return e;
               }
-              if (e.children != undefined && e.children.length > 0) {
+              if (e.children != undefined && e.children.length > 0) {    //如果本站不是要找的站，就找本站的子站
                   var e = each(e.children, deptId);
                   if( e != undefined ){
                       return e;
@@ -603,7 +603,7 @@
                         tree.reload('area', {
                             data: dataTree
                         });
-                        donePost = false;
+                        donePost = false;  //当前河系是否做预报
                     }
                     layer.close(loading);
                 }
@@ -641,6 +641,7 @@
           $("select[name=plan]").html('<option value="">请选择</option>');
           form.render('select');
           var stcd = $("select[name=station]").val();
+          currentStcd = stcd;
           if( stcd != "" ){
               var loading = layer.load(0);
               $.post(
@@ -1071,6 +1072,7 @@
 
   });
 
+  //取3位小数
   function zhzs(value, fixed) {
       if(fixed == undefined) fixed = 3;
       value = parseFloat(value.replace(/^0{1,}/g, '')).toFixed(fixed);

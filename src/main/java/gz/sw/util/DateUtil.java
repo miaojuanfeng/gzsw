@@ -18,6 +18,24 @@ public class DateUtil {
 		return retval;
 	}
 
+	/**
+	 * 返回两个日期相差的小时数
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Integer hoursBetween(String startDate,String endDate) throws ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sdf.parse(startDate));
+		long time1 = cal.getTimeInMillis();
+		cal.setTime(sdf.parse(endDate));
+		long time2 = cal.getTimeInMillis();
+		long between_hours=(time2-time1)/(1000*3600);
+		return Integer.parseInt(String.valueOf(between_hours));
+	}
+
 	public static Date addHour(Date date, Integer num){
 		Calendar ca = Calendar.getInstance();
 		ca.setTime(date);

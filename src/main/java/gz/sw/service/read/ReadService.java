@@ -7,5 +7,5 @@ public interface ReadService {
 
 	Map selectInitData(String stcd, String date, String year, String monthDay);
 
-	List<Map> selectInqList(String stcd, String forecastTime, String affectTime);
+	List<Map> selectRsvrList(String stcd, String forecastTime, String affectTime);
 }

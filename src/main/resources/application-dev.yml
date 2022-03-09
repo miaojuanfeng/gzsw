@@ -23,18 +23,21 @@ spring:
 #      password: Mjf19921030
 #      username: sa
     read:
-      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
-      password: haosql
-      username: sa
+#      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=rwdb
+#      password: xss@8113234
+#      username: sa
+      jdbc-url: jdbc:sqlserver://10.36.162.3:1433;databasename=ycreal_all
+      password: gzsw_1220
+      username: gzsw
     read3:
-      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=ycreal
-      password: haosql
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=rwdb
+      password: xss@8113234
       username: sa
     read2:
-      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=rwdb
-      password: haosql
+      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=rdwd20
+      password: xss@8113234
       username: sa
     write:
       jdbc-url: jdbc:sqlserver://127.0.0.1:1433;databasename=my_forecast
-      password: haosql
+      password: xss@8113234
       username: sa
